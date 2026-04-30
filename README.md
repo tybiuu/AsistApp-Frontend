@@ -1,6 +1,20 @@
 # AssistApp-Frontend
 AsistApp es una app móvil para gestionar la asistencia de practicantes preprofesionales en laboratorios universitarios. Permite registrar entradas y salidas, validar asistencias, controlar tardanzas y aprobar horarios.
+
 ## Entorno de desarrollo
+A continuacion listaremos las herramientas que usaremos para el desarrollo del app
+###Flutter
+Flutter es un Software Development Kit open source hecho por google. Es utilizado para la creacion de aplicaciones en distintas plataformas con un solo lenguaje de programacion (Dart). 
+Utilizaremos Flutter en el proyecto para el desarrollo de la aplicacion.
+###Android Studio
+Android Studio es el Integrated Development Enviroment oficial para el desarrollo y testeo de aplicaciones en el sistema Android. Provee de herramientas para codigo, y un emulador de Android para poder hacer debugging y testing.
+Utilizarems Android Studio en el proyecto para las pruebas de la aplicacion y verificacion de funcionamiento.
+###Express.js
+Express es un framework que construye sobre node.js para ofrecer herramientas que agilizan el desarrollo de la API del proyecto. 
+Utilizaremos Express para el manejo de errores, el ingreso de sesion y la gestion de usuarios.
+###PostgreSQL
+PostreSQL es un sistema de manejo de base de datos con objetos relacionales. Es open source y se caracteriza por su integridad y flexibilidad. Soporta SQL y Json.
+Utilizaremos PostgreSQL para el manejo de la base de datos que almacenara los datos de los usuarioa.
 
 ## Requerimientos funcionales
 - Creacion de cuentas (Nombre, Rol, correo, contraseña)
