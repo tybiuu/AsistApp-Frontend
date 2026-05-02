@@ -63,3 +63,6 @@ Los requerimientos no funcionales definen las características de calidad que de
 ### Escalabilidad
 - El backend desarrollado en Node.js con Express debe permitir agregar nuevas funcionalidades sin afectar la estructura principal del sistema.
 - La arquitectura debe permitir separar la aplicación móvil, el servidor y la base de datos.
+
+![Diagrama de despliegue](docs/diagrama_despliegue.png)
+
