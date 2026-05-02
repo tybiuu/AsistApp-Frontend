@@ -29,3 +29,37 @@ Utilizaremos PostgreSQL para el manejo de la base de datos que almacenara los da
 - El administrador puede ver las horas de ingreso y salida de cualquier usuario en cualquier dia
 - El usuario puede ver su record de asistencias del mes y cuantas horas debe
 - El administrador puede imprimir un PDF con el resumen de asistencias del mes de cualquier usuario
+
+
+## Requerimientos no funcionales
+
+Los requerimientos no funcionales definen las características de calidad que debe cumplir AssistApp para funcionar correctamente, de forma segura y eficiente.
+
+### Rendimiento
+- La aplicación debe responder a las acciones del usuario en menos de 2 segundos en condiciones normales.
+- El registro de entrada y salida debe procesarse de manera rápida para evitar retrasos en el control de asistencia.
+
+### Seguridad
+- El sistema debe proteger las cuentas de los usuarios mediante autenticación.
+- Las contraseñas deben almacenarse de forma cifrada en la base de datos.
+- La comunicación entre la aplicación móvil y el backend debe realizarse mediante HTTPS.
+
+### Disponibilidad
+- El backend debe estar disponible para que los usuarios puedan registrar sus asistencias durante sus horarios asignados.
+- El sistema debe manejar múltiples usuarios registrando asistencia sin afectar el funcionamiento general.
+
+### Usabilidad
+- La interfaz debe ser clara e intuitiva para administradores y usuarios.
+- El usuario debe poder registrar su ingreso o salida con pocos pasos.
+
+### Compatibilidad
+- La aplicación debe funcionar en dispositivos Android.
+- La interfaz debe adaptarse correctamente a diferentes tamaños de pantalla.
+
+### Persistencia de datos
+- La información de usuarios, horarios y asistencias debe almacenarse en PostgreSQL.
+- El sistema debe conservar el historial de asistencias para futuras consultas y reportes.
+
+### Escalabilidad
+- El backend desarrollado en Node.js con Express debe permitir agregar nuevas funcionalidades sin afectar la estructura principal del sistema.
+- La arquitectura debe permitir separar la aplicación móvil, el servidor y la base de datos.
