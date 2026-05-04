@@ -1,5 +1,5 @@
 # AssistApp-Frontend
-AsistApp es una app móvil para gestionar la asistencia de practicantes preprofesionales en laboratorios universitarios. Permite registrar entradas y salidas, validar asistencias, controlar tardanzas y aprobar horarios.
+AsistApp es una aplicación móvil desarrollada con Flutter orientada a la gestión de asistencia de practicantes preprofesionales dentro de organizaciones. Permite a los practicantes registrar su asistencia diaria, proponer y ajustar horarios, justificar inasistencias y consultar su historial personal, todo desde su dispositivo móvil. Por su parte, administradores y validadores cuentan con herramientas para aprobar solicitudes de ingreso, confirmar registros de asistencia, gestionar cambios de horario y acceder a reportes individuales y analíticas generales del equipo.
 
 ## Entorno de desarrollo
 A continuacion listaremos las herramientas que usaremos para el desarrollo del app
@@ -16,7 +16,7 @@ Utilizaremos Express para el manejo de errores, el ingreso de sesion y la gestio
 PostreSQL es un sistema de manejo de base de datos con objetos relacionales. Es open source y se caracteriza por su integridad y flexibilidad. Soporta SQL y Json.
 Utilizaremos PostgreSQL para el manejo de la base de datos que almacenara los datos de los usuarioa.
 ### Figma
-fnuaihfiusdhfiusdi
+Figma es una herramienta de diseño de interfaces colaborativa basada en la nube. Permite crear wireframes, prototipos interactivos y el diseño visual final de la aplicación.
 ## Diagrama de despliegue 
 ![Diagrama de despliegue](docs/diagrama_despliegue.png)
 
