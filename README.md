@@ -53,17 +53,33 @@ Los requerimientos no funcionales definen las características de calidad que de
 - El backend desarrollado en Node.js con Express debe permitir agregar nuevas funcionalidades sin afectar la estructura principal del sistema.
 - La arquitectura debe permitir separar la aplicación móvil, el servidor y la base de datos.
 
-## Diagrama de Casos de Uso
-### Actor: Usuario
-<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 12 55 AM" src="https://github.com/user-attachments/assets/f6156b96-630a-4e03-8016-ff9d1fbcf2a4" />
-### Actor: Administrador
-<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 13 15 AM" src="https://github.com/user-attachments/assets/dfb38b0f-eebf-4039-8ed9-2518a272a548" />
-### Actor: Validador
-<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 13 43 AM" src="https://github.com/user-attachments/assets/b69c36f3-72fb-4bab-a0c0-9846a2602cad" />
-### Actor: Practicante
-<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 14 13 AM" src="https://github.com/user-attachments/assets/358f106d-27b7-41c6-b31d-0d07511492d6" />
+---
 
-A continuación se detallan los casos de uso:
+## Diagrama de despliegue
+
+![Diagrama de despliegue](docs/diagrama_despliegue.png)
+
+---
+
+## Diagrama de casos de uso
+
+### Actor: Usuario
+<img width="610" height="806" alt="Casos de uso – Usuario" src="https://github.com/user-attachments/assets/f6156b96-630a-4e03-8016-ff9d1fbcf2a4" />
+
+### Actor: Administrador
+<img width="610" height="806" alt="Casos de uso – Administrador" src="https://github.com/user-attachments/assets/dfb38b0f-eebf-4039-8ed9-2518a272a548" />
+
+### Actor: Validador
+<img width="610" height="806" alt="Casos de uso – Validador" src="https://github.com/user-attachments/assets/b69c36f3-72fb-4bab-a0c0-9846a2602cad" />
+
+### Actor: Practicante
+<img width="610" height="806" alt="Casos de uso – Practicante" src="https://github.com/user-attachments/assets/358f106d-27b7-41c6-b31d-0d07511492d6" />
+
+---
+
+## Descripción de casos de uso
+
+A continuación se detalla cada caso de uso junto con el actor responsable y su descripción funcional. Los mockups de cada flujo se encuentran en el prototipo de Figma: [Ver prototipo en Figma](https://www.figma.com/design/4Uoegadii4QbM0yfaIX0XS/Logo-pmovil?t=WOXSwVpmNAQj3wrR-1)
 
 | Código | Nombre | Actor | Descripción |
 |--------|--------|-------|-------------|
@@ -91,5 +107,4 @@ A continuación se detallan los casos de uso:
 | UC22 | Generar y descargar PDF | Practicante | El practicante exporta su reporte de asistencia en formato PDF para entregarlo como constancia. |
 | UC23 | Ver registro de actividad | Admin | El administrador revisa el historial de acciones realizadas dentro del sistema por los miembros de la organización. |
 
-Link del figma
-https://www.figma.com/design/4Uoegadii4QbM0yfaIX0XS/Logo-pmovil?t=WOXSwVpmNAQj3wrR-1
+## Diagrama de despliegue
