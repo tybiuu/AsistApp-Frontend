@@ -15,21 +15,10 @@ Utilizaremos Express para el manejo de errores, el ingreso de sesion y la gestio
 ### PostgreSQL
 PostreSQL es un sistema de manejo de base de datos con objetos relacionales. Es open source y se caracteriza por su integridad y flexibilidad. Soporta SQL y Json.
 Utilizaremos PostgreSQL para el manejo de la base de datos que almacenara los datos de los usuarioa.
-
-## Requerimientos funcionales
-- Creacion de cuentas (Nombre, Rol, correo, contraseña)
-- Diferenciacion entre cuenta de administrador y usuario
-- Que el administrador pueda enviar invitaciones a sus trabajadores para crearse una cuenta
-- Administrador puede colocar tiempo de entrada y salida esperado a cada usuario por cada dia de la semana
-- Administrador puede colocar tiempo de gracia para ingreso
-- Administrador puede editar tiempo de entrada y salida de cada usuario. (El admin y el usuario pueden ver si un tiempo ha sido editado de esta manera)
-- Los usuarios pueden presionar un boton para marcar su ingreso y su salida
-- El usuario puede ver su hora de ingreso y salida esperada de cada dia en un calendario
-- El sistema determina automaticamente si un usuario ha cumplido con su horario o cuanto tiempo debe
-- El administrador puede ver las horas de ingreso y salida de cualquier usuario en cualquier dia
-- El usuario puede ver su record de asistencias del mes y cuantas horas debe
-- El administrador puede imprimir un PDF con el resumen de asistencias del mes de cualquier usuario
-
+### Figma
+fnuaihfiusdhfiusdi
+## Diagrama de despliegue 
+![Diagrama de despliegue](docs/diagrama_despliegue.png)
 
 ## Requerimientos no funcionales
 
@@ -64,5 +53,43 @@ Los requerimientos no funcionales definen las características de calidad que de
 - El backend desarrollado en Node.js con Express debe permitir agregar nuevas funcionalidades sin afectar la estructura principal del sistema.
 - La arquitectura debe permitir separar la aplicación móvil, el servidor y la base de datos.
 
-![Diagrama de despliegue](docs/diagrama_despliegue.png)
+## Diagrama de Casos de Uso
+### Actor: Usuario
+<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 12 55 AM" src="https://github.com/user-attachments/assets/f6156b96-630a-4e03-8016-ff9d1fbcf2a4" />
+### Actor: Administrador
+<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 13 15 AM" src="https://github.com/user-attachments/assets/dfb38b0f-eebf-4039-8ed9-2518a272a548" />
+### Actor: Validador
+<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 13 43 AM" src="https://github.com/user-attachments/assets/b69c36f3-72fb-4bab-a0c0-9846a2602cad" />
+### Actor: Practicante
+<img width="610" height="806" alt="Screenshot 2026-05-04 at 9 14 13 AM" src="https://github.com/user-attachments/assets/358f106d-27b7-41c6-b31d-0d07511492d6" />
 
+A continuación se detallan los casos de uso:
+
+| Código | Nombre | Actor | Descripción |
+|--------|--------|-------|-------------|
+| UC01 | Registrarse | Usuario | El usuario crea una nueva cuenta en el sistema proporcionando sus datos personales y credenciales de acceso. |
+| UC02 | Iniciar sesión | Usuario | El usuario accede al sistema autenticándose con sus credenciales registradas. |
+| UC03 | Cerrar sesión | Usuario | El usuario finaliza su sesión activa y es redirigido a la pantalla de inicio. |
+| UC04 | Editar perfil | Usuario | El usuario actualiza su información personal, foto o datos de contacto dentro de su cuenta. |
+| UC05 | Crear organización | Admin | El administrador registra una nueva organización en el sistema, configurando su nombre e información básica. |
+| UC06 | Configurar organización | Admin | El administrador modifica los parámetros generales de la organización, como nombre, descripción o configuraciones de asistencia. |
+| UC07 | Compartir código de invitación | Admin | El administrador genera y comparte un código único para que nuevos miembros soliciten unirse a la organización. |
+| UC08 | Solicitar unirse a organización | Validador / Practicante | El usuario envía una solicitud de incorporación a una organización usando el código de invitación. |
+| UC09 | Aceptar o rechazar solicitud | Admin | El administrador revisa las solicitudes de ingreso pendientes y decide aprobarlas o rechazarlas. |
+| UC10 | Ver lista de miembros | Admin / Validador | El usuario visualiza el listado completo de integrantes activos de la organización con sus datos. |
+| UC11 | Proponer horario de prácticas | Practicante | El practicante propone su horario semanal de prácticas para ser validado por un superior. |
+| UC12 | Solicitar cambio de horario | Practicante | El practicante solicita una modificación a su horario de prácticas previamente aprobado. |
+| UC13 | Aprobar o rechazar cambio de horario | Admin / Validador | El usuario revisa la solicitud de cambio de horario del practicante y emite una respuesta. |
+| UC14 | Marcar asistencia diaria | Practicante | El practicante registra su entrada o salida en el sistema al inicio o fin de su jornada de prácticas. |
+| UC15 | Confirmar registro de asistencia | Admin / Validador | El usuario verifica y confirma los registros de asistencia enviados por los practicantes. |
+| UC16 | Solicitar registro de asistencia faltante | Practicante | El practicante solicita el registro de una asistencia que no pudo marcar en su momento, justificando el motivo. |
+| UC17 | Aprobar o rechazar asistencia faltante | Admin / Validador | El usuario evalúa la justificación del practicante y decide si aprueba o rechaza el registro retroactivo. |
+| UC18 | Ver historial de asistencia propio | Practicante | El practicante consulta su historial completo de asistencias registradas, incluyendo tardanzas y faltas. |
+| UC19 | Ver reporte personal | Practicante | El practicante accede a un resumen estadístico de su desempeño y asistencia durante el periodo de prácticas. |
+| UC20 | Ver reporte de practicante | Admin / Validador | El usuario consulta el reporte individual de asistencia y desempeño de un practicante específico. |
+| UC21 | Ver analíticas generales | Admin / Validador | El usuario accede a un panel con métricas y estadísticas agregadas de todos los practicantes de la organización. |
+| UC22 | Generar y descargar PDF | Practicante | El practicante exporta su reporte de asistencia en formato PDF para entregarlo como constancia. |
+| UC23 | Ver registro de actividad | Admin | El administrador revisa el historial de acciones realizadas dentro del sistema por los miembros de la organización. |
+
+Link del figma
+https://www.figma.com/design/4Uoegadii4QbM0yfaIX0XS/Logo-pmovil?t=WOXSwVpmNAQj3wrR-1
