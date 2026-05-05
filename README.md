@@ -144,6 +144,7 @@ A continuación se muestran los mockups de los flujos principales de cada actor:
 
 
 ## Diagrama de Base de datos
+<img width="693" height="756" alt="image" src="https://github.com/user-attachments/assets/3ee22382-2721-4b57-a26a-40bcd1634a2f" />
 
 ```mermaid
 
