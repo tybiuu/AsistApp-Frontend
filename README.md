@@ -144,12 +144,12 @@ A continuación se muestran los mockups de los flujos principales de cada actor:
 
 
 ## Diagrama de Base de datos
-<img width="693" height="756" alt="image" src="https://github.com/user-attachments/assets/3ee22382-2721-4b57-a26a-40bcd1634a2f" />
+<img width="697" height="757" alt="image" src="https://github.com/user-attachments/assets/5268931e-4e00-4886-a5de-81a0670f99ba" />
+
 
 ```plantuml
 @startuml
 skinparam linetype ortho
-
 entity "organizations" {
   * id : uuid <<PK>>
   --
@@ -161,7 +161,6 @@ entity "organizations" {
   * created_at : timestamp
   * updated_at : timestamp
 }
-
 entity "users" {
   * id : uuid <<PK>>
   --
@@ -178,7 +177,6 @@ entity "users" {
   * created_at : timestamp
   * updated_at : timestamp
 }
-
 entity "schedules" {
   * id : uuid <<PK>>
   --
@@ -189,7 +187,6 @@ entity "schedules" {
   * created_at : timestamp
   * updated_at : timestamp
 }
-
 entity "schedule_days" {
   * id : uuid <<PK>>
   --
@@ -201,7 +198,6 @@ entity "schedule_days" {
   * check_out_time : time
   * updated_at : timestamp
 }
-
 entity "schedule_change_requests" {
   * id : uuid <<PK>>
   --
@@ -217,7 +213,6 @@ entity "schedule_change_requests" {
   * created_at : timestamp
   * updated_at : timestamp
 }
-
 entity "attendance_records" {
   * id : uuid <<PK>>
   --
@@ -236,7 +231,6 @@ entity "attendance_records" {
   * created_at : timestamp
   * updated_at : timestamp
 }
-
 entity "attendance_requests" {
   * id : uuid <<PK>>
   --
@@ -251,20 +245,19 @@ entity "attendance_requests" {
 }
 
 ' Relaciones
-organizations ||--o{ users : "has"
-organizations |o--|| users : ""
+organizations |o--o{ users : "has"
 users ||--o{ schedules : "has"
 organizations ||--o{ schedules : "belongs to"
 schedules ||--o{ schedule_days : "has"
 schedule_days ||--o{ schedule_change_requests : "has"
 users ||--o{ schedule_change_requests : "requests"
-users ||--o{ schedule_change_requests : "reviews"
+users |o--o{ schedule_change_requests : "reviews"
 users ||--o{ attendance_records : "has"
 organizations ||--o{ attendance_records : "belongs to"
-users ||--o{ attendance_records : "validates"
+users |o--o{ attendance_records : "validates"
 users ||--o{ attendance_requests : "has"
 organizations ||--o{ attendance_requests : "belongs to"
-users ||--o{ attendance_requests : "reviews"
+users |o--o{ attendance_requests : "reviews"
 @enduml
 
 ```
