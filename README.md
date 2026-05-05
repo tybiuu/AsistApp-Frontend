@@ -23,7 +23,7 @@ Para la instalacion, primero se descarga PostgreSQL de la pagina principal. Al e
 Figma es una herramienta de diseño de interfaces colaborativa basada en la nube. Permite crear wireframes, prototipos interactivos y el diseño visual final de la aplicación.
 No requiere de instalacion, puesto que es una herramienta de web.
 ## Diagrama de despliegue 
-![Diagrama de despliegue](docs/diagrama_despliegue.png)
+![Diagrama de despliegue](docs/diagrama_despliegue2.png)
 
 ## Requerimientos no funcionales
 
@@ -62,7 +62,7 @@ Los requerimientos no funcionales definen las características de calidad que de
 
 ## Diagrama de despliegue
 
-![Diagrama de despliegue](docs/diagrama_despliegue.png)
+![Diagrama de despliegue](docs/diagrama_despliegue2.png)
 
 ---
 
