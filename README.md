@@ -73,7 +73,7 @@ La comunicación entre la aplicación móvil y el backend se realiza mediante so
 
 ### Representación gráfica
 
-<img width="609" height="774" alt="image" src="https://github.com/user-attachments/assets/e8c8dcce-856a-4e6f-a3bc-6891e4b9c4d3" />
+<img width="334" height="413" alt="image" src="https://github.com/user-attachments/assets/dbcf2748-0bd0-4411-8165-e0f5d52c6875" />
 
 ---
 
