@@ -144,7 +144,7 @@ A continuación se muestran los mockups de los flujos principales de cada actor:
 
 
 ## Diagrama de Base de datos
-<img width="881" height="761" alt="image" src="https://github.com/user-attachments/assets/98d7a90a-f229-4e88-87d1-63d9734f91c7" />
+<img width="886" height="758" alt="image" src="https://github.com/user-attachments/assets/aa7460bb-9d1c-4ae5-9ac7-2bf47a54ffb3" />
 
 
 ```plantuml
@@ -168,8 +168,8 @@ entity "users" {
   * last_name : text
   * institutional_email : text <<unique>>
   * phone_number : text
-  * career : text
-  * cycle : int
+   career : text
+   cycle : int
   organization_id : uuid <<FK>>
   * role : enum(admin, validator, trainee)
   * status : enum(pending, active, rejected)
