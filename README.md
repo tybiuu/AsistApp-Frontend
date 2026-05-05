@@ -6,17 +6,22 @@ A continuacion listaremos las herramientas que usaremos para el desarrollo del a
 ### Flutter
 Flutter es un Software Development Kit open source hecho por google. Es utilizado para la creacion de aplicaciones en distintas plataformas con un solo lenguaje de programacion (Dart). 
 Utilizaremos Flutter en el proyecto para el desarrollo de la aplicacion.
+No se requiere la instalacion de Flutter pues puede ser trabajado en web.
 ### Android Studio
 Android Studio es el Integrated Development Enviroment oficial para el desarrollo y testeo de aplicaciones en el sistema Android. Provee de herramientas para codigo, y un emulador de Android para poder hacer debugging y testing.
 Utilizarems Android Studio en el proyecto para las pruebas de la aplicacion y verificacion de funcionamiento.
+Para la instalacion de Android Studio, se descarga el installer desde la pagina oficial y se corre. Dentro, elegimos el google pixel 10 como emulador predeterminado.
 ### Express.js
 Express es un framework que construye sobre node.js para ofrecer herramientas que agilizan el desarrollo de la API del proyecto. 
 Utilizaremos Express para el manejo de errores, el ingreso de sesion y la gestion de usuarios.
+Para la instalacion, primero se decarga node.js de su pagina oficial. Luego, se ingresa a la consola y se inserta "node -v". Luego, se abre un terminal en el folder donde quieras crear el proyecto y se escribe "npx express-generator [NombredelProyecto]" y dentro del folder del proyecto se ejecuta el comando "npm install".
 ### PostgreSQL
 PostreSQL es un sistema de manejo de base de datos con objetos relacionales. Es open source y se caracteriza por su integridad y flexibilidad. Soporta SQL y Json.
-Utilizaremos PostgreSQL para el manejo de la base de datos que almacenara los datos de los usuarioa.
+Utilizaremos PostgreSQL para el manejo de la base de datos que almacenara los datos de los usuarios.
+Para la instalacion, primero se descarga PostgreSQL de la pagina principal. Al ejecutar el instalador, en uno de los pasos se pide una contraseña para el superusuario. La contraseña debe ser guardada para futuras configuraciones. Luego, se le asigna un puerto. Con eso, se instala correctamente.
 ### Figma
 Figma es una herramienta de diseño de interfaces colaborativa basada en la nube. Permite crear wireframes, prototipos interactivos y el diseño visual final de la aplicación.
+No requiere de instalacion, puesto que es una herramienta de web.
 ## Diagrama de despliegue 
 ![Diagrama de despliegue](docs/diagrama_despliegue.png)
 
