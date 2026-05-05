@@ -112,4 +112,4 @@ A continuación se detalla cada caso de uso junto con el actor responsable y su 
 | UC22 | Generar y descargar PDF | Practicante | El practicante exporta su reporte de asistencia en formato PDF para entregarlo como constancia. |
 | UC23 | Ver registro de actividad | Admin | El administrador revisa el historial de acciones realizadas dentro del sistema por los miembros de la organización. |
 
-## Diagrama de despliegue
+## Diagrama de Base de datos
