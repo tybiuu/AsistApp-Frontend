@@ -60,16 +60,11 @@ Los requerimientos no funcionales definen las características de calidad que de
 ---
 
 ## Diagrama de despliegue
+Se muestra la arquitectura de AsistApp con dos nodos principales. El primero es el dispositivo móvil, donde se ejecuta la aplicación desarrollada en Flutter y desde donde el usuario interactúa con el sistema.
 
-El sistema de AsistApp está compuesto por tres componentes principales que trabajan en conjunto para gestionar la asistencia de los usuarios.
+El segundo nodo corresponde al servidor backend, que contiene una API REST implementada con Node.js y Express. Este recibe las solicitudes de la aplicación, procesa la información y gestiona la interacción con la base de datos PostgreSQL, donde se almacena toda la información del sistema, como usuarios y registros de asistencia. Mediante consultas SQL, permite guardar, actualizar y recuperar estos datos según sea necesario.
 
-En primer lugar, se encuentra el dispositivo móvil, donde se ejecuta la aplicación desarrollada en Flutter. Esta aplicación permite a los usuarios registrar su asistencia, consultar horarios y realizar distintas acciones desde su celular.
-
-En segundo lugar, se tiene el servidor backend, desarrollado con Node.js y Express. Este componente se encarga de procesar las solicitudes enviadas por la aplicación móvil, aplicar la lógica del sistema y gestionar la información.
-
-Finalmente, el sistema cuenta con una base de datos PostgreSQL, donde se almacenan los datos de usuarios, horarios, asistencias y demás información relevante.
-
-La comunicación entre la aplicación móvil y el backend se realiza mediante solicitudes HTTPS utilizando formato JSON. A su vez, el backend interactúa con la base de datos mediante consultas SQL para almacenar y recuperar la información.
+La comunicación entre ambos nodos se realiza a través de HTTPS, utilizando JSON como formato de intercambio de datos, lo que garantiza un flujo de información seguro y eficiente.
 
 ### Representación gráfica
 
