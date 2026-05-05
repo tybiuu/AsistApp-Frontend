@@ -146,6 +146,128 @@ A continuación se muestran los mockups de los flujos principales de cada actor:
 ## Diagrama de Base de datos
 <img width="693" height="756" alt="image" src="https://github.com/user-attachments/assets/3ee22382-2721-4b57-a26a-40bcd1634a2f" />
 
+@startuml
+skinparam linetype ortho
+
+entity "organizations" {
+  * id : uuid <<PK>>
+  --
+  * name : text
+  * code : text <<unique>>
+  photo_url : text
+  description : text
+  * late_time_limit : int
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "users" {
+  * id : uuid <<PK>>
+  --
+  * first_name : text
+  * last_name : text
+  * institutional_email : text <<unique>>
+  * phone_number : text
+  * career : text
+  * cycle : int
+  organization_id : uuid <<FK>>
+  * role : enum(admin, validator, trainee)
+  * status : enum(pending, active, rejected)
+  device_token : text
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "schedules" {
+  * id : uuid <<PK>>
+  --
+  * user_id : uuid <<FK>>
+  * organization_id : uuid <<FK>>
+  * weekly_hours : int
+  * status : enum(pending, approved, rejected)
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "schedule_days" {
+  * id : uuid <<PK>>
+  --
+  * schedule_id : uuid <<FK>>
+  * day : enum(monday..friday)
+  * check_in_time : time
+  lunch_start_time : time
+  lunch_end_time : time
+  * check_out_time : time
+  * updated_at : timestamp
+}
+
+entity "schedule_change_requests" {
+  * id : uuid <<PK>>
+  --
+  * user_id : uuid <<FK>>
+  * schedule_day_id : uuid <<FK>>
+  new_check_in_time : time
+  new_lunch_start_time : time
+  new_lunch_end_time : time
+  new_check_out_time : time
+  * reason : text
+  * status : enum(pending, approved, rejected)
+  reviewed_by : uuid <<FK>>
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "attendance_records" {
+  * id : uuid <<PK>>
+  --
+  * user_id : uuid <<FK>>
+  * organization_id : uuid <<FK>>
+  * date : date
+  check_in : timestamp
+  lunch_start : timestamp
+  lunch_end : timestamp
+  check_out : timestamp
+  * auto_checkout : boolean
+  late_minutes : int
+  total_minutes : int
+  * status : enum(pending, confirmed, absence)
+  validated_by : uuid <<FK>>
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "attendance_requests" {
+  * id : uuid <<PK>>
+  --
+  * user_id : uuid <<FK>>
+  * organization_id : uuid <<FK>>
+  * requested_date : date
+  * reason : text
+  * status : enum(pending, approved, rejected)
+  reviewed_by : uuid <<FK>>
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+' Relaciones
+organizations ||--o{ users : "has"
+organizations |o--|| users : ""
+users ||--o{ schedules : "has"
+organizations ||--o{ schedules : "belongs to"
+schedules ||--o{ schedule_days : "has"
+schedule_days ||--o{ schedule_change_requests : "has"
+users ||--o{ schedule_change_requests : "requests"
+users ||--o{ schedule_change_requests : "reviews"
+users ||--o{ attendance_records : "has"
+organizations ||--o{ attendance_records : "belongs to"
+users ||--o{ attendance_records : "validates"
+users ||--o{ attendance_requests : "has"
+organizations ||--o{ attendance_requests : "belongs to"
+users ||--o{ attendance_requests : "reviews"
+@enduml
+
+
+
 ```mermaid
 
 erDiagram
