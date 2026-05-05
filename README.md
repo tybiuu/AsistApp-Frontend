@@ -144,7 +144,7 @@ A continuación se muestran los mockups de los flujos principales de cada actor:
 
 
 ## Diagrama de Base de datos
-<img width="697" height="757" alt="image" src="https://github.com/user-attachments/assets/5268931e-4e00-4886-a5de-81a0670f99ba" />
+<img width="881" height="761" alt="image" src="https://github.com/user-attachments/assets/98d7a90a-f229-4e88-87d1-63d9734f91c7" />
 
 
 ```plantuml
@@ -243,6 +243,16 @@ entity "attendance_requests" {
   * created_at : timestamp
   * updated_at : timestamp
 }
+entity "activity_logs" {
+  * id : uuid <<PK>>
+  --
+  * user_id : uuid <<FK>>
+  * organization_id : uuid <<FK>>
+  * action : text
+  * entity_type : text
+  entity_id : uuid
+  * created_at : timestamp
+}
 
 ' Relaciones
 organizations |o--o{ users : "has"
@@ -258,6 +268,8 @@ users |o--o{ attendance_records : "validates"
 users ||--o{ attendance_requests : "has"
 organizations ||--o{ attendance_requests : "belongs to"
 users |o--o{ attendance_requests : "reviews"
+users ||--o{ activity_logs : "generates"
+organizations ||--o{ activity_logs : "belongs to"
 @enduml
 
 ```
