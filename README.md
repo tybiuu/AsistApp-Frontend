@@ -62,6 +62,18 @@ Los requerimientos no funcionales definen las características de calidad que de
 
 ## Diagrama de despliegue
 
+El sistema de AssistApp está compuesto por tres componentes principales que trabajan en conjunto para gestionar la asistencia de los usuarios.
+
+En primer lugar, se encuentra el dispositivo móvil, donde se ejecuta la aplicación desarrollada en Flutter. Esta aplicación permite a los usuarios registrar su asistencia, consultar horarios y realizar distintas acciones desde su celular.
+
+En segundo lugar, se tiene el servidor backend, desarrollado con Node.js y Express. Este componente se encarga de procesar las solicitudes enviadas por la aplicación móvil, aplicar la lógica del sistema y gestionar la información.
+
+Finalmente, el sistema cuenta con una base de datos PostgreSQL, donde se almacenan los datos de usuarios, horarios, asistencias y demás información relevante.
+
+La comunicación entre la aplicación móvil y el backend se realiza mediante solicitudes HTTPS utilizando formato JSON. A su vez, el backend interactúa con la base de datos mediante consultas SQL para almacenar y recuperar la información.
+
+### Representación gráfica
+
 ![Diagrama de despliegue](docs/diagrama_despliegue2.png)
 
 ---
