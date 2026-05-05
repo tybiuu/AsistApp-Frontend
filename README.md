@@ -95,29 +95,30 @@ A continuación se detalla cada caso de uso junto con el actor responsable y su 
 
 | Código | Nombre | Actor | Descripción |
 |--------|--------|-------|-------------|
-| UC01 | Registrarse | Usuario | El usuario crea una nueva cuenta en el sistema proporcionando sus datos personales y credenciales de acceso. |
-| UC02 | Iniciar sesión | Usuario | El usuario accede al sistema autenticándose con sus credenciales registradas. |
+| UC01 | Registrarse | Usuario | El usuario inicia el proceso de registro desde la pantalla de bienvenida, selecciona el rol con el que usará AsistApp y completa el formulario correspondiente. En el caso del practicante, también registra su carrera y ciclo académico. |
+| UC02 | Iniciar sesión | Usuario | El usuario accede al sistema ingresando su correo institucional y contraseña registrados. Si las credenciales son correctas, el sistema inicia la sesión y muestra las funciones correspondientes a su rol. |
 | UC03 | Cerrar sesión | Usuario | El usuario finaliza su sesión activa y es redirigido a la pantalla de inicio. |
 | UC04 | Editar perfil | Usuario | El usuario actualiza su información personal, foto o datos de contacto dentro de su cuenta. |
-| UC05 | Crear organización | Admin | El administrador registra una nueva organización en el sistema, configurando su nombre e información básica. |
-| UC06 | Configurar organización | Admin | El administrador modifica los parámetros generales de la organización, como nombre, descripción o configuraciones de asistencia. |
-| UC07 | Compartir código de invitación | Admin | El administrador genera y comparte un código único para que nuevos miembros soliciten unirse a la organización. |
+| UC05 | Crear organización | Admin | El administrador crea una organización o laboratorio registrando su nombre, foto opcional, descripción opcional y el tiempo límite de tardanza permitido para los practicantes. |
+| UC06 | Configurar organización | Admin | El administrador visualiza y edita la información de la organización, incluyendo nombre, descripción, foto y tiempo límite de tardanza. |
+| UC07 | Compartir código de invitación | Admin | El administrador visualiza y copia el código único de la organización para compartirlo con practicantes y validadores que deseen unirse. |
 | UC08 | Solicitar unirse a organización | Validador / Practicante | El usuario envía una solicitud de incorporación a una organización usando el código de invitación. |
-| UC09 | Aceptar o rechazar solicitud | Admin | El administrador revisa las solicitudes de ingreso pendientes y decide aprobarlas o rechazarlas. |
-| UC10 | Ver lista de miembros | Admin / Validador | El usuario visualiza el listado completo de integrantes activos de la organización con sus datos. |
+| UC09 | Aceptar o rechazar solicitud | Admin | El administrador revisa las solicitudes de ingreso a la organización, visualiza los datos del usuario y el rol solicitado, y decide aprobar o rechazar la incorporación. |
+| UC10 | Ver lista de miembros | Admin / Validador | El usuario visualiza los miembros activos de la organización, diferenciando practicantes y validadores, junto con sus datos principales. |
 | UC11 | Proponer horario de prácticas | Practicante | El practicante propone su horario semanal de prácticas para ser validado por un superior. |
 | UC12 | Solicitar cambio de horario | Practicante | El practicante solicita una modificación a su horario de prácticas previamente aprobado. |
-| UC13 | Aprobar o rechazar cambio de horario | Admin / Validador | El usuario revisa la solicitud de cambio de horario del practicante y emite una respuesta. |
+| UC13 | Aprobar o rechazar cambio de horario | Admin / Validador | El usuario revisa las solicitudes de cambio de horario enviadas por los practicantes, compara el horario actual con el horario propuesto, revisa el motivo y aprueba o rechaza la solicitud |
 | UC14 | Marcar asistencia diaria | Practicante | El practicante registra su entrada o salida en el sistema al inicio o fin de su jornada de prácticas. |
-| UC15 | Confirmar registro de asistencia | Admin / Validador | El usuario verifica y confirma los registros de asistencia enviados por los practicantes. |
+| UC15 | Confirmar registro de asistencia | Admin / Validador | El usuario revisa los registros de asistencia enviados por los practicantes, visualiza su estado, tardanzas o marcaciones incompletas, y confirma los registros correspondientes. |
 | UC16 | Solicitar registro de asistencia faltante | Practicante | El practicante solicita el registro de una asistencia que no pudo marcar en su momento, justificando el motivo. |
-| UC17 | Aprobar o rechazar asistencia faltante | Admin / Validador | El usuario evalúa la justificación del practicante y decide si aprueba o rechaza el registro retroactivo. |
+| UC17 | Aprobar o rechazar asistencia faltante | Admin / Validador | El usuario revisa las solicitudes de asistencia faltante enviadas por los practicantes, evalúa la fecha, hora y justificación, y decide si rechaza la solicitud o registra la asistencia sin tardanza. |
 | UC18 | Ver historial de asistencia propio | Practicante | El practicante consulta su historial completo de asistencias registradas, incluyendo tardanzas y faltas. |
 | UC19 | Ver reporte personal | Practicante | El practicante accede a un resumen estadístico de su desempeño y asistencia durante el periodo de prácticas. |
 | UC20 | Ver reporte de practicante | Admin / Validador | El usuario consulta el reporte individual de asistencia y desempeño de un practicante específico. |
-| UC21 | Ver analíticas generales | Admin / Validador | El usuario accede a un panel con métricas y estadísticas agregadas de todos los practicantes de la organización. |
+| UC21 | Ver analíticas generales | Admin / Validador | El usuario consulta métricas generales de asistencia de la organización, incluyendo horas cumplidas por practicante, porcentaje de asistencia, asistencias confirmadas, tardanzas, inasistencias y gráficos de distribución mensual. |
 | UC22 | Generar y descargar PDF | Practicante | El practicante exporta su reporte de asistencia en formato PDF para entregarlo como constancia. |
-| UC23 | Ver registro de actividad | Admin | El administrador revisa el historial de acciones realizadas dentro del sistema por los miembros de la organización. |
+| UC23 | Ver registro de actividad | Admin | El administrador revisa el historial de acciones realizadas en la organización, filtrando por asistencias, horarios o miembros. |
+| UC24 | Eliminar miembro de la organización | Admin | El administrador elimina o retira a un miembro activo de la organización cuando ya no forma parte del equipo. |
 
 A continuación se muestran los mockups de los flujos principales de cada actor:
 
@@ -139,7 +140,7 @@ A continuación se muestran los mockups de los flujos principales de cada actor:
 
 
 ## Diagrama de Base de datos
-<img width="886" height="758" alt="image" src="https://github.com/user-attachments/assets/aa7460bb-9d1c-4ae5-9ac7-2bf47a54ffb3" />
+<img width="928" height="759" alt="image" src="https://github.com/user-attachments/assets/20f83abb-b0e5-4139-8ef8-5685c2e6be48" />
 
 
 ```plantuml
@@ -241,11 +242,11 @@ entity "attendance_requests" {
 entity "activity_logs" {
   * id : uuid <<PK>>
   --
-  * user_id : uuid <<FK>>
   * organization_id : uuid <<FK>>
-  * action : text
-  * entity_type : text
-  entity_id : uuid
+  performed_by : uuid <<FK>>
+  * affected_user_id : uuid <<FK>>
+  * title : text
+  * category : enum(attendance, schedule, members)
   * created_at : timestamp
 }
 
@@ -266,6 +267,7 @@ users |o--o{ attendance_requests : "reviews"
 users ||--o{ activity_logs : "generates"
 organizations ||--o{ activity_logs : "belongs to"
 @enduml
+
 
 ```
 
