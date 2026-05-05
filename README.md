@@ -4,9 +4,10 @@ AsistApp es una aplicación móvil desarrollada con Flutter orientada a la gesti
 ## Entorno de desarrollo
 A continuacion listaremos las herramientas que usaremos para el desarrollo del app
 ### Flutter
-Flutter es un Software Development Kit open source hecho por google. Es utilizado para la creacion de aplicaciones en distintas plataformas con un solo lenguaje de programacion (Dart). 
-Utilizaremos Flutter en el proyecto para el desarrollo de la aplicacion.
-No se requiere la instalacion de Flutter pues puede ser trabajado en web.
+Flutter es un Software Development Kit open source hecho por Google. Es utilizado para la creacion de aplicaciones en distintas plataformas con un solo lenguaje de programacion (Dart).
+Utilizaremos Flutter en el proyecto para el desarrollo de la aplicacion móvil.
+Para la instalacion, se descarga el SDK desde la pagina oficial de Flutter (flutter.dev), se descomprime el archivo y se agrega la carpeta `flutter/bin` a la variable de entorno PATH. Luego, se ejecuta el comando `flutter doctor` en la terminal para verificar que todas las dependencias esten correctamente instaladas.
+
 ### Android Studio
 Android Studio es el Integrated Development Enviroment oficial para el desarrollo y testeo de aplicaciones en el sistema Android. Provee de herramientas para codigo, y un emulador de Android para poder hacer debugging y testing.
 Utilizarems Android Studio en el proyecto para las pruebas de la aplicacion y verificacion de funcionamiento.
@@ -72,11 +73,12 @@ La comunicación entre la aplicación móvil y el backend se realiza mediante so
 
 ### Representación gráfica
 
-![Diagrama de despliegue](docs/diagrama_despliegue2.png)
+<img width="609" height="774" alt="image" src="https://github.com/user-attachments/assets/e8c8dcce-856a-4e6f-a3bc-6891e4b9c4d3" />
 
 ---
 
 ## Diagrama de casos de uso
+AsistApp cuenta con cuatro actores principales: Usuario (actor base del que heredan los demás), Administrador, Validador y Practicante. Los casos de uso comunes a todos los roles, como registrarse, iniciar sesión, cerrar sesión y editar perfil, están asociados al actor Usuario, y los demás actores los heredan. A continuación se presentan los diagramas organizados por actor, mostrando únicamente los casos de uso propios de cada rol.
 
 ### Actor: Usuario
 <img width="610" height="806" alt="Casos de uso – Usuario" src="https://github.com/user-attachments/assets/f6156b96-630a-4e03-8016-ff9d1fbcf2a4" />
@@ -121,6 +123,25 @@ A continuación se detalla cada caso de uso junto con el actor responsable y su 
 | UC21 | Ver analíticas generales | Admin / Validador | El usuario accede a un panel con métricas y estadísticas agregadas de todos los practicantes de la organización. |
 | UC22 | Generar y descargar PDF | Practicante | El practicante exporta su reporte de asistencia en formato PDF para entregarlo como constancia. |
 | UC23 | Ver registro de actividad | Admin | El administrador revisa el historial de acciones realizadas dentro del sistema por los miembros de la organización. |
+
+A continuación se muestran los mockups de los flujos principales de cada actor:
+
+### Usuario
+| Registro | Inicio de sesión |
+|----------|-----------------|
+| <img width="250" alt="Pantalla de registro" src="https://github.com/user-attachments/assets/560010e9-8264-4733-8cc3-218cdb313d2e" /> | <img width="250" alt="Pantalla de inicio de sesión" src="https://github.com/user-attachments/assets/f9fdab30-8e4a-427e-a234-592e4fa6c692" /> |
+
+### Practicante
+| Marcar asistencia | Historial de asistencia | Proponer horario |
+|-------------------|------------------------|-----------------|
+| <img width="250" alt="Pantalla de marcar asistencia" src="https://github.com/user-attachments/assets/c5afd212-73b5-4771-9a9a-265445a37195" /> | <img width="250" alt="Pantalla de historial de asistencia" src="https://github.com/user-attachments/assets/cb23d0cc-b2ae-4daa-9f9d-085cd8434863" /> | <img width="250" alt="Pantalla de proponer horario" src="https://github.com/user-attachments/assets/1978e21c-5356-44bd-8b24-0cd5e2906e89" /> |
+
+### Administrador / Validador
+| Solicitudes pendientes | Reportes y analíticas |
+|-----------------------|----------------------|
+| <img width="250" alt="Pantalla de solicitudes pendientes" src="https://github.com/user-attachments/assets/42a4800e-de5e-4288-af28-614e975bb778" /> | <img width="250" alt="Pantalla de reportes y analíticas" src="https://github.com/user-attachments/assets/c5b0be13-fb72-45ea-aeb4-d907427375cd" /> |
+
+
 
 ## Diagrama de Base de datos
 
