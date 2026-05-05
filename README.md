@@ -113,3 +113,117 @@ A continuación se detalla cada caso de uso junto con el actor responsable y su 
 | UC23 | Ver registro de actividad | Admin | El administrador revisa el historial de acciones realizadas dentro del sistema por los miembros de la organización. |
 
 ## Diagrama de Base de datos
+
+```mermaid
+
+erDiagram
+    organizations ||--o{ users : "has"
+    organizations ||--o{ schedules : "belongs to"
+    organizations ||--o{ attendance_records : "belongs to"
+    organizations ||--o{ attendance_requests : "belongs to"
+    
+    users ||--o{ schedules : "has"
+    users ||--o{ schedule_change_requests : "requests"
+    users ||--o{ schedule_change_requests : "reviews"
+    users ||--o{ attendance_records : "has"
+    users ||--o{ attendance_records : "validates"
+    users ||--o{ attendance_requests : "has"
+    users ||--o{ attendance_requests : "reviews"
+    
+    schedules ||--o{ schedule_days : "has"
+    schedule_days ||--o{ schedule_change_requests : "has"
+
+    organizations {
+        uuid id PK
+        text name
+        text code
+        text photo_url
+        text description
+        int late_time_limit
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    users {
+        uuid id PK
+        text first_name
+        text last_name
+        text institutional_email
+        text phone_number
+        text career
+        int cycle
+        uuid organization_id FK
+        enum role
+        enum status
+        text device_token
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    schedules {
+        uuid id PK
+        uuid user_id FK
+        uuid organization_id FK
+        int weekly_hours
+        enum status
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    schedule_days {
+        uuid id PK
+        uuid schedule_id FK
+        enum day
+        time check_in_time
+        time lunch_start_time
+        time lunch_end_time
+        time check_out_time
+        timestamp updated_at
+    }
+
+    schedule_change_requests {
+        uuid id PK
+        uuid user_id FK
+        uuid schedule_day_id FK
+        time new_check_in_time
+        time new_lunch_start_time
+        time new_lunch_end_time
+        time new_check_out_time
+        text reason
+        enum status
+        uuid reviewed_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    attendance_records {
+        uuid id PK
+        uuid user_id FK
+        uuid organization_id FK
+        date date
+        timestamp check_in
+        timestamp lunch_start
+        timestamp lunch_end
+        timestamp check_out
+        boolean auto_checkout
+        int late_minutes
+        int total_minutes
+        enum status
+        uuid validated_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+    attendance_requests {
+        uuid id PK
+        uuid user_id FK
+        uuid organization_id FK
+        date requested_date
+        text reason
+        enum status
+        uuid reviewed_by FK
+        timestamp created_at
+        timestamp updated_at
+    }
+
+```
