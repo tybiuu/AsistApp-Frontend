@@ -1,4 +1,4 @@
-# AssistApp-Frontend
+# AsistApp-Frontend
 AsistApp es una aplicación móvil desarrollada con Flutter orientada a la gestión de asistencia de practicantes preprofesionales dentro de organizaciones. Permite a los practicantes registrar su asistencia diaria, proponer y ajustar horarios, justificar inasistencias y consultar su historial personal, todo desde su dispositivo móvil. Por su parte, administradores y validadores cuentan con herramientas para aprobar solicitudes de ingreso, confirmar registros de asistencia, gestionar cambios de horario y acceder a reportes individuales y analíticas generales del equipo.
 
 ## Entorno de desarrollo
@@ -22,8 +22,6 @@ Para la instalacion, primero se descarga PostgreSQL de la pagina principal. Al e
 ### Figma
 Figma es una herramienta de diseño de interfaces colaborativa basada en la nube. Permite crear wireframes, prototipos interactivos y el diseño visual final de la aplicación.
 No requiere de instalacion, puesto que es una herramienta de web.
-## Diagrama de despliegue 
-![Diagrama de despliegue](docs/diagrama_despliegue2.png)
 
 ## Requerimientos no funcionales
 
@@ -62,7 +60,7 @@ Los requerimientos no funcionales definen las características de calidad que de
 
 ## Diagrama de despliegue
 
-El sistema de AssistApp está compuesto por tres componentes principales que trabajan en conjunto para gestionar la asistencia de los usuarios.
+El sistema de AsistApp está compuesto por tres componentes principales que trabajan en conjunto para gestionar la asistencia de los usuarios.
 
 En primer lugar, se encuentra el dispositivo móvil, donde se ejecuta la aplicación desarrollada en Flutter. Esta aplicación permite a los usuarios registrar su asistencia, consultar horarios y realizar distintas acciones desde su celular.
 
