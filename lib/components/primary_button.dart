@@ -10,35 +10,41 @@ enum PrimaryButtonVariant {
 }
 
 class PrimaryButton extends StatelessWidget {
-  final String text;
-  final VoidCallback onPressed;
+  final String? text;
+  final Widget? child;
+  final VoidCallback? onPressed;
   final bool fullWidth;
   final PrimaryButtonVariant variant;
 
   const PrimaryButton({
     super.key,
-    required this.text,
-    required this.onPressed,
+    this.text,
+    this.child,
+    this.onPressed,
     this.fullWidth = true,
     this.variant = PrimaryButtonVariant.primary,
-  });
+  }) : assert(text != null || child != null);
 
   @override
   Widget build(BuildContext context) {
     final bool isPrimary = variant == PrimaryButtonVariant.primary;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final Color backgroundColor = isPrimary
-        ? AppColors.chart1
-        : isDark
-            ? const Color(0xff1a1d27)
-            : AppColors.card;
+    final Color backgroundColor = onPressed == null
+        ? (isDark ? const Color(0xff1a1d27) : AppColors.muted)
+        : isPrimary
+            ? AppColors.chart1
+            : isDark
+                ? const Color(0xff1a1d27)
+                : AppColors.card;
 
-    final Color foregroundColor = isPrimary
-        ? AppColors.primaryForeground
-        : isDark
-            ? const Color(0xfff9fafb)
-            : AppColors.foreground;
+    final Color foregroundColor = onPressed == null
+        ? (isDark ? const Color(0xff717182) : AppColors.mutedForeground)
+        : isPrimary
+            ? AppColors.primaryForeground
+            : isDark
+                ? const Color(0xfff9fafb)
+                : AppColors.foreground;
 
     final Color borderColor = isPrimary
         ? Colors.transparent
@@ -52,7 +58,7 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          elevation: isPrimary ? 0 : 0,
+          elevation: 0,
           shadowColor: Colors.transparent,
           backgroundColor: backgroundColor,
           foregroundColor: foregroundColor,
@@ -68,7 +74,7 @@ class PrimaryButton extends StatelessWidget {
             height: 1.5,
           ),
         ),
-        child: Text(text),
+        child: child ?? Text(text!),
       ),
     );
   }
