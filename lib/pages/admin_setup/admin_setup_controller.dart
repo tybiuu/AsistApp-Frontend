@@ -1,6 +1,7 @@
 // lib/pages/admin_setup/admin_setup_controller.dart
 
 import 'dart:typed_data';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -66,11 +67,31 @@ class AdminSetupController extends GetxController {
   Future<void> createOrganization() async {
     if (!canCreate) return;
 
+    final String organizationName = nameController.text.trim().toUpperCase();
+    final String organizationCode = _buildOrganizationCode(organizationName);
+
     isLoading.value = true;
     await Future.delayed(const Duration(milliseconds: 700));
     isLoading.value = false;
 
-    Get.offAllNamed(AppRoutes.home);
+    Get.offNamed(
+      AppRoutes.adminSetupSuccess,
+      arguments: {
+        'organizationName': organizationName,
+        'organizationCode': organizationCode,
+      },
+    );
+  }
+
+  String _buildOrganizationCode(String organizationName) {
+    final String normalizedName = organizationName
+        .replaceAll(RegExp(r'[^A-Z0-9]'), '')
+        .padRight(1, 'X');
+    final String prefix =
+        normalizedName.substring(0, min(6, normalizedName.length));
+    final int numericCode = 1000 + Random().nextInt(9000);
+
+    return '$prefix-$numericCode';
   }
 
   void goBack() {

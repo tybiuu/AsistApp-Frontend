@@ -1,0 +1,138 @@
+{
+  "organization": {
+    "id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+    "name": "ITLAB",
+    "code": "ITLAB-4829",
+    "photo_url": null,
+    "description": "Laboratorio de innovación tecnológica",
+    "late_time_limit": 10,
+    "created_at": "2026-05-24T21:00:00.000Z",
+    "updated_at": "2026-05-24T21:00:00.000Z"
+  },
+  "stats": [
+    {
+      "label": "Pendientes",
+      "value": 4,
+      "type": "pending"
+    },
+    {
+      "label": "Confirmados",
+      "value": 8,
+      "type": "confirmed"
+    },
+    {
+      "label": "Inasistencias",
+      "value": 2,
+      "type": "absences"
+    }
+  ],
+  "requests": [
+    {
+      "title": "Nuevos miembros",
+      "count": 5,
+      "type": "members"
+    },
+    {
+      "title": "Cambios de horario",
+      "count": 2,
+      "type": "schedule"
+    },
+    {
+      "title": "Asistencias faltantes",
+      "count": 3,
+      "type": "attendance"
+    }
+  ],
+  "active_members": [
+    {
+      "id": "51d8073f-b7d7-497c-98b0-58a48f4f1001",
+      "first_name": "Juan",
+      "last_name": "Pérez",
+      "institutional_email": "juan.perez@universidad.edu.pe",
+      "phone_number": "987654321",
+      "career": "Ing. de Sistemas",
+      "cycle": 7,
+      "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+      "role": "trainee",
+      "status": "active",
+      "device_token": null,
+      "created_at": "2026-05-24T21:00:00.000Z",
+      "updated_at": "2026-05-24T21:00:00.000Z"
+    },
+    {
+      "id": "51d8073f-b7d7-497c-98b0-58a48f4f1002",
+      "first_name": "María",
+      "last_name": "García",
+      "institutional_email": "maria.garcia@universidad.edu.pe",
+      "phone_number": "987654322",
+      "career": "Ing. Industrial",
+      "cycle": 8,
+      "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+      "role": "trainee",
+      "status": "active",
+      "device_token": null,
+      "created_at": "2026-05-24T21:00:00.000Z",
+      "updated_at": "2026-05-24T21:00:00.000Z"
+    },
+    {
+      "id": "51d8073f-b7d7-497c-98b0-58a48f4f1003",
+      "first_name": "Carlos",
+      "last_name": "Quispe",
+      "institutional_email": "carlos.quispe@universidad.edu.pe",
+      "phone_number": "987654323",
+      "career": "Ing. de Sistemas",
+      "cycle": 6,
+      "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+      "role": "trainee",
+      "status": "active",
+      "device_token": null,
+      "created_at": "2026-05-24T21:00:00.000Z",
+      "updated_at": "2026-05-24T21:00:00.000Z"
+    },
+    {
+      "id": "51d8073f-b7d7-497c-98b0-58a48f4f1004",
+      "first_name": "Ana",
+      "last_name": "Torres",
+      "institutional_email": "ana.torres@universidad.edu.pe",
+      "phone_number": "987654324",
+      "career": "Administración",
+      "cycle": 9,
+      "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+      "role": "trainee",
+      "status": "active",
+      "device_token": null,
+      "created_at": "2026-05-24T21:00:00.000Z",
+      "updated_at": "2026-05-24T21:00:00.000Z"
+    },
+    {
+      "id": "51d8073f-b7d7-497c-98b0-58a48f4f1005",
+      "first_name": "Luis",
+      "last_name": "Mendoza",
+      "institutional_email": "luis.mendoza@universidad.edu.pe",
+      "phone_number": "987654325",
+      "career": "Ing. Electrónica",
+      "cycle": 7,
+      "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+      "role": "trainee",
+      "status": "active",
+      "device_token": null,
+      "created_at": "2026-05-24T21:00:00.000Z",
+      "updated_at": "2026-05-24T21:00:00.000Z"
+    },
+    {
+      "id": "51d8073f-b7d7-497c-98b0-58a48f4f1006",
+      "first_name": "Patricia",
+      "last_name": "Rojas",
+      "institutional_email": "patricia.rojas@universidad.edu.pe",
+      "phone_number": "987654326",
+      "career": "Ing. de Sistemas",
+      "cycle": 8,
+      "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+      "role": "trainee",
+      "status": "active",
+      "device_token": null,
+      "created_at": "2026-05-24T21:00:00.000Z",
+      "updated_at": "2026-05-24T21:00:00.000Z"
+    }
+  ]
+}

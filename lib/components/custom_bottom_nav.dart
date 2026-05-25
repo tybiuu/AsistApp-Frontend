@@ -1,5 +1,8 @@
-import 'package:asist_app/configs/theme.dart';
+// lib/components/custom_bottom_nav.dart
+
 import 'package:flutter/material.dart';
+
+import '../configs/theme.dart';
 
 class NavTab {
   final String label;
@@ -77,7 +80,7 @@ class CustomBottomNav extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
+                        duration: Duration.zero,
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: (isActive && !isDisabled)
@@ -90,7 +93,9 @@ class CustomBottomNav extends StatelessWidget {
                           size: 20,
                           color: (isActive && !isDisabled)
                               ? Colors.white
-                              : (isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af)),
+                              : (isDark
+                                  ? const Color(0xff6b7280)
+                                  : const Color(0xff9ca3af)),
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -101,7 +106,9 @@ class CustomBottomNav extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           color: (isActive && !isDisabled)
                               ? AppColors.chart1
-                              : (isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af)),
+                              : (isDark
+                                  ? const Color(0xff6b7280)
+                                  : const Color(0xff9ca3af)),
                         ),
                       ),
                     ],
