@@ -1,6 +1,5 @@
 // lib/pages/auth/register_controller.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../configs/routes.dart';
@@ -58,7 +57,6 @@ class RegisterController extends GetxController {
     final c = correo().trim();
     final cel = celular().trim();
     final p = password();
-    final cp = confirmPassword();
     final carr = selectedCarrera();
 
     if (n.isEmpty) return false;
