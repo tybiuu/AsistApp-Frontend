@@ -26,8 +26,39 @@ class LoginController extends GetxController {
     
     isLoading.value = false;
 
-    // Based on actual logic, it routes to home page after login.
-    Get.offAllNamed(AppRoutes.home);
+    final mail = email.value.trim();
+    final pass = password.value;
+
+    if (mail == 'admin@ulima.edu.pe' && pass == 'admin123') {
+      Get.snackbar(
+        'Bienvenido',
+        'Sesión iniciada como Administrador',
+        backgroundColor: Colors.green.shade600,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+      Get.offAllNamed(AppRoutes.home, arguments: {'isAdmin': true});
+    } else if (mail == 'practicante@ulima.edu.pe' && pass == 'practicante123') {
+      Get.snackbar(
+        'Bienvenido',
+        'Sesión iniciada como Practicante',
+        backgroundColor: Colors.green.shade600,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+      Get.offAllNamed(AppRoutes.home, arguments: {'isAdmin': false});
+    } else {
+      Get.snackbar(
+        'Error',
+        'Credenciales incorrectas. Intenta con admin@ulima.edu.pe o practicante@ulima.edu.pe',
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
   void goToRegister() {

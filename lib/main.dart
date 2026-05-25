@@ -11,7 +11,7 @@ import 'pages/setup/org_code/org_code_page.dart';
 import 'pages/setup/pending/pending_page.dart';
 import 'pages/auth/register/register_page.dart';
 import 'pages/setup/role_select/role_select_page.dart';
-import './pages/home/home_page.dart';
+import './pages/dashboard/dashboard_page.dart';
 import './pages/welcome/welcome_page.dart';
 
 void main() {
@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.orgCode: (context) => const OrgCodePage(),
         AppRoutes.pending: (context) => const PendingPage(),
         AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.home: (context) => const DashboardPage(),
         AppRoutes.adminSetup: (context) => AdminSetupPage(),
       },
       home: const WelcomePage(),

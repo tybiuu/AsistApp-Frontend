@@ -66,7 +66,7 @@ class RegisterController extends GetxController {
     if (c.isEmpty || !GetUtils.isEmail(c)) return false;
     if (cel.isEmpty || cel.length < 9) return false;
     if (p.isEmpty || p.length < 8) return false;
-    if (p != cp) return false;
+    // Removed strict password match constraint here to handle it in handleCreate
     
     if (role == RoleOption.practitioner) {
       if (carr.isEmpty) return false;
@@ -95,6 +95,19 @@ class RegisterController extends GetxController {
 
   void handleCreate() async {
     if (!isFormValid) return;
+
+    if (password() != confirmPassword()) {
+      Get.snackbar(
+        'Contraseñas no coinciden',
+        'Por favor, asegúrate de que ambas contraseñas sean idénticas.',
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+      return;
+    }
+
     if (isLoading.value) return;
     isLoading.value = true;
     
