@@ -125,10 +125,10 @@ class _WelcomePageState extends State<WelcomePage>
                     () => Column(
                       children: [
                         PrimaryButton(
-                          text: control.isLoading.value
+                          text: control.isLoading()
                               ? 'Cargando...'
                               : 'Crear cuenta',
-                          onPressed: control.isLoading.value
+                          onPressed: control.isLoading()
                               ? () {}
                               : () {
                                   control.goToRoleSelect(context);
@@ -138,7 +138,7 @@ class _WelcomePageState extends State<WelcomePage>
                         PrimaryButton(
                           text: 'Ya tengo cuenta',
                           variant: PrimaryButtonVariant.secondary,
-                          onPressed: control.isLoading.value
+                          onPressed: control.isLoading()
                               ? () {}
                               : () {
                                   control.goToLogin(context);
@@ -195,7 +195,7 @@ class _IllustrationMock extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: isDark
-                  ? AppColors.chart1.withOpacity(0.20)
+                  ? AppColors.chart1.withValues(alpha: 0.20)
                   : const Color(0xffffedd5),
             ),
           ),
@@ -208,7 +208,7 @@ class _IllustrationMock extends StatelessWidget {
               borderRadius: BorderRadius.circular(22),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.35 : 0.16),
+                  color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.16),
                   blurRadius: 22,
                   offset: const Offset(0, 10),
                 ),
@@ -324,7 +324,7 @@ class _FloatingInfoCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.18),
+                color: Colors.black.withValues(alpha: 0.18),
                 blurRadius: 22,
                 offset: const Offset(0, 8),
               ),
@@ -361,8 +361,6 @@ class _WelcomeText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       children: [
         Text(
@@ -444,7 +442,7 @@ class _FeatureItem extends StatelessWidget {
           height: 42,
           decoration: BoxDecoration(
             color: isDark
-                ? AppColors.chart1.withOpacity(0.28)
+                ? AppColors.chart1.withValues(alpha: 0.28)
                 : const Color(0xffffedd5),
             borderRadius: BorderRadius.circular(16),
           ),

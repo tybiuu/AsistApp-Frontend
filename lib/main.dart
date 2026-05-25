@@ -5,9 +5,11 @@ import 'package:get/get.dart';
 
 import './configs/routes.dart';
 import './configs/theme.dart';
-import './pages/auth/login_page.dart';
-import './pages/auth/register_page.dart';
-import './pages/auth/role_select_page.dart';
+import 'pages/auth/login/login_page.dart';
+import 'pages/setup/org_code/org_code_page.dart';
+import 'pages/setup/pending/pending_page.dart';
+import 'pages/auth/register/register_page.dart';
+import 'pages/setup/role_select/role_select_page.dart';
 import './pages/home/home_page.dart';
 import './pages/welcome/welcome_page.dart';
 
@@ -34,10 +36,12 @@ class MyApp extends StatelessWidget {
         AppRoutes.welcome: (context) => const WelcomePage(),
         AppRoutes.roleSelect: (context) => const RoleSelectPage(),
         AppRoutes.register: (context) => const RegisterPage(),
+        AppRoutes.orgCode: (context) => const OrgCodePage(),
+        AppRoutes.pending: (context) => const PendingPage(),
         AppRoutes.login: (context) => const LoginPage(),
         AppRoutes.home: (context) => const HomePage(),
       },
       home: const WelcomePage(),
     );
   }
-}
+}

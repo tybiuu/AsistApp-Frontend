@@ -4,10 +4,10 @@ import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../components/input_field.dart';
-import '../../components/primary_button.dart';
+import '../../../components/input_field.dart';
+import '../../../components/primary_button.dart';
 import 'register_controller.dart';
-import 'role_select_controller.dart';
+import '../../setup/role_select/role_select_controller.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -36,10 +36,10 @@ class RegisterPage extends StatelessWidget {
     final role = controller.role;
     final bool isPractitioner = role == RoleOption.practitioner;
 
-    final Color roleColor = isPractitioner ? AppColors.chart1 : Theme.of(context).colorScheme.secondary;
+    final Color roleColor = isPractitioner ? AppColors.chart1 : Theme.of(context).colorScheme.onSurface;
     final Color roleBg = isDark 
-        ? roleColor.withOpacity(0.2) 
-        : (isPractitioner ? Theme.of(context).colorScheme.primaryContainer : Theme.of(context).colorScheme.secondaryContainer);
+        ? roleColor.withValues(alpha: 0.2) 
+        : Theme.of(context).colorScheme.primaryContainer;
     final IconData roleIcon = isPractitioner ? Icons.school_rounded : Icons.shield_rounded;
     final String roleTitle = isPractitioner ? 'Practicante' : 'Administrador';
     final String roleSubtitle = isPractitioner ? 'Estudiante universitario' : 'Profesional del laboratorio';
@@ -117,7 +117,7 @@ class RegisterPage extends StatelessWidget {
                           Text(
                             roleSubtitle,
                             style: TextStyle(
-                              color: roleColor.withOpacity(0.7),
+                              color: roleColor.withValues(alpha: 0.7),
                               fontSize: 10,
                             ),
                           ),
@@ -144,6 +144,8 @@ class RegisterPage extends StatelessWidget {
                             label: 'Nombres',
                             placeholder: 'Juan Carlos',
                             icon: const Icon(Icons.person, size: 18),
+                            controller: controller.nombresCtrl,
+                            onChanged: (val) => controller.nombres.value = val,
                           ),
                         ),
                         const SizedBox(width: 12),
@@ -152,24 +154,30 @@ class RegisterPage extends StatelessWidget {
                             label: 'Apellidos',
                             placeholder: 'Pérez Torres',
                             icon: const Icon(Icons.person, size: 18),
+                            controller: controller.apellidosCtrl,
+                            onChanged: (val) => controller.apellidos.value = val,
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 16),
-                    const InputField(
+                    InputField(
                       label: 'Correo institucional',
                       placeholder: 'usuario@universidad.edu.pe',
                       keyboardType: TextInputType.emailAddress,
-                      icon: Icon(Icons.email, size: 18),
+                      icon: const Icon(Icons.email, size: 18),
+                      controller: controller.correoCtrl,
+                      onChanged: (val) => controller.correo.value = val,
                     ),
                     const SizedBox(height: 16),
-                    const InputField(
+                    InputField(
                       label: 'Celular',
                       placeholder: '987 654 321',
                       keyboardType: TextInputType.phone,
-                      icon: Icon(Icons.phone, size: 18),
+                      icon: const Icon(Icons.phone, size: 18),
                       prefixText: '+51',
+                      controller: controller.celularCtrl,
+                      onChanged: (val) => controller.celular.value = val,
                     ),
                     
                     if (isPractitioner) ...[
@@ -184,7 +192,7 @@ class RegisterPage extends StatelessWidget {
                       ),
                       const SizedBox(height: 6),
                       Obx(() => DropdownButtonFormField<String>(
-                        value: controller.selectedCarrera.value.isEmpty ? null : controller.selectedCarrera.value,
+                        initialValue: controller.selectedCarrera().isEmpty ? null : controller.selectedCarrera(),
                         hint: Text(
                           'Selecciona tu carrera',
                           style: TextStyle(
@@ -257,7 +265,7 @@ class RegisterPage extends StatelessWidget {
                               child: Obx(() => Column(
                                 children: [
                                   Text(
-                                    '${controller.selectedCiclo.value}',
+                                    '${controller.selectedCiclo()}',
                                     style: const TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w900,
@@ -265,7 +273,7 @@ class RegisterPage extends StatelessWidget {
                                     ),
                                   ),
                                   Text(
-                                    _getCicloLabel(controller.selectedCiclo.value),
+                                    _getCicloLabel(controller.selectedCiclo()),
                                     style: TextStyle(
                                       fontSize: 10,
                                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -292,10 +300,12 @@ class RegisterPage extends StatelessWidget {
                     Obx(() => InputField(
                       label: 'Contraseña',
                       placeholder: 'Mínimo 8 caracteres',
-                      obscureText: !controller.showPass.value,
+                      obscureText: !controller.showPass(),
                       icon: const Icon(Icons.lock, size: 18),
+                      controller: controller.passwordCtrl,
+                      onChanged: (val) => controller.password.value = val,
                       rightIcon: IconButton(
-                        icon: Icon(controller.showPass.value ? Icons.visibility_off : Icons.visibility, size: 18),
+                        icon: Icon(controller.showPass() ? Icons.visibility_off : Icons.visibility, size: 18),
                         onPressed: controller.toggleShowPass,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -305,10 +315,12 @@ class RegisterPage extends StatelessWidget {
                     Obx(() => InputField(
                       label: 'Confirmar contraseña',
                       placeholder: 'Repite tu contraseña',
-                      obscureText: !controller.showConfirmPass.value,
+                      obscureText: !controller.showConfirmPass(),
                       icon: const Icon(Icons.lock, size: 18),
+                      controller: controller.confirmPasswordCtrl,
+                      onChanged: (val) => controller.confirmPassword.value = val,
                       rightIcon: IconButton(
-                        icon: Icon(controller.showConfirmPass.value ? Icons.visibility_off : Icons.visibility, size: 18),
+                        icon: Icon(controller.showConfirmPass() ? Icons.visibility_off : Icons.visibility, size: 18),
                         onPressed: controller.toggleShowConfirmPass,
                         padding: EdgeInsets.zero,
                         constraints: const BoxConstraints(),
@@ -317,31 +329,9 @@ class RegisterPage extends StatelessWidget {
 
                     const SizedBox(height: 24),
                     
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xff431407).withOpacity(0.1) : Theme.of(context).colorScheme.primaryContainer,
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        isPractitioner
-                            ? '📍 Tras registrarte, ingresarás el código de tu organización y propondrás tu horario semanal.'
-                            : '🏢 Tras registrarte, crearás tu organización y obtendrás un código único para compartir con tu equipo.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.primary,
-                          height: 1.4,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 24),
                     Obx(() => PrimaryButton(
-                      text: controller.isLoading.value ? 'Creando...' : 'Crear cuenta',
-                      onPressed: controller.isLoading.value ? null : controller.handleCreate,
+                      text: controller.isLoading() ? 'Creando...' : 'Crear cuenta',
+                      onPressed: (!controller.isFormValid || controller.isLoading()) ? null : controller.handleCreate,
                     )),
 
                     const SizedBox(height: 16),

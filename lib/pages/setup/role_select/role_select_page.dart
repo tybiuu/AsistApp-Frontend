@@ -4,7 +4,7 @@ import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../components/primary_button.dart';
+import '../../../components/primary_button.dart';
 import 'role_select_controller.dart';
 
 class RoleDef {
@@ -22,7 +22,7 @@ class RoleDef {
   final Color selectedBgDark;
   final Color tagColorLight;
   final Color tagColorDark;
-  final String hint;
+
 
   const RoleDef({
     required this.id,
@@ -39,7 +39,7 @@ class RoleDef {
     required this.selectedBgDark,
     required this.tagColorLight,
     required this.tagColorDark,
-    required this.hint,
+
   });
 }
 
@@ -62,13 +62,13 @@ class RoleSelectPage extends StatelessWidget {
         tag: 'Practicante',
         iconColor: AppColors.chart1,
         iconBgLight: const Color(0xfffff7ed),
-        iconBgDark: const Color(0xff431407).withOpacity(0.3),
+        iconBgDark: const Color(0xff431407).withValues(alpha: 0.3),
         selectedBorder: AppColors.chart1,
         selectedBgLight: const Color(0xfffff7ed),
-        selectedBgDark: const Color(0xff431407).withOpacity(0.2),
+        selectedBgDark: const Color(0xff431407).withValues(alpha: 0.2),
         tagColorLight: const Color(0xffea580c),
         tagColorDark: const Color(0xfffb923c),
-        hint: '📍 Tras registrarte, ingresarás el código de tu organización y propondrás tu horario semanal.',
+
       ),
 
       RoleDef(
@@ -79,15 +79,15 @@ class RoleSelectPage extends StatelessWidget {
         description:
             'Crea y administra la organización, gestiona miembros y accede a todas las funciones.',
         tag: 'Administrador',
-        iconColor: Theme.of(context).colorScheme.secondary,
+        iconColor: AppColors.chart1,
         iconBgLight: const Color(0xfff1f5f9),
-        iconBgDark: const Color(0xff1e293b).withOpacity(0.5),
-        selectedBorder: Theme.of(context).colorScheme.secondary,
+        iconBgDark: const Color(0xff1e293b).withValues(alpha: 0.5),
+        selectedBorder: AppColors.chart1,
         selectedBgLight: const Color(0xfff8fafc),
-        selectedBgDark: const Color(0xff1e293b).withOpacity(0.3),
+        selectedBgDark: const Color(0xff1e293b).withValues(alpha: 0.3),
         tagColorLight: const Color(0xff334155),
         tagColorDark: const Color(0xffe2e8f0),
-        hint: '🏢 Tras registrarte, crearás tu organización y obtendrás un código único para compartir con tu equipo.',
+
       ),
     ];
 
@@ -159,7 +159,7 @@ class RoleSelectPage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final role = roles[index];
                   return Obx(() {
-                    final bool isSelected = controller.selectedRole.value == role.id;
+                    final bool isSelected = controller.selectedRole() == role.id;
                     return GestureDetector(
                       onTap: () => controller.selectRole(role.id),
                       child: AnimatedContainer(
@@ -276,31 +276,9 @@ class RoleSelectPage extends StatelessWidget {
               padding: const EdgeInsets.fromLTRB(20, 0, 20, 40),
               child: Column(
                 children: [
-                  Obx(() {
-                    if (controller.selectedRole.value == null) return const SizedBox.shrink();
-                    final selectedRoleDef = roles.firstWhere((r) => r.id == controller.selectedRole.value);
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 20),
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      decoration: BoxDecoration(
-                        color: isDark ? const Color(0xff431407).withOpacity(0.1) : const Color(0xfffff7ed),
-                        border: Border.all(
-                          color: isDark ? const Color(0xff431407).withOpacity(0.3) : const Color(0xffffedd5),
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        selectedRoleDef.hint,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? const Color(0xfffb923c) : const Color(0xffea580c),
-                          height: 1.4,
-                        ),
-                      ),
-                    );
-                  }),
+
                   Obx(() => PrimaryButton(
-                        onPressed: controller.selectedRole.value != null ? controller.handleContinue : null,
+                        onPressed: controller.selectedRole() != null ? controller.handleContinue : null,
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [

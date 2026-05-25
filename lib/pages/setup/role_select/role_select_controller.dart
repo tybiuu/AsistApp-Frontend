@@ -1,7 +1,7 @@
 // lib/pages/auth/role_select_controller.dart
 
 import 'package:get/get.dart';
-import '../../configs/routes.dart';
+import '../../../configs/routes.dart';
 
 enum RoleOption { practitioner, admin }
 

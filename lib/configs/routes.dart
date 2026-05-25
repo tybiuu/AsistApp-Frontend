@@ -7,5 +7,7 @@ class AppRoutes {
   static const String login = '/login';
   static const String roleSelect = '/role-select';
   static const String register = '/register';
+  static const String orgCode = '/org-code';
+  static const String pending = '/pending';
   static const String home = '/home';
 }
