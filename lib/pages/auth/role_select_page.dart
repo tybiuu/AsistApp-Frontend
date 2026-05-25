@@ -1,10 +1,10 @@
 // lib/pages/auth/role_select_page.dart
 
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/primary_button.dart';
-import '../../configs/theme.dart';
 import 'role_select_controller.dart';
 
 class RoleDef {
@@ -60,34 +60,17 @@ class RoleSelectPage extends StatelessWidget {
         description:
             'Marca tu asistencia, propón tu horario semanal y genera reportes de tus prácticas.',
         tag: 'Practicante',
-        iconColor: const Color(0xfff97316),
+        iconColor: AppColors.chart1,
         iconBgLight: const Color(0xfffff7ed),
         iconBgDark: const Color(0xff431407).withOpacity(0.3),
-        selectedBorder: const Color(0xfff97316),
+        selectedBorder: AppColors.chart1,
         selectedBgLight: const Color(0xfffff7ed),
         selectedBgDark: const Color(0xff431407).withOpacity(0.2),
         tagColorLight: const Color(0xffea580c),
         tagColorDark: const Color(0xfffb923c),
         hint: '📍 Tras registrarte, ingresarás el código de tu organización y propondrás tu horario semanal.',
       ),
-      RoleDef(
-        id: RoleOption.validator,
-        icon: Icons.science_rounded,
-        title: 'Soy jefe de área / validador',
-        subtitle: 'Profesional del laboratorio',
-        description:
-            'Valida asistencias, aprueba horarios y supervisa al equipo. Te unes con un código de organización.',
-        tag: 'Validador',
-        iconColor: const Color(0xff3b82f6),
-        iconBgLight: const Color(0xffeff6ff),
-        iconBgDark: const Color(0xff1e3a8a).withOpacity(0.3),
-        selectedBorder: const Color(0xff3b82f6),
-        selectedBgLight: const Color(0xffeff6ff),
-        selectedBgDark: const Color(0xff1e3a8a).withOpacity(0.2),
-        tagColorLight: const Color(0xff2563eb),
-        tagColorDark: const Color(0xff60a5fa),
-        hint: '🔑 Tras registrarte, ingresarás el código de tu organización. El administrador te asignará como validador.',
-      ),
+
       RoleDef(
         id: RoleOption.admin,
         icon: Icons.shield_rounded,
@@ -96,10 +79,10 @@ class RoleSelectPage extends StatelessWidget {
         description:
             'Crea y administra la organización, gestiona miembros y accede a todas las funciones.',
         tag: 'Administrador',
-        iconColor: const Color(0xff475569),
+        iconColor: Theme.of(context).colorScheme.secondary,
         iconBgLight: const Color(0xfff1f5f9),
         iconBgDark: const Color(0xff1e293b).withOpacity(0.5),
-        selectedBorder: const Color(0xff475569),
+        selectedBorder: Theme.of(context).colorScheme.secondary,
         selectedBgLight: const Color(0xfff8fafc),
         selectedBgDark: const Color(0xff1e293b).withOpacity(0.3),
         tagColorLight: const Color(0xff334155),
@@ -109,7 +92,7 @@ class RoleSelectPage extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xff0f1117) : const Color(0xffF8F9FA),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -143,7 +126,7 @@ class RoleSelectPage extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
-                        color: isDark ? Colors.white : const Color(0xff111827),
+                        color: Theme.of(context).colorScheme.onSurface,
                         height: 1.2,
                       ),
                       children: const [
@@ -159,7 +142,7 @@ class RoleSelectPage extends StatelessWidget {
                   Text(
                     'Elige tu rol para ver el formulario de registro correcto',
                     style: TextStyle(
-                      color: isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                       fontSize: 14,
                     ),
                   ),
@@ -185,12 +168,12 @@ class RoleSelectPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: isSelected
                               ? (isDark ? role.selectedBgDark : role.selectedBgLight)
-                              : (isDark ? const Color(0xff1A1D27) : Colors.white),
+                              : (Theme.of(context).colorScheme.surfaceContainerHigh),
                           borderRadius: BorderRadius.circular(24),
                           border: Border.all(
                             color: isSelected
                                 ? role.selectedBorder
-                                : (isDark ? const Color(0xff2D3042) : const Color(0xffe5e7eb)),
+                                : (Theme.of(context).colorScheme.outlineVariant),
                             width: 2,
                           ),
                         ),
@@ -203,7 +186,7 @@ class RoleSelectPage extends StatelessWidget {
                               height: 56,
                               decoration: BoxDecoration(
                                 color: isSelected
-                                    ? const Color(0xfff97316)
+                                    ? AppColors.chart1
                                     : (isDark ? role.iconBgDark : role.iconBgLight),
                                 borderRadius: BorderRadius.circular(16),
                               ),
@@ -225,8 +208,8 @@ class RoleSelectPage extends StatelessWidget {
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14,
                                       color: isSelected
-                                          ? (isDark ? Colors.white : const Color(0xff111827))
-                                          : (isDark ? const Color(0xfff3f4f6) : const Color(0xff374151)),
+                                          ? (Theme.of(context).colorScheme.onSurface)
+                                          : (Theme.of(context).colorScheme.onSurface),
                                     ),
                                   ),
                                   Text(
@@ -236,7 +219,7 @@ class RoleSelectPage extends StatelessWidget {
                                       fontWeight: FontWeight.w500,
                                       color: isSelected
                                           ? (isDark ? role.tagColorDark : role.tagColorLight)
-                                          : (isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af)),
+                                          : (Theme.of(context).colorScheme.onSurfaceVariant),
                                     ),
                                   ),
                                   const SizedBox(height: 6),
@@ -244,7 +227,7 @@ class RoleSelectPage extends StatelessWidget {
                                     role.description,
                                     style: TextStyle(
                                       fontSize: 11,
-                                      color: isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af),
+                                      color: Theme.of(context).colorScheme.onSurfaceVariant,
                                       height: 1.3,
                                     ),
                                   ),
@@ -258,11 +241,11 @@ class RoleSelectPage extends StatelessWidget {
                               height: 24,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: isSelected ? const Color(0xfff97316) : Colors.transparent,
+                                color: isSelected ? AppColors.chart1 : Colors.transparent,
                                 border: Border.all(
                                   color: isSelected
-                                      ? const Color(0xfff97316)
-                                      : (isDark ? const Color(0xff3D4052) : const Color(0xffd1d5db)),
+                                      ? AppColors.chart1
+                                      : (Theme.of(context).colorScheme.outline),
                                   width: 2,
                                 ),
                               ),

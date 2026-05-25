@@ -1,22 +1,22 @@
-// lib/pages/onboarding/onboarding_page.dart
+// lib/pages/welcome/welcome_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 
 import '../../components/primary_button.dart';
 import '../../configs/theme.dart';
-import 'onboarding_controller.dart';
+import 'welcome_controller.dart';
 
-class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({super.key});
+class WelcomePage extends StatefulWidget {
+  const WelcomePage({super.key});
 
   @override
-  State<OnboardingPage> createState() => _OnboardingPageState();
+  State<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _OnboardingPageState extends State<OnboardingPage>
+class _WelcomePageState extends State<WelcomePage>
     with TickerProviderStateMixin {
-  final OnboardingController control = Get.put(OnboardingController());
+  final WelcomeController control = Get.put(WelcomeController());
 
   late final AnimationController _entryController;
   late final AnimationController _floatingControllerOne;
@@ -78,10 +78,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   }
 
   Widget _buildBody(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final Color backgroundColor =
-        isDark ? const Color(0xff0f1117) : const Color(0xfff8f9fa);
+    final Color backgroundColor = Theme.of(context).colorScheme.surface;
 
     return SafeArea(
       child: Container(
@@ -207,7 +204,7 @@ class _IllustrationMock extends StatelessWidget {
             height: 82,
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: isDark ? const Color(0xff1a1d27) : AppColors.card,
+              color: Theme.of(context).colorScheme.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(22),
               boxShadow: [
                 BoxShadow(
@@ -231,9 +228,9 @@ class _IllustrationMock extends StatelessWidget {
             icon: Icons.check_circle,
             iconColor: const Color(0xff22c55e),
             text: 'Asistencia marcada',
-            backgroundColor: isDark ? const Color(0xff1a1d27) : AppColors.card,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
             textColor:
-                isDark ? const Color(0xffe5e7eb) : const Color(0xff374151),
+                Theme.of(context).colorScheme.onSurface,
           ),
           _FloatingInfoCard(
             controller: secondController,
@@ -244,9 +241,9 @@ class _IllustrationMock extends StatelessWidget {
             icon: Icons.access_time_filled,
             iconColor: AppColors.chart1,
             text: '08:12 AM',
-            backgroundColor: isDark ? const Color(0xff1a1d27) : AppColors.card,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
             textColor:
-                isDark ? const Color(0xffe5e7eb) : const Color(0xff374151),
+                Theme.of(context).colorScheme.onSurface,
           ),
           _FloatingInfoCard(
             controller: thirdController,
@@ -372,7 +369,7 @@ class _WelcomeText extends StatelessWidget {
           'Bienvenido a AsistApp',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isDark ? Colors.white : const Color(0xff111827),
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 26,
             fontWeight: FontWeight.w900,
             height: 1.2,
@@ -383,7 +380,7 @@ class _WelcomeText extends StatelessWidget {
           'Gestiona tu asistencia de prácticas preprofesionales desde tu celular',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280),
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 14,
             fontWeight: FontWeight.w400,
             height: 1.45,
@@ -462,7 +459,7 @@ class _FeatureItem extends StatelessWidget {
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isDark ? const Color(0xff9ca3af) : AppColors.mutedForeground,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
             fontSize: 10.5,
             fontWeight: FontWeight.w400,
             height: 1.2,

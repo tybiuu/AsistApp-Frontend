@@ -3,7 +3,7 @@
 import 'package:get/get.dart';
 import '../../configs/routes.dart';
 
-enum RoleOption { practitioner, validator, admin }
+enum RoleOption { practitioner, admin }
 
 class RoleSelectController extends GetxController {
   final Rx<RoleOption?> selectedRole = Rx<RoleOption?>(null);

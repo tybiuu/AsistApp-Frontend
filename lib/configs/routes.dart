@@ -3,7 +3,7 @@
 class AppRoutes {
   const AppRoutes._();
 
-  static const String onboarding = '/onboarding';
+  static const String welcome = '/welcome';
   static const String login = '/login';
   static const String roleSelect = '/role-select';
   static const String register = '/register';
