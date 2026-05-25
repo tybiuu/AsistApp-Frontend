@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import './configs/routes.dart';
 import './configs/theme.dart';
+import 'pages/admin_setup/admin_setup_page.dart';
 import 'pages/auth/login/login_page.dart';
 import 'pages/setup/org_code/org_code_page.dart';
 import 'pages/setup/pending/pending_page.dart';
@@ -40,6 +41,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.pending: (context) => const PendingPage(),
         AppRoutes.login: (context) => const LoginPage(),
         AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.adminSetup: (context) => AdminSetupPage(),
       },
       home: const WelcomePage(),
     );

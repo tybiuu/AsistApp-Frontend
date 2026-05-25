@@ -10,4 +10,5 @@ class AppRoutes {
   static const String orgCode = '/org-code';
   static const String pending = '/pending';
   static const String home = '/home';
+  static const String adminSetup = '/admin-setup';
 }

@@ -1,0 +1,333 @@
+// lib/pages/admin_setup/admin_setup_page.dart
+
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../components/primary_button.dart';
+import '../../configs/theme.dart';
+import 'admin_setup_controller.dart';
+
+class AdminSetupPage extends StatelessWidget {
+  final AdminSetupController control = Get.put(AdminSetupController());
+
+  AdminSetupPage({super.key});
+
+  Widget _topBar(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return Container(
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        border: Border(
+          bottom: BorderSide(color: colors.outlineVariant),
+        ),
+      ),
+      child: Row(
+        children: [
+          IconButton(
+            onPressed: control.goBack,
+            icon: const Icon(Icons.arrow_back),
+            style: IconButton.styleFrom(
+              backgroundColor: colors.surfaceContainer,
+              foregroundColor: colors.onSurface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(14),
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            'Crea tu laboratorio',
+            style: TextStyle(
+              color: colors.onSurface,
+              fontSize: 16,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _photoPicker(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return GestureDetector(
+      onTap: control.selectPhoto,
+      child: Column(
+        children: [
+          Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Obx(
+                () => Container(
+                  width: 88,
+                  height: 88,
+                  decoration: BoxDecoration(
+                    color: AppColors.chart1,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: control.laboratoryPhotoBytes.value == null
+                      ? Icon(
+                          Icons.question_mark_rounded,
+                          color: colors.onPrimary,
+                          size: 32,
+                        )
+                      : Image.memory(
+                          control.laboratoryPhotoBytes.value!,
+                          fit: BoxFit.cover,
+                        ),
+                ),
+              ),
+              Positioned(
+                right: -4,
+                bottom: -4,
+                child: Container(
+                  width: 28,
+                  height: 28,
+                  decoration: BoxDecoration(
+                    color: AppColors.chart1,
+                    shape: BoxShape.circle,
+                    border: Border.all(color: colors.surface, width: 3),
+                  ),
+                  child: Icon(
+                    Icons.photo_camera_outlined,
+                    color: colors.onPrimary,
+                    size: 14,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 14),
+          Text(
+            'Foto del laboratorio',
+            style: TextStyle(
+              color: colors.onSurface,
+              fontSize: 14,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            'Opcional',
+            style: TextStyle(
+              color: colors.onSurfaceVariant,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _textInput({
+    required BuildContext context,
+    required String label,
+    required String hint,
+    required TextEditingController controller,
+    int maxLines = 1,
+  }) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: colors.onSurface,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextField(
+          controller: controller,
+          maxLines: maxLines,
+          style: TextStyle(
+            color: colors.onSurface,
+            fontSize: 14,
+          ),
+          decoration: InputDecoration(
+            hintText: hint,
+            hintStyle: TextStyle(
+              color: colors.onSurfaceVariant,
+              fontSize: 14,
+            ),
+            filled: true,
+            fillColor: colors.surfaceContainerLowest,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: colors.outlineVariant),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: colors.outlineVariant),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: colors.primary, width: 1.5),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _tardinessStepper(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Tiempo limite de tardanza',
+          style: TextStyle(
+            color: colors.onSurface,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        const SizedBox(height: 6),
+        Container(
+          height: 58,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: colors.surfaceContainerLowest,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: Row(
+            children: [
+              _stepperButton(
+                context: context,
+                icon: Icons.remove_rounded,
+                onPressed: control.decreaseTardinessLimit,
+              ),
+              Expanded(
+                child: Obx(
+                  () => Text(
+                    '${control.tardinessLimit.value} min',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+              ),
+              _stepperButton(
+                context: context,
+                icon: Icons.add_rounded,
+                onPressed: control.increaseTardinessLimit,
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _stepperButton({
+    required BuildContext context,
+    required IconData icon,
+    required VoidCallback onPressed,
+  }) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return SizedBox(
+      width: 34,
+      height: 34,
+      child: IconButton(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 18),
+        padding: EdgeInsets.zero,
+        style: IconButton.styleFrom(
+          backgroundColor: colors.primaryContainer,
+          foregroundColor: AppColors.chart1,
+          shape: const CircleBorder(),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return SafeArea(
+      child: Column(
+        children: [
+          _topBar(context),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 22, 16, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _photoPicker(context),
+                  const SizedBox(height: 22),
+                  _textInput(
+                    context: context,
+                    label: 'Nombre del laboratorio',
+                    hint: 'Ej: ITLAB, BioLab, QuimLab...',
+                    controller: control.nameController,
+                  ),
+                  const SizedBox(height: 18),
+                  _tardinessStepper(context),
+                  const SizedBox(height: 18),
+                  _textInput(
+                    context: context,
+                    label: 'Descripcion (opcional)',
+                    hint: 'Describe brevemente tu laboratorio...',
+                    controller: control.descriptionController,
+                    maxLines: 1,
+                  ),
+                  const SizedBox(height: 18),
+                  Obx(
+                    () => PrimaryButton(
+                      text: control.isLoading.value
+                          ? 'Creando...'
+                          : 'Crear organizacion',
+                      onPressed: control.canCreate
+                          ? control.createOrganization
+                          : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 18,
+            color: colors.surfaceContainerLow,
+            alignment: Alignment.center,
+            child: Container(
+              width: 98,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colors.outline,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      body: _buildBody(context),
+    );
+  }
+}
