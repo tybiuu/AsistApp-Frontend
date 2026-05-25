@@ -52,15 +52,24 @@ class RegisterController extends GetxController {
   final RxString confirmPassword = ''.obs;
 
   bool get isFormValid {
-    if (nombres().trim().isEmpty) return false;
-    if (apellidos().trim().isEmpty) return false;
-    if (correo().trim().isEmpty || !GetUtils.isEmail(correo().trim())) return false;
-    if (celular().trim().isEmpty || celular().trim().length < 9) return false;
-    if (password().isEmpty || password().length < 8) return false;
-    if (password() != confirmPassword()) return false;
+    // Read all reactive variables first so GetX tracks them properly
+    final n = nombres().trim();
+    final a = apellidos().trim();
+    final c = correo().trim();
+    final cel = celular().trim();
+    final p = password();
+    final cp = confirmPassword();
+    final carr = selectedCarrera();
+
+    if (n.isEmpty) return false;
+    if (a.isEmpty) return false;
+    if (c.isEmpty || !GetUtils.isEmail(c)) return false;
+    if (cel.isEmpty || cel.length < 9) return false;
+    if (p.isEmpty || p.length < 8) return false;
+    if (p != cp) return false;
     
     if (role == RoleOption.practitioner) {
-      if (selectedCarrera().isEmpty) return false;
+      if (carr.isEmpty) return false;
     }
     return true;
   }

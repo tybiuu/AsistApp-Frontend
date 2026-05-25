@@ -9,8 +9,27 @@ import '../../../components/primary_button.dart';
 import 'register_controller.dart';
 import '../../setup/role_select/role_select_controller.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  late final RegisterController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(RegisterController());
+  }
+
+  @override
+  void dispose() {
+    Get.delete<RegisterController>();
+    super.dispose();
+  }
 
   String _getCicloLabel(int n) {
     const suffixes = {
@@ -30,7 +49,6 @@ class RegisterPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(RegisterController());
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final role = controller.role;
