@@ -55,37 +55,6 @@ String fmtMins(int totalMins) {
 }
 
 // ---------------------------------------------------------------------------
-// Mock data
-// ---------------------------------------------------------------------------
-
-final kMySchedule = <String, DaySchedule>{
-  'Lunes': DaySchedule(enabled: true, blocks: [
-    const ScheduleBlock(type: BlockType.work,      start: '08:00', end: '13:00'),
-    const ScheduleBlock(type: BlockType.breakTime, start: '13:00', end: '14:00'),
-    const ScheduleBlock(type: BlockType.work,      start: '14:00', end: '17:00'),
-  ]),
-  'Martes': DaySchedule(enabled: true, blocks: [
-    const ScheduleBlock(type: BlockType.work,      start: '08:00', end: '13:00'),
-    const ScheduleBlock(type: BlockType.breakTime, start: '13:00', end: '14:00'),
-    const ScheduleBlock(type: BlockType.work,      start: '14:00', end: '17:00'),
-  ]),
-  'Miércoles': DaySchedule(enabled: true, blocks: [
-    const ScheduleBlock(type: BlockType.work,      start: '08:00', end: '13:00'),
-    const ScheduleBlock(type: BlockType.breakTime, start: '13:00', end: '14:00'),
-    const ScheduleBlock(type: BlockType.work,      start: '14:00', end: '17:00'),
-  ]),
-  'Jueves': DaySchedule(enabled: true, blocks: [
-    const ScheduleBlock(type: BlockType.work,      start: '08:00', end: '13:00'),
-    const ScheduleBlock(type: BlockType.breakTime, start: '13:00', end: '14:00'),
-    const ScheduleBlock(type: BlockType.work,      start: '14:00', end: '17:00'),
-  ]),
-  'Viernes': DaySchedule(enabled: true, blocks: [
-    const ScheduleBlock(type: BlockType.work, start: '08:00', end: '11:00'),
-  ]),
-  'Sábado': const DaySchedule(enabled: false, blocks: []),
-};
-
-// ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 

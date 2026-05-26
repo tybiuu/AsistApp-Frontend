@@ -109,17 +109,21 @@ class _LogoutButton extends StatelessWidget {
   const _LogoutButton({required this.onTap});
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    onTap: onTap,
-    child: const Padding(
-      padding: EdgeInsets.symmetric(vertical: 10),
-      child: Text(
-        'Cerrar sesión',
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Color(0xffef4444),
-          fontSize: 14,
-          fontWeight: FontWeight.w600,
+  Widget build(BuildContext context) => Material(
+    color: Colors.transparent,
+    child: InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: const Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: Text(
+          'Cerrar sesión',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Color(0xffef4444),
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
     ),

@@ -1,6 +1,8 @@
 // lib/pages/auth/login/login_controller.dart
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../configs/routes.dart';
@@ -31,68 +33,48 @@ class LoginController extends GetxController {
     final mail = email.value.trim();
     final pass = password.value;
 
-    if (mail == 'admin@ulima.edu.pe' && pass == 'admin123') {
-      // ── Mock admin user ──────────────────────────────────────────────────
-      final adminUser = User(
-        id: 'usr-admin-001',
-        firstName: 'Carlos',
-        lastName: 'Ramírez',
-        institutionalEmail: mail,
-        phoneNumber: '999000001',
-        career: null,
-        cycle: null,
-        organizationId: 'ITLAB',
-        role: UserRole.admin,
-        status: UserStatus.active,
-        createdAt: DateTime(2023, 6, 1),
-        updatedAt: DateTime.now(),
-      );
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/mock_users.json');
+      final List<dynamic> data = jsonDecode(response);
+      
+      Map<String, dynamic>? foundUserMap;
 
-      await SessionService.to.saveUser(adminUser);
+      for (var item in data) {
+        if (item['institutional_email'] == mail && item['password'] == pass) {
+          foundUserMap = item;
+          break;
+        }
+      }
 
-      Get.snackbar(
-        'Bienvenido',
-        'Sesión iniciada como Administrador',
-        backgroundColor: Colors.green.shade600,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-      );
-      Get.offAllNamed(AppRoutes.home);
+      if (foundUserMap != null) {
+        final user = User.fromJson(foundUserMap);
+        await SessionService.to.saveUser(user);
 
-    } else if (mail == 'practicante@ulima.edu.pe' && pass == 'practicante123') {
-      // ── Mock trainee user ────────────────────────────────────────────────
-      final traineeUser = User(
-        id: 'usr-trainee-001',
-        firstName: 'Jose',
-        lastName: 'Torres',
-        institutionalEmail: mail,
-        phoneNumber: '987654321',
-        career: 'Ingeniería de Sistemas',
-        cycle: 7,
-        organizationId: 'org-001',
-        role: UserRole.trainee,
-        status: UserStatus.active,
-        createdAt: DateTime(2024, 1, 15),
-        updatedAt: DateTime.now(),
-      );
+        String roleName = user.role == UserRole.admin ? 'Administrador' : 'Practicante';
 
-      await SessionService.to.saveUser(traineeUser);
-
-      Get.snackbar(
-        'Bienvenido',
-        'Sesión iniciada como Practicante',
-        backgroundColor: Colors.green.shade600,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-      );
-      Get.offAllNamed(AppRoutes.home);
-
-    } else {
+        Get.snackbar(
+          'Bienvenido',
+          'Sesión iniciada como $roleName',
+          backgroundColor: Colors.green.shade600,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(16),
+        );
+        Get.offAllNamed(AppRoutes.home);
+      } else {
+        Get.snackbar(
+          'Error',
+          'Credenciales incorrectas. Intenta con admin@ulima.edu.pe o practicante@ulima.edu.pe',
+          backgroundColor: Colors.red.shade600,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(16),
+        );
+      }
+    } catch (e) {
       Get.snackbar(
         'Error',
-        'Credenciales incorrectas. Intenta con admin@ulima.edu.pe o practicante@ulima.edu.pe',
+        'Ocurrió un error al cargar los datos de prueba.',
         backgroundColor: Colors.red.shade600,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
@@ -101,6 +83,13 @@ class LoginController extends GetxController {
     }
   }
 
-  void goToRegister() => Get.toNamed(AppRoutes.roleSelect);
+  void goToRegister() {
+    if (Get.previousRoute == AppRoutes.roleSelect || Get.previousRoute == AppRoutes.register) {
+      Get.back();
+    } else {
+      Get.toNamed(AppRoutes.roleSelect);
+    }
+  }
+
   void goBack() => Get.back();
 }

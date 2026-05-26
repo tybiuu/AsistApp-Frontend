@@ -70,27 +70,7 @@ class LoginPage extends StatelessWidget {
                         constraints: const BoxConstraints(),
                       ),
                     )),
-                    const SizedBox(height: 12),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: TextButton(
-                        onPressed: () {},
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: const Size(50, 30),
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: Text(
-                          '¿Olvidaste tu contraseña?',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.chart1,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 40),
                     Obx(() => PrimaryButton(
                       text: controller.isLoading() ? 'Ingresando...' : 'Ingresar',
                       onPressed: controller.isLoading() ? null : controller.handleLogin,

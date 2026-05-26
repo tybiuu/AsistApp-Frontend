@@ -91,7 +91,7 @@ class ProfileHeaderCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Empresa XYZ S.A.C.',
+                'ITLAB',
                 style: TextStyle(color: muted, fontSize: 11),
               ),
             ],

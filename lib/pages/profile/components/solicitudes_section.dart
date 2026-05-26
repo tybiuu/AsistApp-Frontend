@@ -107,27 +107,33 @@ class _RequestAbsenceRow extends StatelessWidget {
     final value = isDark ? Colors.white : const Color(0xff1f2937);
     final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
 
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: border),
-        ),
-        child: Row(
-          children: [
-            const Icon(Icons.error_outline_rounded, color: Color(0xffe15d27), size: 18),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                'Solicitar asistencia faltante',
-                style: TextStyle(color: value, fontSize: 14, fontWeight: FontWeight.w500),
-              ),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: border),
+      ),
+      child: Material(
+        color: bg,
+        borderRadius: BorderRadius.circular(15),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            child: Row(
+              children: [
+                const Icon(Icons.error_outline_rounded, color: Color(0xffe15d27), size: 18),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Solicitar asistencia faltante',
+                    style: TextStyle(color: value, fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                Icon(Icons.chevron_right_rounded, color: muted, size: 18),
+              ],
             ),
-            Icon(Icons.chevron_right_rounded, color: muted, size: 18),
-          ],
+          ),
         ),
       ),
     );

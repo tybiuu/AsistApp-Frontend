@@ -1,5 +1,7 @@
 // lib/pages/profile/profile_controller.dart
 
+import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -36,7 +38,14 @@ class ProfileController extends GetxController {
   final expandedDay = RxnInt();
 
   // ── Static data ───────────────────────────────────────────────────────────
-  final schedule = kMySchedule;
+  final schedule = <String, DaySchedule>{
+    'Lunes': const DaySchedule(enabled: false, blocks: []),
+    'Martes': const DaySchedule(enabled: false, blocks: []),
+    'Miércoles': const DaySchedule(enabled: false, blocks: []),
+    'Jueves': const DaySchedule(enabled: false, blocks: []),
+    'Viernes': const DaySchedule(enabled: false, blocks: []),
+    'Sábado': const DaySchedule(enabled: false, blocks: []),
+  }.obs;
   final carreras = kCarreras;
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
@@ -49,6 +58,76 @@ class ProfileController extends GetxController {
     cFirstName = TextEditingController(text: firstName);
     cLastName = TextEditingController(text: lastName);
     cPhone = TextEditingController(text: phone);
+
+    _loadMockSchedule();
+  }
+
+  Future<void> _loadMockSchedule() async {
+    try {
+      final String response = await rootBundle.loadString('assets/jsons/mock_schedules.json');
+      final List<dynamic> data = jsonDecode(response);
+      
+      if (data.isNotEmpty) {
+        // Obtenemos el horario del usuario actual (o el primero si no lo encontramos)
+        final userSchedule = data.firstWhere(
+          (s) => s['user_id'] == user.value?.id,
+          orElse: () => data.first,
+        );
+
+        final daysList = userSchedule['days'] as List<dynamic>;
+        
+        final dayMap = {
+          'monday': 'Lunes',
+          'tuesday': 'Martes',
+          'wednesday': 'Miércoles',
+          'thursday': 'Jueves',
+          'friday': 'Viernes',
+          'saturday': 'Sábado',
+          'sunday': 'Domingo',
+        };
+
+        // Clonamos el estado inicial para mantener el orden
+        final newSchedule = Map<String, DaySchedule>.from(schedule);
+
+        for (var d in daysList) {
+          final dayName = dayMap[d['day']] ?? d['day'];
+          
+          List<ScheduleBlock> blocks = [];
+          
+          String? checkIn = d['check_in_time'] as String?;
+          String? lunchStart = d['lunch_start_time'] as String?;
+          String? lunchEnd = d['lunch_end_time'] as String?;
+          String? checkOut = d['check_out_time'] as String?;
+
+          // Remove seconds if present
+          if (checkIn != null && checkIn.length > 5) checkIn = checkIn.substring(0, 5);
+          if (lunchStart != null && lunchStart.length > 5) lunchStart = lunchStart.substring(0, 5);
+          if (lunchEnd != null && lunchEnd.length > 5) lunchEnd = lunchEnd.substring(0, 5);
+          if (checkOut != null && checkOut.length > 5) checkOut = checkOut.substring(0, 5);
+          
+          if (checkIn != null && checkOut != null) {
+            if (lunchStart != null && lunchEnd != null) {
+              blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: lunchStart));
+              blocks.add(ScheduleBlock(type: BlockType.breakTime, start: lunchStart, end: lunchEnd));
+              blocks.add(ScheduleBlock(type: BlockType.work, start: lunchEnd, end: checkOut));
+            } else {
+              blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
+            }
+          }
+          
+          if (newSchedule.containsKey(dayName)) {
+            newSchedule[dayName] = DaySchedule(
+              enabled: blocks.isNotEmpty,
+              blocks: blocks,
+            );
+          }
+        }
+        
+        schedule.assignAll(newSchedule);
+      }
+    } catch (e) {
+      debugPrint('Error loading schedule mock: $e');
+    }
   }
 
   @override
