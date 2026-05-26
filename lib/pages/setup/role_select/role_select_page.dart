@@ -43,12 +43,26 @@ class RoleDef {
   });
 }
 
-class RoleSelectPage extends StatelessWidget {
+class RoleSelectPage extends StatefulWidget {
   const RoleSelectPage({super.key});
 
   @override
+  State<RoleSelectPage> createState() => _RoleSelectPageState();
+}
+
+class _RoleSelectPageState extends State<RoleSelectPage> {
+  late final RoleSelectController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(RoleSelectController());
+    // Resetear siempre la opción seleccionada al entrar a la página
+    controller.selectedRole.value = null;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final controller = Get.put(RoleSelectController());
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final List<RoleDef> roles = [
@@ -102,22 +116,29 @@ class RoleSelectPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  GestureDetector(
-                    onTap: controller.goBack,
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.arrow_back, size: 18, color: Color(0xfff97316)),
-                        SizedBox(width: 6),
-                        Text(
-                          'Volver',
-                          style: TextStyle(
-                            color: Color(0xfff97316),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: controller.goBack,
+                      borderRadius: BorderRadius.circular(6),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.arrow_back, size: 18, color: Color(0xfff97316)),
+                            SizedBox(width: 6),
+                            Text(
+                              'Volver',
+                              style: TextStyle(
+                                color: Color(0xfff97316),
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 24),

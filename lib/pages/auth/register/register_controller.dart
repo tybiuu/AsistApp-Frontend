@@ -136,7 +136,11 @@ class RegisterController extends GetxController {
   }
 
   void goToLogin() {
-    Get.offAllNamed(AppRoutes.login);
+    if (Get.previousRoute == AppRoutes.login) {
+      Get.back();
+    } else {
+      Get.toNamed(AppRoutes.login);
+    }
   }
 
   void goBack() {
