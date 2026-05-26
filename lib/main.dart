@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 
 import './configs/routes.dart';
 import './configs/theme.dart';
+import './services/session_service.dart';
 import 'pages/admin_analytics/admin_analytics_page.dart';
 import 'pages/admin_config/admin_config_page.dart';
 import 'pages/admin_dashboard/admin_dashboard_page.dart';
@@ -20,8 +21,12 @@ import 'pages/setup/role_select/role_select_page.dart';
 import './pages/dashboard/dashboard_page.dart';
 import './pages/welcome/welcome_page.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Initialize SessionService and restore any saved session from prefs.
+  await Get.putAsync<SessionService>(() => SessionService().init());
+
   runApp(const MyApp());
 }
 
@@ -32,6 +37,12 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextTheme baseTextTheme = Typography.material2021().englishLike;
     final MaterialTheme materialTheme = MaterialTheme(baseTextTheme);
+
+    // Decide the initial screen based on whether there is a saved session.
+    final session = SessionService.to;
+    final Widget home = session.isLoggedIn
+        ? const DashboardPage()
+        : const WelcomePage();
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
@@ -57,7 +68,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.adminSetup: (context) => AdminSetupPage(),
         AppRoutes.adminSetupSuccess: (context) => AdminSetupSuccessPage(),
       },
-      home: const WelcomePage(),
+      home: home,
     );
   }
 }

@@ -1,16 +1,14 @@
+// lib/pages/dashboard/dashboard_controller.dart
+
 import 'package:get/get.dart';
+
+import '../../services/session_service.dart';
 
 class DashboardController extends GetxController {
   final RxInt currentIndex = 0.obs;
 
-  // Since we have simulated login, we can pass a mock role or retrieve it from a global service
-  // For now we'll allow passing it as an argument when routing, or default to practitioner.
-  bool get isAdmin {
-    if (Get.arguments != null && Get.arguments is Map) {
-      return Get.arguments['isAdmin'] ?? false;
-    }
-    return false; // Default to practitioner
-  }
+  /// Derived from the persisted session — no route arguments needed.
+  bool get isAdmin => SessionService.to.isAdmin;
 
   void changeTab(int index) {
     currentIndex.value = index;
