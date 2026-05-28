@@ -167,7 +167,7 @@ entity "users" {
    career : text
    cycle : int
   organization_id : uuid <<FK>>
-  * role : enum(admin, validator, trainee)
+  * role : enum(admin, trainee)
   * status : enum(pending, active, rejected)
   device_token : text
   * created_at : timestamp

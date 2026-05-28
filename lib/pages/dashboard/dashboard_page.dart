@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../components/custom_bottom_nav.dart';
 import 'dashboard_controller.dart';
+import '../admin_analytics/admin_analytics_page.dart';
+import '../admin_config/admin_config_page.dart';
+import '../admin_home/admin_home_page.dart';
+import '../admin_validate/admin_validate_page.dart';
 import '../home/home_page.dart';
 
 import '../attendance/attendance_page.dart';
 import '../report/report_page.dart';
 import '../profile/profile_page.dart';
-import '../validate/validate_page.dart';
-import '../analytics/analytics_page.dart';
-import '../settings/settings_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -28,10 +29,10 @@ class DashboardPage extends StatelessWidget {
 
     // Admin views
     final adminViews = [
-      const HomePage(),
-      const ValidatePage(),
-      const AnalyticsPage(),
-      const SettingsPage(),
+      const AdminHomePage(),
+      const AdminValidatePage(),
+      const AdminAnalyticsPage(),
+      const AdminConfigPage(),
     ];
 
     return Scaffold(

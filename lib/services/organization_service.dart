@@ -1,24 +1,27 @@
-// lib/services/admin_home_service.dart
+// lib/services/organization_service.dart
 
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
 import '../configs/generic_response.dart';
-import '../models/admin_home.dart';
+import '../models/organization.dart';
 
-class AdminHomeService {
-  Future<GenericResponse<AdminHomeData>> fetchHomeData() async {
+class OrganizationService {
+  Future<GenericResponse<Organization>> fetchCurrent() async {
     try {
-      final String jsonString =
-          await rootBundle.loadString('assets/jsons/admin_home.json');
+      final String jsonString = await rootBundle.loadString(
+        'assets/jsons/mock_organization.json',
+      );
       final Map<String, dynamic> jsonMap = json.decode(jsonString);
-      final AdminHomeData homeData = AdminHomeData.fromJson(jsonMap);
+      final Organization organization = Organization.fromJson(
+        jsonMap['organization'] ?? <String, dynamic>{},
+      );
 
       return GenericResponse(
         success: true,
-        data: homeData,
-        message: 'Resumen del administrador',
+        data: organization,
+        message: 'Organización actual',
         error: null,
       );
     } catch (e, stackTrace) {

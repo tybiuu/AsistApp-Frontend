@@ -3,17 +3,13 @@
 import 'package:flutter/material.dart';
 
 import '../configs/theme.dart';
-import '../models/admin_home.dart';
+import '../pages/admin_home/components/admin_home_summary.dart';
 
 class AdminRequestCard extends StatelessWidget {
   final AdminRequestSummary request;
   final VoidCallback? onTap;
 
-  const AdminRequestCard({
-    super.key,
-    required this.request,
-    this.onTap,
-  });
+  const AdminRequestCard({super.key, required this.request, this.onTap});
 
   IconData get _icon {
     switch (request.type) {
