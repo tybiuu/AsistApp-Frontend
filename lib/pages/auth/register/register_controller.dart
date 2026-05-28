@@ -57,6 +57,7 @@ class RegisterController extends GetxController {
     final c = correo().trim();
     final cel = celular().trim();
     final p = password();
+    final cp = confirmPassword();
     final carr = selectedCarrera();
 
     if (n.isEmpty) return false;
@@ -64,6 +65,7 @@ class RegisterController extends GetxController {
     if (c.isEmpty || !GetUtils.isEmail(c)) return false;
     if (cel.isEmpty || cel.length < 9) return false;
     if (p.isEmpty || p.length < 8) return false;
+    if (cp.isEmpty || cp.length < 8) return false;
     // Removed strict password match constraint here to handle it in handleCreate
     
     if (role == RoleOption.practitioner) {

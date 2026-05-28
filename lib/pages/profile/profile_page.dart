@@ -7,10 +7,11 @@ import '../../components/app_top_bar.dart';
 import '../../components/primary_button.dart';
 import '../../components/status_badge.dart';
 import '../../services/session_service.dart';
+import '../../components/schedule_card.dart';
+import '../dashboard/dashboard_controller.dart';
 import 'profile_controller.dart';
 import 'components/profile_header_card.dart';
 import 'components/personal_data_card.dart';
-import 'components/schedule_card.dart';
 import 'components/solicitudes_section.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -18,7 +19,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Get.put(ProfileController());
+    final c = Get.put(ProfileController());
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -44,7 +45,11 @@ class ProfilePage extends StatelessWidget {
                     // ── Schedule ─────────────────────────────────────────
                     _SectionHeader(title: 'Mi horario', isDark: isDark),
                     const SizedBox(height: 10),
-                    const ScheduleCard(),
+                    ScheduleCard(
+                      schedule: c.schedule,
+                      expandedDay: c.expandedDay,
+                      onToggleDay: c.toggleDay,
+                    ),
                     const SizedBox(height: 12),
                     PrimaryButton(
                       text: 'Solicitar cambio de horario',
@@ -68,6 +73,7 @@ class ProfilePage extends StatelessWidget {
                     // ── Logout ────────────────────────────────────────────
                     _LogoutButton(onTap: () async {
                       await SessionService.to.logout();
+                      Get.delete<DashboardController>(force: true);
                       Get.offAllNamed('/welcome');
                     }),
                   ],

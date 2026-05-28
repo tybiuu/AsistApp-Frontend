@@ -10,6 +10,9 @@ import './services/session_service.dart';
 import 'pages/admin_analytics/admin_analytics_page.dart';
 import 'pages/admin_config/admin_config_page.dart';
 import 'pages/admin_home/admin_home_page.dart';
+import 'pages/admin_home/admin_member_detail/admin_member_detail_page.dart';
+import 'pages/admin_home/admin_member_request/admin_member_request_page.dart';
+import 'pages/admin_home/admin_new_members/admin_new_members_page.dart';
 import 'pages/admin_setup/admin_setup_page.dart';
 import 'pages/admin_setup_success/admin_setup_success_page.dart';
 import 'pages/admin_validate/admin_validate_page.dart';
@@ -68,6 +71,11 @@ class MyApp extends StatelessWidget {
         AppRoutes.adminConfig: (context) => const AdminConfigPage(),
         AppRoutes.adminSetup: (context) => AdminSetupPage(),
         AppRoutes.adminSetupSuccess: (context) => AdminSetupSuccessPage(),
+        AppRoutes.adminNewMembers: (context) => const AdminNewMembersPage(),
+        AppRoutes.adminMemberRequest: (context) =>
+            const AdminMemberRequestPage(),
+        AppRoutes.adminMemberDetail: (context) =>
+            const AdminMemberDetailPage(),
       },
     );
   }

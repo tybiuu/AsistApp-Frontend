@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../configs/theme.dart';
+import '../../../models/schedule.dart';
 import '../profile_controller.dart';
-import '../profile_schedule.dart';
 
 /// Top card: avatar, name, "Practicante" badge, and the three stats.
 class ProfileHeaderCard extends StatelessWidget {

@@ -2,6 +2,7 @@
 
 import 'package:get/get.dart';
 
+import '../../configs/routes.dart';
 import '../../models/organization.dart';
 import '../../models/user.dart';
 import '../../services/attendance_record_service.dart';
@@ -172,7 +173,13 @@ class AdminHomeController extends GetxController {
 
   void goToPendingRequests() {}
 
-  void openRequest(AdminRequestSummary request) {}
+  void openRequest(AdminRequestSummary request) {
+    if (request.type == 'members') {
+      Get.toNamed(AppRoutes.adminNewMembers);
+    }
+  }
 
-  void openMember(User member) {}
+  void openMember(User member) {
+    Get.toNamed(AppRoutes.adminMemberDetail, arguments: member);
+  }
 }

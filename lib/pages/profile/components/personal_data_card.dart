@@ -6,8 +6,8 @@ import 'package:get/get.dart';
 
 import '../../../components/number_stepper.dart';
 import '../../../configs/theme.dart';
+import '../../../models/schedule.dart';
 import '../profile_controller.dart';
-import '../profile_schedule.dart';
 
 /// Card that shows personal data in view mode and a form in edit mode.
 class PersonalDataCard extends StatelessWidget {
@@ -97,13 +97,6 @@ class _CardHeader extends StatelessWidget {
                         label: 'Cancelar',
                         color: muted,
                         onTap: c.cancelEdit,
-                      ),
-                      const SizedBox(width: 16),
-                      _IconTextBtn(
-                        icon: Icons.check,
-                        label: 'Guardar',
-                        color: const Color(0xff22c55e),
-                        onTap: c.saveEdit,
                       ),
                     ],
                   )

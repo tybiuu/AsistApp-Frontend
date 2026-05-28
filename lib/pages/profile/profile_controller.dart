@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../models/schedule.dart';
 import '../../models/user.dart';
 import '../../services/session_service.dart';
-import 'profile_schedule.dart';
 
 class ProfileController extends GetxController {
   // ── Current user — sourced from SessionService ────────────────────────────

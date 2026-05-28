@@ -3,25 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-/// General-purpose top app bar used across practitioner and admin pages.
-///
-/// [title]       — required page title.
-/// [showBack]    — shows a back arrow that calls [Get.back] when tapped.
-/// [actions]     — optional trailing widgets (e.g. icon buttons).
-class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
+class AppTopBar extends StatelessWidget {
   final String title;
   final bool showBack;
+  final VoidCallback? onBack;
   final List<Widget> actions;
 
   const AppTopBar({
     super.key,
     required this.title,
     this.showBack = false,
+    this.onBack,
     this.actions = const [],
   });
-
-  @override
-  Size get preferredSize => const Size.fromHeight(56);
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +26,7 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
     final Color titleColor  = isDark ? Colors.white : const Color(0xff1f2937);
 
     return Container(
-      height: preferredSize.height,
+      height: 56,
       padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
         color: bg,
@@ -40,35 +34,32 @@ class AppTopBar extends StatelessWidget implements PreferredSizeWidget {
           bottom: BorderSide(color: borderColor, width: 1),
         ),
       ),
-      child: SafeArea(
-        bottom: false,
-        child: Row(
-          children: [
-            if (showBack)
-              GestureDetector(
-                onTap: Get.back,
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Icon(
-                    Icons.arrow_back_ios_new_rounded,
-                    size: 18,
-                    color: isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280),
-                  ),
-                ),
-              ),
-            Expanded(
-              child: Text(
-                title,
-                style: TextStyle(
-                  color: titleColor,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w800,
+      child: Row(
+        children: [
+          if (showBack)
+            GestureDetector(
+              onTap: onBack ?? Get.back,
+              child: Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Icon(
+                  Icons.arrow_back_ios_new_rounded,
+                  size: 18,
+                  color: isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280),
                 ),
               ),
             ),
-            ...actions,
-          ],
-        ),
+          Expanded(
+            child: Text(
+              title,
+              style: TextStyle(
+                color: titleColor,
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          ...actions,
+        ],
       ),
     );
   }

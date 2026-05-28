@@ -18,4 +18,7 @@ class AppRoutes {
   static const String adminConfig = '/admin-config';
   static const String adminSetup = '/admin-setup';
   static const String adminSetupSuccess = '/admin-setup-success';
+  static const String adminNewMembers = '/admin-new-members';
+  static const String adminMemberRequest = '/admin-member-request';
+  static const String adminMemberDetail = '/admin-member-detail';
 }

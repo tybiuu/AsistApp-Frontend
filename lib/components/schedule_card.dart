@@ -1,21 +1,29 @@
-// lib/pages/profile/components/schedule_card.dart
+// lib/components/schedule_card.dart
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../configs/theme.dart';
-import '../../../components/status_badge.dart';
-import '../profile_controller.dart';
-import '../profile_schedule.dart';
+import '../configs/theme.dart';
+import '../components/status_badge.dart';
+import '../models/schedule.dart';
 
-/// Card that shows the practitioner's approved weekly schedule.
-/// Each day row is tappable to expand block details.
 class ScheduleCard extends StatelessWidget {
-  const ScheduleCard({super.key});
+  final RxMap<String, DaySchedule> schedule;
+  final RxnInt expandedDay;
+  final void Function(int) onToggleDay;
+
+  const ScheduleCard({
+    super.key,
+    required this.schedule,
+    required this.expandedDay,
+    required this.onToggleDay,
+  });
+
+  int get _totalWeekMins =>
+      schedule.values.fold(0, (sum, d) => sum + dayWorkMins(d));
 
   @override
   Widget build(BuildContext context) {
-    final c = Get.find<ProfileController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     final cardBg = isDark ? const Color(0xff1A1D27) : Colors.white;
@@ -23,75 +31,84 @@ class ScheduleCard extends StatelessWidget {
     final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
     final onCard = isDark ? Colors.white : const Color(0xff1f2937);
 
-    final days = c.schedule.keys.toList();
+    return Obx(() {
+      final days = schedule.keys.toList();
 
-    return Obx(() => Container(
-      decoration: BoxDecoration(
-        color: cardBg,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: border),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          // ── Header ───────────────────────────────────────────────────────
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(color: border)),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.access_time_rounded, size: 16, color: AppColors.chart1),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Row(
-                    children: [
-                      Text(
-                        'Horario aprobado',
-                        style: TextStyle(color: onCard, fontSize: 14, fontWeight: FontWeight.w700),
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        '${fmtMins(c.totalWeekMins)} / sem',
-                        style: TextStyle(color: muted, fontSize: 12),
-                      ),
-                    ],
+      return Container(
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: border),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          children: [
+            // ── Header ───────────────────────────────────────────────────────
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                border: Border(bottom: BorderSide(color: border)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.access_time_rounded,
+                    size: 16,
+                    color: AppColors.chart1,
                   ),
-                ),
-                const StatusBadge(status: BadgeStatus.confirmed),
-              ],
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Text(
+                          'Horario aprobado',
+                          style: TextStyle(
+                            color: onCard,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          '${fmtMins(_totalWeekMins)} / sem',
+                          style: TextStyle(color: muted, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
 
-          // ── Day rows ──────────────────────────────────────────────────────
-          ...days.asMap().entries.map((e) {
-            final idx    = e.key;
-            final dayKey = e.value;
-            final sched  = c.schedule[dayKey]!;
-            return _DayRow(
-              dayKey: dayKey,
-              sched: sched,
-              idx: idx,
-              isExpanded: c.expandedDay.value == idx,
-              isDark: isDark,
-              showDivider: idx < days.length - 1,
-              onTap: () => c.toggleDay(idx),
-            );
-          }),
+            // ── Day rows ──────────────────────────────────────────────────────
+            ...days.asMap().entries.map((e) {
+              final idx = e.key;
+              final dayKey = e.value;
+              final sched = schedule[dayKey]!;
+              return _DayRow(
+                dayKey: dayKey,
+                sched: sched,
+                idx: idx,
+                isExpanded: expandedDay.value == idx,
+                isDark: isDark,
+                showDivider: idx < days.length - 1,
+                onTap: () => onToggleDay(idx),
+              );
+            }),
 
-          // ── Hint ──────────────────────────────────────────────────────────
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Text(
-              'Toca un día para ver los bloques exactos',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: muted, fontSize: 10),
+            // ── Hint ──────────────────────────────────────────────────────────
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Text(
+                'Toca un día para ver los bloques exactos',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: muted, fontSize: 10),
+              ),
             ),
-          ),
-        ],
-      ),
-    ));
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -133,7 +150,6 @@ class _DayRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 11),
             child: Row(
               children: [
-                // Day name
                 SizedBox(
                   width: 80,
                   child: Text(
@@ -145,10 +161,8 @@ class _DayRow extends StatelessWidget {
                     ),
                   ),
                 ),
-                // Timeline bar
                 Expanded(child: _ScheduleBar(sched: sched, isDark: isDark)),
                 const SizedBox(width: 8),
-                // Hours label
                 SizedBox(
                   width: 44,
                   child: Text(
@@ -173,7 +187,6 @@ class _DayRow extends StatelessWidget {
             ),
           ),
         ),
-        // Block detail
         if (isExpanded && sched.enabled) _BlockDetail(sched: sched, isDark: isDark),
         if (showDivider) Divider(height: 1, thickness: 1, color: _border),
       ],
@@ -189,19 +202,22 @@ class _ScheduleBar extends StatelessWidget {
 
   const _ScheduleBar({required this.sched, required this.isDark});
 
-  // Timeline: 08:00–17:00
-  static const _start = 480;   // 08:00
-  static const _end = 1020;  // 17:00
+  static const _start = 480;
+  static const _end = 1020;
   static const _span = _end - _start;
 
   @override
   Widget build(BuildContext context) {
-    final trackColor = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
+    final trackColor =
+        isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
 
     if (!sched.enabled || sched.blocks.isEmpty) {
       return Container(
         height: 8,
-        decoration: BoxDecoration(color: trackColor, borderRadius: BorderRadius.circular(4)),
+        decoration: BoxDecoration(
+          color: trackColor,
+          borderRadius: BorderRadius.circular(4),
+        ),
       );
     }
 
@@ -211,11 +227,12 @@ class _ScheduleBar extends StatelessWidget {
         height: 8,
         child: Stack(
           children: [
-            // Track
             Container(
-              decoration: BoxDecoration(color: trackColor, borderRadius: BorderRadius.circular(4)),
+              decoration: BoxDecoration(
+                color: trackColor,
+                borderRadius: BorderRadius.circular(4),
+              ),
             ),
-            // Blocks
             ...sched.blocks.map((block) {
               final s = schedToMins(block.start).clamp(_start, _end);
               final e = schedToMins(block.end).clamp(_start, _end);
@@ -230,7 +247,10 @@ class _ScheduleBar extends StatelessWidget {
                 top: 0,
                 bottom: 0,
                 child: Container(
-                  decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(4)),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
                 ),
               );
             }),
@@ -258,7 +278,10 @@ class _BlockDetail extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(10)),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(10),
+      ),
       child: Column(
         children: sched.blocks.map((b) {
           final isWork = b.type == BlockType.work;
@@ -270,19 +293,29 @@ class _BlockDetail extends StatelessWidget {
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: isWork ? AppColors.chart1 : AppColors.chart1.withValues(alpha: 0.3),
+                    color: isWork
+                        ? AppColors.chart1
+                        : AppColors.chart1.withValues(alpha: 0.3),
                     shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   isWork ? 'Trabajo' : 'Descanso',
-                  style: TextStyle(color: label, fontSize: 11, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: label,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
                 const Spacer(),
                 Text(
                   '${b.start} – ${b.end}',
-                  style: TextStyle(color: value, fontSize: 12, fontWeight: FontWeight.w600),
+                  style: TextStyle(
+                    color: value,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),

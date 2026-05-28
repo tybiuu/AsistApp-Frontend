@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../components/app_top_bar.dart';
 import '../../../components/input_field.dart';
 import '../../../components/primary_button.dart';
 import '../../../configs/theme.dart';
@@ -20,27 +21,10 @@ class LoginPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // AppBar equivalent
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: controller.goBack,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Inicia sesión',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface,
-                    ),
-                  ),
-                ],
-              ),
+            AppTopBar(
+              title: 'Inicia sesión',
+              showBack: true,
+              onBack: controller.goBack,
             ),
             
             Expanded(

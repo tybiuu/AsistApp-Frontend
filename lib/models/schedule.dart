@@ -1,4 +1,4 @@
-// lib/pages/profile/profile_schedule.dart
+// lib/models/schedule.dart
 
 // ---------------------------------------------------------------------------
 // Models

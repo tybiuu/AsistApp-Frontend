@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../components/app_top_bar.dart';
 import '../../components/primary_button.dart';
 import '../../configs/theme.dart';
 import 'admin_setup_controller.dart';
@@ -11,45 +12,6 @@ class AdminSetupPage extends StatelessWidget {
   final AdminSetupController control = Get.put(AdminSetupController());
 
   AdminSetupPage({super.key});
-
-  Widget _topBar(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
-
-    return Container(
-      height: 64,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        border: Border(
-          bottom: BorderSide(color: colors.outlineVariant),
-        ),
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: control.goBack,
-            icon: const Icon(Icons.arrow_back),
-            style: IconButton.styleFrom(
-              backgroundColor: colors.surfaceContainer,
-              foregroundColor: colors.onSurface,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(14),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Text(
-            'Crea tu laboratorio',
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 16,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   Widget _photoPicker(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
@@ -264,7 +226,11 @@ class AdminSetupPage extends StatelessWidget {
     return SafeArea(
       child: Column(
         children: [
-          _topBar(context),
+          AppTopBar(
+            title: 'Crea tu laboratorio',
+            showBack: true,
+            onBack: control.goBack,
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(16, 22, 16, 24),
