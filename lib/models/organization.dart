@@ -1,5 +1,7 @@
 // lib/models/organization.dart
 
+import '../utils/date_utils.dart';
+
 class Organization {
   final String id;
   final String name;
@@ -30,8 +32,8 @@ class Organization {
       photoUrl: map['photo_url'] as String?,
       description: map['description'] as String?,
       lateTimeLimit: map['late_time_limit'] as int? ?? 0,
-      createdAt: _dateFromJson(map['created_at'] as String?),
-      updatedAt: _dateFromJson(map['updated_at'] as String?),
+      createdAt: dateFromJson(map['created_at'] as String?),
+      updatedAt: dateFromJson(map['updated_at'] as String?),
     );
   }
 
@@ -46,11 +48,6 @@ class Organization {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
-  }
-
-  static DateTime _dateFromJson(String? value) {
-    return DateTime.tryParse(value ?? '') ??
-        DateTime.fromMillisecondsSinceEpoch(0);
   }
 
   @override

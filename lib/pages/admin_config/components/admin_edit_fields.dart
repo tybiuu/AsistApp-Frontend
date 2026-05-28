@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../configs/theme.dart';
-import '../admin_config_controller.dart';
 
 class AdminEditTextField extends StatelessWidget {
   final IconData icon;
@@ -43,7 +42,7 @@ class AdminEditTextField extends StatelessWidget {
 }
 
 class AdminPhoneField extends StatelessWidget {
-  final AdminConfigController controller;
+  final TextEditingController controller;
 
   const AdminPhoneField({super.key, required this.controller});
 
@@ -78,7 +77,7 @@ class AdminPhoneField extends StatelessWidget {
               const SizedBox(width: 10),
               Expanded(
                 child: TextField(
-                  controller: controller.phoneController,
+                  controller: controller,
                   keyboardType: TextInputType.phone,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   style: TextStyle(color: colors.onSurface, fontSize: 15),

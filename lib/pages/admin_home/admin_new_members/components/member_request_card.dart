@@ -1,8 +1,10 @@
-// lib/components/member_request_card.dart
+// lib/pages/admin_home/admin_new_members/components/member_request_card.dart
 
 import 'package:flutter/material.dart';
 
-import '../models/user.dart';
+import '../../../../models/user.dart';
+import '../../../../utils/date_utils.dart';
+import '../../../../configs/theme.dart';
 
 class MemberRequestCard extends StatelessWidget {
   final User member;
@@ -17,33 +19,6 @@ class MemberRequestCard extends StatelessWidget {
     this.onReject,
     this.onTap,
   });
-
-  String _formatRequestDate(DateTime date) {
-    final DateTime now = DateTime.now();
-    final bool isToday =
-        date.year == now.year && date.month == now.month && date.day == now.day;
-
-    final String minute = date.minute.toString().padLeft(2, '0');
-    final String period = date.hour < 12 ? 'AM' : 'PM';
-    final int displayHour = date.hour % 12 == 0 ? 12 : date.hour % 12;
-
-    if (isToday) {
-      return 'Hoy, $displayHour:$minute $period';
-    }
-
-    final DateTime yesterday = now.subtract(const Duration(days: 1));
-    if (date.year == yesterday.year &&
-        date.month == yesterday.month &&
-        date.day == yesterday.day) {
-      return 'Ayer, $displayHour:$minute $period';
-    }
-
-    const List<String> months = [
-      'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-      'jul', 'ago', 'sep', 'oct', 'nov', 'dic',
-    ];
-    return '${date.day} ${months[date.month - 1]}, $displayHour:$minute $period';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -99,13 +74,13 @@ class MemberRequestCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: const Color(0xffe15d27).withValues(alpha: 0.12),
+                              color: AppColors.chart1.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: const Text(
                               'Practicante',
                               style: TextStyle(
-                                color: Color(0xffe15d27),
+                                color: AppColors.chart1,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -122,7 +97,7 @@ class MemberRequestCard extends StatelessWidget {
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            'Solicitó: ${_formatRequestDate(member.createdAt)}',
+                            'Solicitó: ${formatRequestDate(member.createdAt)}',
                             style: TextStyle(
                               color: colors.onSurfaceVariant,
                               fontSize: 12,

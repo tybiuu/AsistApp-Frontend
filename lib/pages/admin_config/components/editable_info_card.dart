@@ -5,14 +5,12 @@ import 'package:flutter/material.dart';
 class EditableInfoCard extends StatelessWidget {
   final String title;
   final VoidCallback onCancel;
-  final VoidCallback onSave;
   final Widget child;
 
   const EditableInfoCard({
     super.key,
     required this.title,
     required this.onCancel,
-    required this.onSave,
     required this.child,
   });
 
@@ -52,13 +50,6 @@ class EditableInfoCard extends StatelessWidget {
                   label: 'Cancelar',
                   color: colors.onSurfaceVariant,
                   onTap: onCancel,
-                ),
-                const SizedBox(width: 14),
-                _IconTextAction(
-                  icon: Icons.check_rounded,
-                  label: 'Guardar',
-                  color: const Color(0xff22c55e),
-                  onTap: onSave,
                 ),
               ],
             ),

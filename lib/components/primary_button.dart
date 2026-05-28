@@ -7,6 +7,8 @@ import '../configs/theme.dart';
 enum PrimaryButtonVariant {
   primary,
   secondary,
+  destructive,
+  success,
 }
 
 class PrimaryButton extends StatelessWidget {
@@ -27,8 +29,59 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isPrimary = variant == PrimaryButtonVariant.primary;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    if (variant == PrimaryButtonVariant.success) {
+      return SizedBox(
+        width: fullWidth ? double.infinity : null,
+        height: 54,
+        child: ElevatedButton(
+          onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            shadowColor: Colors.transparent,
+            backgroundColor: const Color(0xff16a34a),
+            foregroundColor: Colors.white,
+            surfaceTintColor: Colors.transparent,
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              height: 1.5,
+            ),
+          ),
+          child: child ?? Text(text!),
+        ),
+      );
+    }
+
+    if (variant == PrimaryButtonVariant.destructive) {
+      final Color errorColor = Theme.of(context).colorScheme.error;
+      return SizedBox(
+        width: fullWidth ? double.infinity : null,
+        height: 54,
+        child: OutlinedButton(
+          onPressed: onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: errorColor,
+            side: BorderSide(color: errorColor, width: 1.5),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            textStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          child: child ?? Text(text!),
+        ),
+      );
+    }
+
+    final bool isPrimary = variant == PrimaryButtonVariant.primary;
 
     final Color backgroundColor = onPressed == null
         ? (isDark ? const Color(0xff1a1d27) : AppColors.muted)

@@ -1,22 +1,25 @@
 // lib/pages/admin_config/components/organization_avatar.dart
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../configs/theme.dart';
 import '../../../models/organization.dart';
-import '../admin_config_controller.dart';
 
 class OrganizationAvatar extends StatelessWidget {
   final Organization organization;
   final double size;
   final double borderRadius;
+  final Rx<Uint8List?>? photoBytes;
 
   const OrganizationAvatar({
     super.key,
     required this.organization,
     this.size = 46,
     this.borderRadius = 14,
+    this.photoBytes,
   });
 
   @override
@@ -33,8 +36,7 @@ class OrganizationAvatar extends StatelessWidget {
       ),
       clipBehavior: Clip.antiAlias,
       child: Obx(() {
-        final bytes =
-            Get.find<AdminConfigController>().savedOrganizationPhotoBytes.value;
+        final bytes = photoBytes?.value;
         if (bytes != null) {
           return Image.memory(
             bytes,

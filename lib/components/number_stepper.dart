@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import '../configs/theme.dart';
 
 class NumberStepper extends StatelessWidget {
-  final IconData icon;
-  final String title;
+  final IconData? icon;
+  final String? title;
   final int value;
   final String valueLabel;
   final bool canDecrease;
@@ -16,8 +16,8 @@ class NumberStepper extends StatelessWidget {
 
   const NumberStepper({
     super.key,
-    required this.icon,
-    required this.title,
+    this.icon,
+    this.title,
     required this.value,
     required this.valueLabel,
     required this.canDecrease,
@@ -33,21 +33,23 @@ class NumberStepper extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          children: [
-            Icon(icon, size: 14, color: colors.onSurfaceVariant),
-            const SizedBox(width: 6),
-            Text(
-              title,
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 13,
-                fontWeight: FontWeight.w700,
+        if (icon != null && title != null) ...[
+          Row(
+            children: [
+              Icon(icon, size: 14, color: colors.onSurfaceVariant),
+              const SizedBox(width: 6),
+              Text(
+                title!,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           decoration: BoxDecoration(

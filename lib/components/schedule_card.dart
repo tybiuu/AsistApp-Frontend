@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../configs/theme.dart';
-import '../components/status_badge.dart';
 import '../models/schedule.dart';
 
 class ScheduleCard extends StatelessWidget {
@@ -30,9 +29,13 @@ class ScheduleCard extends StatelessWidget {
     final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
     final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
     final onCard = isDark ? Colors.white : const Color(0xff1f2937);
+    final trackColor =
+        isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
 
     return Obx(() {
-      final days = schedule.keys.toList();
+      final days = schedule.keys
+          .where((k) => schedule[k]!.enabled)
+          .toList();
 
       return Container(
         decoration: BoxDecoration(
@@ -80,6 +83,31 @@ class ScheduleCard extends StatelessWidget {
               ),
             ),
 
+            // ── Time axis ────────────────────────────────────────────────────
+            if (days.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                child: Row(
+                  children: [
+                    const SizedBox(width: 36),
+                    Expanded(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: ['6a', '9a', '12p', '3p', '6p', '9p']
+                            .map(
+                              (l) => Text(
+                                l,
+                                style: TextStyle(color: muted, fontSize: 9),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                    const SizedBox(width: 72),
+                  ],
+                ),
+              ),
+
             // ── Day rows ──────────────────────────────────────────────────────
             ...days.asMap().entries.map((e) {
               final idx = e.key;
@@ -96,6 +124,33 @@ class ScheduleCard extends StatelessWidget {
               );
             }),
 
+            // ── Legend ────────────────────────────────────────────────────────
+            if (days.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 10, 16, 4),
+                child: Row(
+                  children: [
+                    _LegendItem(
+                      color: AppColors.chart1,
+                      label: 'Trabajo',
+                      muted: muted,
+                    ),
+                    const SizedBox(width: 14),
+                    _LegendItem(
+                      color: AppColors.chart1.withValues(alpha: 0.4),
+                      label: 'Refrigerio',
+                      muted: muted,
+                    ),
+                    const SizedBox(width: 14),
+                    _LegendItem(
+                      color: trackColor,
+                      label: 'Fuera',
+                      muted: muted,
+                    ),
+                  ],
+                ),
+              ),
+
             // ── Hint ──────────────────────────────────────────────────────────
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -109,6 +164,39 @@ class ScheduleCard extends StatelessWidget {
         ),
       );
     });
+  }
+}
+
+// ── Legend item ───────────────────────────────────────────────────────────────
+
+class _LegendItem extends StatelessWidget {
+  final Color color;
+  final String label;
+  final Color muted;
+
+  const _LegendItem({
+    required this.color,
+    required this.label,
+    required this.muted,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 8,
+          height: 8,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: TextStyle(color: muted, fontSize: 10),
+        ),
+      ],
+    );
   }
 }
 
@@ -137,6 +225,8 @@ class _DayRow extends StatelessWidget {
   Color get _muted => isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
   Color get _value => isDark ? Colors.white : const Color(0xff1f2937);
 
+  String get _abbrev => dayKey.substring(0, 3).toUpperCase();
+
   @override
   Widget build(BuildContext context) {
     final dayMins = dayWorkMins(sched);
@@ -151,13 +241,13 @@ class _DayRow extends StatelessWidget {
             child: Row(
               children: [
                 SizedBox(
-                  width: 80,
+                  width: 36,
                   child: Text(
-                    dayKey,
+                    _abbrev,
                     style: TextStyle(
                       color: sched.enabled ? _value : _muted,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
@@ -202,8 +292,9 @@ class _ScheduleBar extends StatelessWidget {
 
   const _ScheduleBar({required this.sched, required this.isDark});
 
-  static const _start = 480;
-  static const _end = 1020;
+  // 6:00 AM → 9:00 PM
+  static const _start = 360;
+  static const _end = 1260;
   static const _span = _end - _start;
 
   @override
@@ -240,7 +331,7 @@ class _ScheduleBar extends StatelessWidget {
               final width = ((e - s) / _span) * totalWidth;
               final color = block.type == BlockType.work
                   ? AppColors.chart1
-                  : AppColors.chart1.withValues(alpha: 0.3);
+                  : AppColors.chart1.withValues(alpha: 0.4);
               return Positioned(
                 left: left,
                 width: width,
@@ -295,13 +386,13 @@ class _BlockDetail extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isWork
                         ? AppColors.chart1
-                        : AppColors.chart1.withValues(alpha: 0.3),
+                        : AppColors.chart1.withValues(alpha: 0.4),
                     shape: BoxShape.circle,
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
-                  isWork ? 'Trabajo' : 'Descanso',
+                  isWork ? 'Trabajo' : 'Refrigerio',
                   style: TextStyle(
                     color: label,
                     fontSize: 11,

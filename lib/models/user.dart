@@ -1,5 +1,8 @@
 // lib/models/user.dart
 
+import '../utils/date_utils.dart';
+import '../utils/label_utils.dart';
+
 enum UserRole {
   admin,
   trainee,
@@ -42,20 +45,6 @@ class User {
     required this.updatedAt,
   });
 
-  String get fullName => '$firstName $lastName'.trim();
-
-  String get initials {
-    final String firstInitial = firstName.isNotEmpty ? firstName[0] : '';
-    final String lastInitial = lastName.isNotEmpty ? lastName[0] : '';
-    return '$firstInitial$lastInitial'.toUpperCase();
-  }
-
-  String get academicDetail {
-    final String careerText = career ?? 'Sin carrera';
-    final String cycleText = cycle != null ? '${cycle}mo' : 'Sin ciclo';
-    return '$careerText · $cycleText';
-  }
-
   factory User.fromJson(dynamic json) {
     final Map<String, dynamic> map = json as Map<String, dynamic>;
     return User(
@@ -70,50 +59,73 @@ class User {
       role: _roleFromJson(map['role'] as String?),
       status: _statusFromJson(map['status'] as String?),
       deviceToken: map['device_token'] as String?,
-      createdAt: _dateFromJson(map['created_at'] as String?),
-      updatedAt: _dateFromJson(map['updated_at'] as String?),
+      createdAt: dateFromJson(map['created_at'] as String?),
+      updatedAt: dateFromJson(map['updated_at'] as String?),
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'first_name': firstName,
-      'last_name': lastName,
-      'institutional_email': institutionalEmail,
-      'phone_number': phoneNumber,
-      'career': career,
-      'cycle': cycle,
-      'organization_id': organizationId,
-      'role': role.name,
-      'status': status.name,
-      'device_token': deviceToken,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
-    };
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'first_name': firstName,
+    'last_name': lastName,
+    'institutional_email': institutionalEmail,
+    'phone_number': phoneNumber,
+    'career': career,
+    'cycle': cycle,
+    'organization_id': organizationId,
+    'role': role.name,
+    'status': status.name,
+    'device_token': deviceToken,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+  };
+
+  String get fullName => '$firstName $lastName'.trim();
+
+  String get initials {
+    final String firstInitial = firstName.isNotEmpty ? firstName[0] : '';
+    final String lastInitial = lastName.isNotEmpty ? lastName[0] : '';
+    return '$firstInitial$lastInitial'.toUpperCase();
   }
 
-  static UserRole _roleFromJson(String? value) {
-    return UserRole.values.firstWhere(
-      (role) => role.name == value,
-      orElse: () => UserRole.trainee,
-    );
+  String get academicDetail {
+    final String careerText = career ?? 'Sin carrera';
+    final String cycleText = cycle != null ? cicloLabel(cycle!) : 'Sin ciclo';
+    return '$careerText · $cycleText';
   }
 
-  static UserStatus _statusFromJson(String? value) {
-    return UserStatus.values.firstWhere(
-      (status) => status.name == value,
-      orElse: () => UserStatus.pending,
-    );
-  }
+  static UserRole _roleFromJson(String? value) => UserRole.values.firstWhere(
+    (role) => role.name == value,
+    orElse: () => UserRole.trainee,
+  );
 
-  static DateTime _dateFromJson(String? value) {
-    return DateTime.tryParse(value ?? '') ??
-        DateTime.fromMillisecondsSinceEpoch(0);
-  }
+  static UserStatus _statusFromJson(String? value) => UserStatus.values.firstWhere(
+    (status) => status.name == value,
+    orElse: () => UserStatus.pending,
+  );
 
   @override
-  String toString() {
-    return 'User{id: $id, firstName: $firstName, lastName: $lastName, institutionalEmail: $institutionalEmail, phoneNumber: $phoneNumber, career: $career, cycle: $cycle, organizationId: $organizationId, role: $role, status: $status, deviceToken: $deviceToken, createdAt: $createdAt, updatedAt: $updatedAt}';
-  }
+  String toString() =>
+      'User{id: $id, firstName: $firstName, lastName: $lastName, '
+      'institutionalEmail: $institutionalEmail, phoneNumber: $phoneNumber, '
+      'career: $career, cycle: $cycle, organizationId: $organizationId, '
+      'role: $role, status: $status, deviceToken: $deviceToken, '
+      'createdAt: $createdAt, updatedAt: $updatedAt}';
 }
+
+const kCarreras = [
+  'Administración',
+  'Comunicación',
+  'Derecho',
+  'Ingeniería Ambiental',
+  'Ingeniería Industrial',
+  'Ingeniería de Sistemas',
+  'Negocios Internacionales',
+  'Arquitectura',
+  'Contabilidad y Finanzas',
+  'Economía',
+  'Ingeniería Civil',
+  'Ingeniería Mecatrónica',
+  'Marketing',
+  'Psicología',
+];

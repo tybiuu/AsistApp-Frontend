@@ -70,7 +70,6 @@ class _AdminProfileEditCard extends StatelessWidget {
     return EditableInfoCard(
       title: 'Mi perfil',
       onCancel: controller.cancelProfileEdit,
-      onSave: () => controller.saveProfile(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -86,7 +85,7 @@ class _AdminProfileEditCard extends StatelessWidget {
             controller: controller.lastNameController,
           ),
           const SizedBox(height: 18),
-          AdminPhoneField(controller: controller),
+          AdminPhoneField(controller: controller.phoneController),
           const SizedBox(height: 18),
           AdminDisabledEmailField(email: admin.institutionalEmail),
           const SizedBox(height: 28),

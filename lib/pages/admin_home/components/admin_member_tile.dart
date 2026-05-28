@@ -1,9 +1,9 @@
-// lib/components/admin_member_tile.dart
+// lib/pages/admin_home/components/admin_member_tile.dart
 
 import 'package:flutter/material.dart';
 
-import '../configs/theme.dart';
-import '../models/user.dart';
+import '../../../configs/theme.dart';
+import '../../../models/user.dart';
 
 class AdminMemberTile extends StatelessWidget {
   final User member;

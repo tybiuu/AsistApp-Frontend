@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../components/admin_member_tile.dart';
+import 'admin_member_tile.dart';
 import '../../../models/user.dart';
 import '../admin_home_controller.dart';
 

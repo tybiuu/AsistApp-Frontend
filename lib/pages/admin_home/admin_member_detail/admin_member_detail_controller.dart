@@ -1,29 +1,12 @@
 // lib/pages/admin_home/admin_member_detail/admin_member_detail_controller.dart
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../models/schedule.dart';
 import '../../../models/user.dart';
-
-class MemberMetric {
-  final String label;
-  final String value;
-  final String subtitle;
-  final Color valueColor;
-  final double? progress;
-
-  const MemberMetric({
-    required this.label,
-    required this.value,
-    required this.subtitle,
-    required this.valueColor,
-    this.progress,
-  });
-}
+import '../../../services/schedule_service.dart';
+import '../admin_home_models.dart';
 
 class AdminMemberDetailController extends GetxController {
   late final User member;
@@ -80,62 +63,7 @@ class AdminMemberDetailController extends GetxController {
   }
 
   Future<void> _loadSchedule() async {
-    try {
-      final String response = await rootBundle.loadString(
-        'assets/jsons/mock_schedules.json',
-      );
-      final List<dynamic> data = jsonDecode(response);
-      if (data.isEmpty) return;
-
-      final userSchedule = data.firstWhere(
-        (s) => s['user_id'] == member.id,
-        orElse: () => data.first,
-      );
-
-      const dayMap = {
-        'monday': 'Lunes',
-        'tuesday': 'Martes',
-        'wednesday': 'Miércoles',
-        'thursday': 'Jueves',
-        'friday': 'Viernes',
-        'saturday': 'Sábado',
-        'sunday': 'Domingo',
-      };
-
-      final newSchedule = Map<String, DaySchedule>.from(schedule);
-      for (var d in userSchedule['days'] as List<dynamic>) {
-        final dayName = dayMap[d['day']] ?? d['day'] as String;
-
-        String? checkIn = d['check_in_time'] as String?;
-        String? lunchStart = d['lunch_start_time'] as String?;
-        String? lunchEnd = d['lunch_end_time'] as String?;
-        String? checkOut = d['check_out_time'] as String?;
-
-        if (checkIn != null && checkIn.length > 5) checkIn = checkIn.substring(0, 5);
-        if (lunchStart != null && lunchStart.length > 5) lunchStart = lunchStart.substring(0, 5);
-        if (lunchEnd != null && lunchEnd.length > 5) lunchEnd = lunchEnd.substring(0, 5);
-        if (checkOut != null && checkOut.length > 5) checkOut = checkOut.substring(0, 5);
-
-        if (checkIn != null && checkOut != null) {
-          final blocks = <ScheduleBlock>[];
-          if (lunchStart != null && lunchEnd != null) {
-            blocks.addAll([
-              ScheduleBlock(type: BlockType.work, start: checkIn, end: lunchStart),
-              ScheduleBlock(type: BlockType.breakTime, start: lunchStart, end: lunchEnd),
-              ScheduleBlock(type: BlockType.work, start: lunchEnd, end: checkOut),
-            ]);
-          } else {
-            blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
-          }
-          if (newSchedule.containsKey(dayName)) {
-            newSchedule[dayName] = DaySchedule(enabled: true, blocks: blocks);
-          }
-        }
-      }
-      schedule.assignAll(newSchedule);
-    } catch (e) {
-      debugPrint('Error loading member schedule: $e');
-    }
+    schedule.assignAll(await ScheduleService.loadMock(member.id));
   }
 
   void toggleDay(int idx) {

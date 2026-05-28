@@ -5,8 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../components/number_stepper.dart';
+import '../../../components/primary_button.dart';
 import '../../../configs/theme.dart';
-import '../../../models/schedule.dart';
+import '../../../utils/label_utils.dart';
 import '../profile_controller.dart';
 
 /// Card that shows personal data in view mode and a form in edit mode.
@@ -179,7 +180,7 @@ class _ViewRows extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           child: Row(
             children: [
-              Icon(row.$1, size: 15, color: const Color(0xfffb923c)),
+              Icon(row.$1, size: 15, color: AppColors.chart1),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
@@ -270,7 +271,7 @@ class _EditForm extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 16),
-        _saveBtn(),
+        PrimaryButton(text: 'Guardar cambios', onPressed: c.saveEdit),
       ],
     ),
   );
@@ -348,25 +349,6 @@ class _EditForm extends StatelessWidget {
     ],
   );
 
-  Widget _saveBtn() => GestureDetector(
-    onTap: c.saveEdit,
-    child: Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: AppColors.chart1,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      alignment: Alignment.center,
-      child: const Text(
-        'Guardar cambios',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-        ),
-      ),
-    ),
-  );
 }
 
 // ── Carrera dropdown ──────────────────────────────────────────────────────────

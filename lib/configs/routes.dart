@@ -3,7 +3,6 @@
 class AppRoutes {
   const AppRoutes._();
 
-  static const String splash = '/splash';
   static const String welcome = '/welcome';
   static const String login = '/login';
   static const String roleSelect = '/role-select';
@@ -11,7 +10,6 @@ class AppRoutes {
   static const String orgCode = '/org-code';
   static const String pending = '/pending';
   static const String home = '/home';
-  static const String adminDashboard = '/admin-dashboard';
   static const String adminHome = '/admin-home';
   static const String adminValidate = '/admin-validate';
   static const String adminAnalytics = '/admin-analytics';

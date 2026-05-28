@@ -3,16 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../components/app_top_bar.dart';
+import '../../../components/role_badge.dart';
+import '../../../configs/routes.dart';
 import '../../../configs/theme.dart';
-import 'pending_controller.dart';
+import '../../../services/session_service.dart';
+import '../role_select/role_select_controller.dart';
 
 class PendingPage extends StatelessWidget {
   const PendingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(PendingController());
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final args = (Get.arguments as Map<String, dynamic>?) ?? {};
+    final String organizationName = args['organizationName'] as String? ?? '';
 
     final List<Map<String, dynamic>> steps = [
       {'step': '1', 'text': 'El jefe de área revisa tu solicitud', 'done': true},
@@ -28,8 +32,15 @@ class PendingPage extends StatelessWidget {
           children: [
             AppTopBar(
               title: '',
-              showBack: true,
-              onBack: controller.goToHome,
+              actions: [
+                TextButton(
+                  onPressed: () async {
+                    await SessionService.to.logout();
+                    Get.offAllNamed(AppRoutes.welcome);
+                  },
+                  child: const Text('Salir'),
+                ),
+              ],
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -43,8 +54,8 @@ class PendingPage extends StatelessWidget {
                       margin: const EdgeInsets.only(bottom: 24),
                       decoration: BoxDecoration(
                         color: isDark
-                            ? AppColors.chart1.withValues(alpha: 0.3)
-                            : const Color(0xfffff7ed),
+                            ? const Color(0xff1e3a8a).withValues(alpha: 0.3)
+                            : const Color(0xffdbeafe),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -58,38 +69,18 @@ class PendingPage extends StatelessWidget {
                         child: Icon(
                           Icons.access_time_filled,
                           size: 40,
-                          color: AppColors.chart1,
+                          color: isDark
+                              ? const Color(0xff60a5fa)
+                              : const Color(0xff1d4ed8),
                         ),
                       ),
                     ),
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.chart1.withValues(alpha: 0.3)
-                            : const Color(0xfffff7ed),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.school_rounded,
-                              size: 13, color: AppColors.chart1),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Practicante',
-                            style: TextStyle(
-                              color: AppColors.chart1,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                    const RoleBadge(
+                      role: RoleOption.practitioner,
+                      showSubtitle: false,
                     ),
+                    const SizedBox(height: 16),
 
                     Text(
                       'Solicitud enviada',
@@ -113,11 +104,10 @@ class PendingPage extends StatelessWidget {
                         children: [
                           const TextSpan(text: 'Tu solicitud para unirte a '),
                           TextSpan(
-                            text: 'ITLAB',
+                            text: organizationName,
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
-                              color:
-                                  Theme.of(context).colorScheme.onSurface,
+                              color: Theme.of(context).colorScheme.onSurface,
                             ),
                           ),
                           const TextSpan(

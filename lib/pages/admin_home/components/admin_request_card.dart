@@ -1,9 +1,9 @@
-// lib/components/admin_request_card.dart
+// lib/pages/admin_home/components/admin_request_card.dart
 
 import 'package:flutter/material.dart';
 
-import '../configs/theme.dart';
-import '../pages/admin_home/components/admin_home_summary.dart';
+import '../../../configs/theme.dart';
+import '../admin_home_models.dart';
 
 class AdminRequestCard extends StatelessWidget {
   final AdminRequestSummary request;

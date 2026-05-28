@@ -6,37 +6,11 @@ import 'package:get/get.dart';
 import '../../../components/app_top_bar.dart';
 import '../../../components/primary_button.dart';
 import '../../../models/user.dart';
+import '../../../utils/date_utils.dart';
 import 'admin_member_request_controller.dart';
 
 class AdminMemberRequestPage extends StatelessWidget {
   const AdminMemberRequestPage({super.key});
-
-  String _formatRequestDate(DateTime date) {
-    final DateTime now = DateTime.now();
-    final bool isToday =
-        date.year == now.year && date.month == now.month && date.day == now.day;
-
-    final int displayHour = date.hour % 12 == 0 ? 12 : date.hour % 12;
-    final String minute = date.minute.toString().padLeft(2, '0');
-    final String period = date.hour < 12 ? 'AM' : 'PM';
-
-    if (isToday) {
-      return 'Hoy, $displayHour:$minute $period';
-    }
-
-    final DateTime yesterday = now.subtract(const Duration(days: 1));
-    if (date.year == yesterday.year &&
-        date.month == yesterday.month &&
-        date.day == yesterday.day) {
-      return 'Ayer, $displayHour:$minute $period';
-    }
-
-    const List<String> months = [
-      'ene', 'feb', 'mar', 'abr', 'may', 'jun',
-      'jul', 'ago', 'sep', 'oct', 'nov', 'dic',
-    ];
-    return '${date.day} ${months[date.month - 1]}, $displayHour:$minute $period';
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,7 +104,7 @@ class AdminMemberRequestPage extends StatelessWidget {
                           const SizedBox(height: 10),
                           _InfoRow(
                             label: 'Solicitó',
-                            value: _formatRequestDate(member.createdAt),
+                            value: formatRequestDate(member.createdAt),
                             icon: Icons.calendar_today_outlined,
                             colors: colors,
                           ),
@@ -139,11 +113,11 @@ class AdminMemberRequestPage extends StatelessWidget {
                     ),
                     const SizedBox(height: 24),
                     PrimaryButton(
-                      variant: PrimaryButtonVariant.primary,
+                      variant: PrimaryButtonVariant.success,
                       onPressed: controller.acceptMember,
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
+                        children: [
                           Icon(Icons.check_circle_outline_rounded, size: 20),
                           SizedBox(width: 8),
                           Text('Aceptar solicitud'),
@@ -151,7 +125,18 @@ class AdminMemberRequestPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    _RejectButton(onPressed: controller.rejectMember),
+                    PrimaryButton(
+                      variant: PrimaryButtonVariant.destructive,
+                      onPressed: controller.rejectMember,
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.cancel_outlined, size: 20),
+                          SizedBox(width: 8),
+                          Text('Rechazar solicitud'),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -207,41 +192,3 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-class _RejectButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const _RejectButton({required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 54,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Theme.of(context).colorScheme.error,
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.error,
-            width: 1.5,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.cancel_outlined, size: 20),
-            SizedBox(width: 8),
-            Text('Rechazar solicitud'),
-          ],
-        ),
-      ),
-    );
-  }
-}

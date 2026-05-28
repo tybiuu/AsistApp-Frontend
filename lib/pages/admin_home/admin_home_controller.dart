@@ -10,7 +10,7 @@ import '../../services/attendance_request_service.dart';
 import '../../services/organization_service.dart';
 import '../../services/schedule_change_request_service.dart';
 import '../../services/trainee_service.dart';
-import 'components/admin_home_summary.dart';
+import 'admin_home_models.dart';
 
 class AdminHomeController extends GetxController {
   final OrganizationService _organizationService = OrganizationService();

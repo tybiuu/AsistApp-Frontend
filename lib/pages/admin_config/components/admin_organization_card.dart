@@ -43,7 +43,10 @@ class AdminOrganizationCard extends StatelessWidget {
             icon: Icons.business_rounded,
             label: 'Nombre del laboratorio',
             value: organization.name,
-            leading: OrganizationAvatar(organization: organization),
+            leading: OrganizationAvatar(
+                organization: organization,
+                photoBytes: controller.savedOrganizationPhotoBytes,
+              ),
           ),
           InfoRowData(
             icon: Icons.schedule_rounded,
@@ -75,7 +78,6 @@ class _OrganizationEditCard extends StatelessWidget {
     return EditableInfoCard(
       title: 'Mi organización',
       onCancel: controller.cancelOrganizationEdit,
-      onSave: controller.saveOrganization,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

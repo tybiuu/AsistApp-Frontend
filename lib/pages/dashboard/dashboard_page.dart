@@ -12,14 +12,30 @@ import '../attendance/attendance_page.dart';
 import '../report/report_page.dart';
 import '../profile/profile_page.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final controller = Get.put(DashboardController());
+  State<DashboardPage> createState() => _DashboardPageState();
+}
 
-    // Practitioner views
+class _DashboardPageState extends State<DashboardPage> {
+  late final DashboardController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(DashboardController());
+  }
+
+  @override
+  void dispose() {
+    Get.delete<DashboardController>(force: true);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final practitionerViews = [
       const HomePage(),
       const AttendancePage(),
@@ -27,7 +43,6 @@ class DashboardPage extends StatelessWidget {
       const ProfilePage(),
     ];
 
-    // Admin views
     final adminViews = [
       const AdminHomePage(),
       const AdminValidatePage(),

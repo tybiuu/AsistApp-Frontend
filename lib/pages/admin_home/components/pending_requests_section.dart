@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../components/admin_request_card.dart';
 import '../admin_home_controller.dart';
-import 'admin_home_summary.dart';
+import '../admin_home_models.dart';
+import 'admin_request_card.dart';
 
 class PendingRequestsSection extends StatelessWidget {
   final AdminHomeController controller;

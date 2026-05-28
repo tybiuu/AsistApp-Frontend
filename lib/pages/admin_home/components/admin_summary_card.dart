@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import '../../../components/primary_button.dart';
 import '../../../configs/theme.dart';
 import '../admin_home_controller.dart';
-import 'admin_home_summary.dart';
+import '../admin_home_models.dart';
 
 class AdminSummaryCard extends StatelessWidget {
   final AdminHomeController controller;
