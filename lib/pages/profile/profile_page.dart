@@ -1,5 +1,6 @@
 // lib/pages/profile/profile_page.dart
 
+import 'package:asist_app/configs/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -54,7 +55,7 @@ class ProfilePage extends StatelessWidget {
                     PrimaryButton(
                       text: 'Solicitar cambio de horario',
                       variant: PrimaryButtonVariant.secondary,
-                      onPressed: () {}, // TODO: navigate to change-schedule
+                      onPressed: () => Get.toNamed(AppRoutes.adminScheduleValidation) // TODO: switch case for admin and intern student
                     ),
                     const SizedBox(height: 16),
 
