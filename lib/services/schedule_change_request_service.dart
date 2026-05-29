@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../configs/generic_response.dart';
 
@@ -16,6 +17,16 @@ class ScheduleChangeRequestService {
       final List<Map<String, dynamic>> requests = jsonList
           .map((json) => json as Map<String, dynamic>)
           .toList();
+
+      // Merge locally created requests stored in SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      final localRaw = prefs.getString('local_schedule_change_requests');
+      if (localRaw != null) {
+        try {
+          final List<dynamic> localList = json.decode(localRaw);
+          requests.addAll(localList.map((e) => e as Map<String, dynamic>));
+        } catch (_) {}
+      }
 
       return GenericResponse(
         success: true,

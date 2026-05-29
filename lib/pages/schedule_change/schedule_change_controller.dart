@@ -1,5 +1,6 @@
 import 'dart:convert';
-
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
@@ -62,6 +63,36 @@ class ScheduleChangeController extends GetxController {
     } finally {
       isLoading.value = false;
     }
+  }
+
+  /// Edita un bloque existente mostrando selectores de hora.
+  Future<void> editBlockTime(String dayKey, int blockIndex) async {
+    final currentDay = weeklySchedule[dayKey];
+    if (currentDay == null) return;
+    if (blockIndex < 0 || blockIndex >= currentDay.blocks.length) return;
+
+    final block = currentDay.blocks[blockIndex];
+
+    // Parse current times to TimeOfDay
+    TimeOfDay parse(String t) {
+      final parts = t.split(':');
+      return TimeOfDay(hour: int.parse(parts[0]), minute: int.parse(parts[1]));
+    }
+
+    final ctx = Get.context;
+    if (ctx == null) return;
+
+    final startTOD = await showTimePicker(context: ctx, initialTime: parse(block.start));
+    if (startTOD == null) return;
+    final endTOD = await showTimePicker(context: ctx, initialTime: parse(block.end));
+    if (endTOD == null) return;
+
+    String fmt(TimeOfDay t) => t.hour.toString().padLeft(2, '0') + ':' + t.minute.toString().padLeft(2, '0');
+
+    final updatedBlocks = List<ScheduleBlock>.from(currentDay.blocks);
+    updatedBlocks[blockIndex] = ScheduleBlock(type: block.type, start: fmt(startTOD), end: fmt(endTOD));
+
+    weeklySchedule[dayKey] = DaySchedule(enabled: currentDay.enabled, blocks: updatedBlocks);
   }
 
   Map<String, DaySchedule> _defaultSchedule() {
@@ -192,6 +223,27 @@ class ScheduleChangeController extends GetxController {
   }
 
   void submitForApproval() {
-    isSubmitted.value = true;
+    // Build a lightweight request object with full week snapshot
+    final request = {
+      'id': 'scr-local-' + DateTime.now().millisecondsSinceEpoch.toString(),
+      'user_id': 'usr-trainee-001',
+      'status': 'pending',
+      'created_at': DateTime.now().toUtc().toIso8601String(),
+      'payload': weeklySchedule.map((k, v) => MapEntry(k, {
+            'enabled': v.enabled,
+            'blocks': v.blocks
+                .map((b) => {'type': b.type.toString().split('.').last, 'start': b.start, 'end': b.end})
+                .toList()
+          })),
+    };
+
+    // Persist locally in SharedPreferences (merged with mock file when listing)
+    SharedPreferences.getInstance().then((prefs) {
+      final raw = prefs.getString('local_schedule_change_requests');
+      final List<dynamic> existing = raw == null ? [] : jsonDecode(raw) as List<dynamic>;
+      existing.add(request);
+      prefs.setString('local_schedule_change_requests', jsonEncode(existing));
+      isSubmitted.value = true;
+    });
   }
 }
