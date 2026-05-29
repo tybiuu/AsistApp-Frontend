@@ -1,5 +1,5 @@
 // lib/pages/profile/profile_page.dart
-
+import '../attendance/missing_attendance_request_page.dart';
 import 'package:asist_app/configs/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -64,7 +64,14 @@ class ProfilePage extends StatelessWidget {
                         SolicitudItem(type: 'Asistencia faltante', date: '15 abril 2025', status: BadgeStatus.confirmed),
                         SolicitudItem(type: 'Cambio de horario', date: '8 abril 2025', status: BadgeStatus.pending),
                       ],
-                      onRequestAbsence: () {}, // TODO: navigate to request-absence
+                      onRequestAbsence: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MissingAttendanceRequestPage(),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
 
