@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AdminValidatePage extends StatelessWidget {
   const AdminValidatePage({super.key});
@@ -9,68 +12,227 @@ class AdminValidatePage extends StatelessWidget {
   static const Color border = Color(0xFF3A3A3A);
   static const Color muted = Color(0xFF9CA3AF);
 
+  Future<_AdminValidateData> _loadData() async {
+    final recordsString = await rootBundle.loadString(
+      'assets/jsons/mock_attendance_records.json',
+    );
+
+    final traineesString = await rootBundle.loadString(
+      'assets/jsons/mock_trainees.json',
+    );
+
+    final records = (jsonDecode(recordsString) as List<dynamic>)
+        .cast<Map<String, dynamic>>();
+
+    final trainees = (jsonDecode(traineesString) as List<dynamic>)
+        .cast<Map<String, dynamic>>();
+
+    return _AdminValidateData(records: records, trainees: trainees);
+  }
+
+  String _formatTime(dynamic value) {
+    if (value == null) return '-';
+
+    final text = value.toString();
+    if (text.length < 16) return '-';
+
+    return text.substring(11, 16);
+  }
+
+  String _initials(Map<String, dynamic>? trainee) {
+    if (trainee == null) return '--';
+
+    final first = trainee['first_name']?.toString() ?? '';
+    final last = trainee['last_name']?.toString() ?? '';
+
+    final f = first.isNotEmpty ? first[0] : '';
+    final l = last.isNotEmpty ? last[0] : '';
+
+    return '$f$l'.toUpperCase();
+  }
+
+  String _fullName(Map<String, dynamic>? trainee) {
+    if (trainee == null) return 'Practicante no encontrado';
+
+    final first = trainee['first_name']?.toString() ?? '';
+    final last = trainee['last_name']?.toString() ?? '';
+
+    return '$first $last'.trim();
+  }
+
+  String _careerText(Map<String, dynamic>? trainee) {
+    if (trainee == null) return 'Practicante';
+
+    final career = trainee['career']?.toString() ?? 'Sin carrera';
+    final cycle = trainee['cycle']?.toString() ?? '-';
+
+    return '$career · ${cycle}mo ciclo';
+  }
+
+  Map<String, dynamic>? _findTrainee(
+    List<Map<String, dynamic>> trainees,
+    String userId,
+  ) {
+    for (final trainee in trainees) {
+      if (trainee['id'] == userId) return trainee;
+    }
+    return null;
+  }
+
+  String _statusText(Map<String, dynamic> record) {
+    final status = record['status'];
+
+    if (status == 'pending') {
+      final lateMinutes = record['late_minutes'];
+      if (lateMinutes != null && lateMinutes > 0) return 'Tardanza';
+      return 'Pendiente';
+    }
+
+    if (status == 'confirmed') {
+      final lateMinutes = record['late_minutes'];
+      if (lateMinutes != null && lateMinutes > 0) return 'Tardanza';
+      return 'A tiempo';
+    }
+
+    if (status == 'absence') return 'Sin marcar';
+
+    return status.toString();
+  }
+
+  Color _statusColor(String status) {
+    if (status == 'A tiempo') return const Color(0xFF22C55E);
+    if (status == 'Tardanza') return const Color(0xFFF59E0B);
+    if (status == 'Sin marcar') return const Color(0xFF3B82F6);
+    return const Color(0xFF64748B);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-          children: const [
-            _Header(),
-            SizedBox(height: 18),
-            _SectionTitle(title: 'Esperando validación', count: '4'),
-            SizedBox(height: 12),
-            _ValidateCard(
-              initials: 'JP',
-              name: 'Juan Pérez Torres',
-              career: 'Practicante · 30h/sem',
-              status: 'Tardanza',
-              statusColor: Color(0xFFF59E0B),
-              inTime: '08:12',
-              snackStart: '13:00',
-              snackEnd: '14:00',
-              outTime: '17:00',
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: FutureBuilder<_AdminValidateData>(
+              future: _loadData(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      'Error al cargar datos',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                  );
+                }
+
+                final data = snapshot.data!;
+                final records = data.records;
+                final trainees = data.trainees;
+
+                final pendingRecords = records
+                    .where((record) => record['status'] == 'pending')
+                    .toList();
+
+                final confirmedRecords = records
+                    .where((record) => record['status'] == 'confirmed')
+                    .toList();
+
+                final validationRecords = [
+                  ...pendingRecords,
+                  ...confirmedRecords,
+                ];
+
+                final missingRecords = records
+                    .where((record) => record['status'] == 'absence')
+                    .toList();
+
+                return ListView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                  children: [
+                    const _Header(),
+                    const SizedBox(height: 18),
+
+                    _SectionTitle(
+                      title: 'Esperando validación',
+                      count: validationRecords.length.toString(),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    ...validationRecords.map((record) {
+                      final trainee = _findTrainee(
+                        trainees,
+                        record['user_id'].toString(),
+                      );
+
+                      final status = _statusText(record);
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _ValidateCard(
+                          initials: _initials(trainee),
+                          name: _fullName(trainee),
+                          career: _careerText(trainee),
+                          status: status,
+                          statusColor: _statusColor(status),
+                          inTime: _formatTime(record['check_in']),
+                          snackStart: _formatTime(record['lunch_start']),
+                          snackEnd: _formatTime(record['lunch_end']),
+                          outTime: _formatTime(record['check_out']),
+                        ),
+                      );
+                    }),
+
+                    const SizedBox(height: 12),
+
+                    _SectionTitle(
+                      title: 'Aún no han marcado',
+                      count: missingRecords.length.toString(),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    ...missingRecords.map((record) {
+                      final trainee = _findTrainee(
+                        trainees,
+                        record['user_id'].toString(),
+                      );
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _MissingCard(
+                          initials: _initials(trainee),
+                          name: _fullName(trainee),
+                          career: _careerText(trainee),
+                          inTime: 'Sin registro',
+                          outTime: 'Sin registro',
+                        ),
+                      );
+                    }),
+                  ],
+                );
+              },
             ),
-            SizedBox(height: 12),
-            _ValidateCard(
-              initials: 'CQ',
-              name: 'Carla Quispe Rojas',
-              career: 'Practicante · 30h/sem',
-              status: 'A tiempo',
-              statusColor: Color(0xFF22C55E),
-              inTime: '07:55',
-              snackStart: '13:00',
-              snackEnd: '14:00',
-              outTime: '17:00',
-            ),
-            SizedBox(height: 12),
-            _ValidateCard(
-              initials: 'PR',
-              name: 'Patricia Rojas Castillo',
-              career: 'Practicante · 25h/sem',
-              status: 'A tiempo',
-              statusColor: Color(0xFF22C55E),
-              inTime: '09:03',
-              snackStart: null,
-              snackEnd: null,
-              outTime: '14:00',
-            ),
-            SizedBox(height: 24),
-            _SectionTitle(title: 'Aún no han marcado', count: '1'),
-            SizedBox(height: 12),
-            _MissingCard(
-              initials: 'RF',
-              name: 'Roberto Flores Díaz',
-              career: 'Practicante · 20h/sem',
-              inTime: '14:00',
-              outTime: '19:00',
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
+}
+
+class _AdminValidateData {
+  final List<Map<String, dynamic>> records;
+  final List<Map<String, dynamic>> trainees;
+
+  const _AdminValidateData({
+    required this.records,
+    required this.trainees,
+  });
 }
 
 class _Header extends StatelessWidget {
@@ -98,11 +260,18 @@ class _Header extends StatelessWidget {
           ),
           child: const Row(
             children: [
-              Icon(Icons.calendar_today_rounded, color: AdminValidatePage.orange, size: 16),
+              Icon(
+                Icons.calendar_today_rounded,
+                color: AdminValidatePage.orange,
+                size: 16,
+              ),
               SizedBox(width: 8),
               Text(
-                'Hoy, 28 abr',
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+                'Hoy',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),

@@ -1,9 +1,81 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../configs/theme.dart';
 
 class ReportPage extends StatelessWidget {
   const ReportPage({super.key});
+
+  Future<List<dynamic>> _loadRecords() async {
+    final jsonString =
+        await rootBundle.loadString('assets/jsons/mock_attendance_records.json');
+    return jsonDecode(jsonString) as List<dynamic>;
+  }
+
+  String _formatDate(String date) {
+    final parts = date.split('-');
+    if (parts.length != 3) return date;
+
+    final day = parts[2];
+    final month = parts[1];
+
+    const months = {
+      '01': 'ene',
+      '02': 'feb',
+      '03': 'mar',
+      '04': 'abr',
+      '05': 'may',
+      '06': 'jun',
+      '07': 'jul',
+      '08': 'ago',
+      '09': 'sep',
+      '10': 'oct',
+      '11': 'nov',
+      '12': 'dic',
+    };
+
+    return '$day ${months[month] ?? month}';
+  }
+
+  String _formatTime(dynamic value) {
+    if (value == null) return '--:--';
+    final text = value.toString();
+    if (text.length < 16) return '--:--';
+
+    final hour = int.tryParse(text.substring(11, 13)) ?? 0;
+    final minute = text.substring(14, 16);
+    final suffix = hour >= 12 ? 'PM' : 'AM';
+    final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+
+    return '${hour12.toString().padLeft(2, '0')}:$minute $suffix';
+  }
+
+  String _statusText(Map<String, dynamic> record) {
+    if (record['status'] == 'absence') return 'Inasistencia';
+    if (record['status'] == 'pending') return 'Pendiente';
+
+    final lateMinutes = record['late_minutes'];
+    if (lateMinutes != null && lateMinutes > 0) return 'Tardanza';
+
+    return 'Puntual';
+  }
+
+  Color _statusColor(String status) {
+    if (status == 'Puntual') return const Color(0xff22c55e);
+    if (status == 'Tardanza') return AppColors.chart1;
+    if (status == 'Inasistencia') return const Color(0xffef4444);
+    return const Color(0xff3b82f6);
+  }
+
+  String _hoursText(dynamic totalMinutes) {
+    if (totalMinutes == null) return '--';
+    final minutes = totalMinutes as int;
+    final h = minutes ~/ 60;
+    final m = minutes % 60;
+    return '${h}h ${m.toString().padLeft(2, '0')}min';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -22,102 +94,80 @@ class ReportPage extends StatelessWidget {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
-            child: ListView(
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Icon(Icons.chevron_left_rounded, color: textColor),
-                    Text(
-                      'Mi historial',
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w800,
-                      ),
+            child: FutureBuilder<List<dynamic>>(
+              future: _loadRecords(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error al cargar registros',
+                      style: TextStyle(color: textColor),
                     ),
-                    const SizedBox(width: 28),
-                  ],
-                ),
-                const SizedBox(height: 18),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  );
+                }
+
+                final records = snapshot.data ?? [];
+
+                return ListView(
+                  padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
                   children: [
-                    _MonthButton(icon: Icons.chevron_left_rounded),
-                    Text(
-                      'Abril 2025',
-                      style: TextStyle(
-                        color: textColor,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Icon(Icons.chevron_left_rounded, color: textColor),
+                        Text(
+                          'Mi historial',
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 22,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        const SizedBox(width: 28),
+                      ],
                     ),
-                    _MonthButton(icon: Icons.chevron_right_rounded),
+                    const SizedBox(height: 18),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _MonthButton(icon: Icons.chevron_left_rounded),
+                        Text(
+                          'Mayo 2026',
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        _MonthButton(icon: Icons.chevron_right_rounded),
+                      ],
+                    ),
+                    const SizedBox(height: 18),
+
+                    ...records.map((item) {
+                      final record = item as Map<String, dynamic>;
+                      final status = _statusText(record);
+                      final color = _statusColor(status);
+
+                      return _HistoryItem(
+                        date: _formatDate(record['date'].toString()),
+                        status: status,
+                        statusColor: color,
+                        time:
+                            'Entrada: ${_formatTime(record['check_in'])}  Salida: ${_formatTime(record['check_out'])}',
+                        hours: _hoursText(record['total_minutes']),
+                        cardColor: cardColor,
+                        textColor: textColor,
+                        mutedColor: mutedColor,
+                      );
+                    }),
                   ],
-                ),
-                const SizedBox(height: 18),
-                _HistoryItem(
-                  date: 'Lun 28 abril',
-                  status: 'Puntual',
-                  statusColor: const Color(0xff22c55e),
-                  time: 'Entrada: 08:12 AM  Salida: 05:00 PM',
-                  hours: '8h 45min',
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                ),
-                _HistoryItem(
-                  date: 'Vie 25 abril',
-                  status: 'Tardanza',
-                  statusColor: AppColors.chart1,
-                  time: 'Entrada: 08:23 AM  Salida: 05:00 PM',
-                  hours: '8h 34min',
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                ),
-                _HistoryItem(
-                  date: 'Jue 24 abril',
-                  status: 'Puntual',
-                  statusColor: const Color(0xff22c55e),
-                  time: 'Entrada: 08:05 AM  Salida: 05:00 PM',
-                  hours: '8h 52min',
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                ),
-                _HistoryItem(
-                  date: 'Mié 23 abril',
-                  status: 'Puntual',
-                  statusColor: const Color(0xff22c55e),
-                  time: 'Entrada: 08:09 AM  Salida: 05:00 PM',
-                  hours: '8h 49min',
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                ),
-                _HistoryItem(
-                  date: 'Mar 22 abril',
-                  status: 'Puntual',
-                  statusColor: const Color(0xff22c55e),
-                  time: 'Entrada: 08:00 AM  Salida: 05:00 PM',
-                  hours: '9h 00m',
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                ),
-                _HistoryItem(
-                  date: 'Lun 21 abril',
-                  status: 'Puntual',
-                  statusColor: const Color(0xff22c55e),
-                  time: 'Entrada: 08:07 AM  Salida: 05:00 PM',
-                  hours: '8h 51min',
-                  cardColor: cardColor,
-                  textColor: textColor,
-                  mutedColor: mutedColor,
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),
@@ -190,14 +240,7 @@ class _HistoryItem extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    _StatusPill(
-                      text: status,
-                      color: statusColor,
-                    ),
-                  ],
-                ),
+                _StatusPill(text: status, color: statusColor),
                 const SizedBox(height: 8),
                 Text(
                   time,
@@ -241,10 +284,7 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 5,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: color.withOpacity(0.16),
         borderRadius: BorderRadius.circular(999),
