@@ -1,5 +1,8 @@
 // lib/main.dart
 
+import 'package:asist_app/pages/admin_schedule_validation/admin_schedule_validation_detail_page.dart';
+import 'package:asist_app/pages/admin_schedule_validation/admin_schedule_validation_page.dart';
+import 'package:asist_app/pages/schedule_change/schedule_change_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:get/get.dart';
@@ -76,6 +79,11 @@ class MyApp extends StatelessWidget {
             const AdminMemberRequestPage(),
         AppRoutes.adminMemberDetail: (context) =>
             const AdminMemberDetailPage(),
+        AppRoutes.adminScheduleValidation: (context) =>
+            const AdminScheduleValidationPage(),
+        AppRoutes.adminScheduleValidationDetail: (context) =>
+            const AdminScheduleValidationDetailPage(),
+        AppRoutes.scheduleChange: (context) => const ScheduleChangePage()
       },
     );
   }
