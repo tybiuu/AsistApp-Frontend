@@ -176,6 +176,8 @@ class AdminHomeController extends GetxController {
   void openRequest(AdminRequestSummary request) {
     if (request.type == 'members') {
       Get.toNamed(AppRoutes.adminNewMembers);
+    } else if (request.type == 'schedule') {
+      Get.toNamed(AppRoutes.adminScheduleValidation);
     }
   }
 

@@ -55,7 +55,7 @@ class ProfilePage extends StatelessWidget {
                     PrimaryButton(
                       text: 'Solicitar cambio de horario',
                       variant: PrimaryButtonVariant.secondary,
-                      onPressed: () => Get.toNamed(AppRoutes.adminScheduleValidation) // TODO: switch case for admin and intern student
+                      onPressed: () => Get.toNamed(AppRoutes.scheduleChange),
                     ),
                     const SizedBox(height: 16),
 

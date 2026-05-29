@@ -1,15 +1,16 @@
+import 'dart:convert';
+
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
 import '../../models/schedule.dart';
 
 class ScheduleChangeController extends GetxController {
-  // Estado de envío
   final isSubmitted = false.obs;
-
-  // Modalidad seleccionada (20, 25 o 30)
+  final isLoading = true.obs;
   final selectedTargetHours = 30.obs;
   final List<int> hourOptions = [20, 25, 30];
-
-  // Horario reactivo estructurado por días
+  final expandedDay = RxnInt();
   final weeklySchedule = <String, DaySchedule>{}.obs;
 
   @override
@@ -18,8 +19,53 @@ class ScheduleChangeController extends GetxController {
     _loadInitialSchedule();
   }
 
-  void _loadInitialSchedule() {
-    weeklySchedule.addAll({
+  Future<void> _loadInitialSchedule() async {
+    isLoading.value = true;
+
+    try {
+      final String response = await rootBundle.loadString(
+        'assets/jsons/mock_schedules.json',
+      );
+      final List<dynamic> data = jsonDecode(response);
+
+      final defaultSchedule = _defaultSchedule();
+      final userSchedule = data.isNotEmpty
+          ? data.firstWhere(
+              (schedule) => schedule['user_id'] == 'usr-trainee-001',
+              orElse: () => data.first,
+            )
+          : null;
+
+      if (userSchedule != null) {
+        selectedTargetHours.value = _normalizeTargetHours(
+          userSchedule['weekly_hours'] as int? ?? 30,
+        );
+
+        final scheduleMap = Map<String, DaySchedule>.from(defaultSchedule);
+
+        for (final dayRecord in userSchedule['days'] as List<dynamic>) {
+          final String dayLabel = _dayLabel(dayRecord['day']);
+          final List<ScheduleBlock> blocks = _buildBlocksFromDay(dayRecord);
+
+          scheduleMap[dayLabel] = DaySchedule(
+            enabled: blocks.isNotEmpty,
+            blocks: blocks,
+          );
+        }
+
+        weeklySchedule.assignAll(scheduleMap);
+      } else {
+        weeklySchedule.assignAll(defaultSchedule);
+      }
+    } catch (_) {
+      weeklySchedule.assignAll(_defaultSchedule());
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Map<String, DaySchedule> _defaultSchedule() {
+    return {
       'Lunes': const DaySchedule(
         enabled: true,
         blocks: [
@@ -38,7 +84,65 @@ class ScheduleChangeController extends GetxController {
       'Jueves': const DaySchedule(enabled: true, blocks: []),
       'Viernes': const DaySchedule(enabled: true, blocks: []),
       'Sábado': const DaySchedule(enabled: false, blocks: []),
-    });
+    };
+  }
+
+  String _dayLabel(dynamic dayValue) {
+    switch (dayValue.toString().toLowerCase()) {
+      case 'monday':
+        return 'Lunes';
+      case 'tuesday':
+        return 'Martes';
+      case 'wednesday':
+        return 'Miércoles';
+      case 'thursday':
+        return 'Jueves';
+      case 'friday':
+        return 'Viernes';
+      case 'saturday':
+        return 'Sábado';
+      case 'sunday':
+        return 'Domingo';
+      default:
+        return dayValue.toString();
+    }
+  }
+
+  List<ScheduleBlock> _buildBlocksFromDay(Map<String, dynamic> dayRecord) {
+    final String checkIn = _normalizeTime(dayRecord['check_in_time']);
+    final String lunchStart = _normalizeTime(dayRecord['lunch_start_time']);
+    final String lunchEnd = _normalizeTime(dayRecord['lunch_end_time']);
+    final String checkOut = _normalizeTime(dayRecord['check_out_time']);
+
+    final List<ScheduleBlock> blocks = [];
+
+    if (lunchStart.isNotEmpty && lunchEnd.isNotEmpty) {
+      blocks.add(
+        ScheduleBlock(type: BlockType.work, start: checkIn, end: lunchStart),
+      );
+      blocks.add(
+        ScheduleBlock(type: BlockType.breakTime, start: lunchStart, end: lunchEnd),
+      );
+      blocks.add(
+        ScheduleBlock(type: BlockType.work, start: lunchEnd, end: checkOut),
+      );
+      return blocks;
+    }
+
+    blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
+    return blocks;
+  }
+
+  String _normalizeTime(dynamic value) {
+    if (value == null) return '';
+    final String rawValue = value.toString();
+    return rawValue.length > 5 ? rawValue.substring(0, 5) : rawValue;
+  }
+
+  int _normalizeTargetHours(int value) {
+    if (value < 20) return 20;
+    if (value > 30) return 30;
+    return value;
   }
 
   /// Calcula el total de minutos de trabajo acumulados en la semana
@@ -66,8 +170,11 @@ class ScheduleChangeController extends GetxController {
     if (currentDay != null) {
       final updatedBlocks = List<ScheduleBlock>.from(currentDay.blocks)
         ..add(const ScheduleBlock(type: BlockType.work, start: '08:00', end: '12:00'));
-      
-      weeklySchedule[dayKey] = DaySchedule(enabled: currentDay.enabled, blocks: updatedBlocks);
+
+      weeklySchedule[dayKey] = DaySchedule(
+        enabled: currentDay.enabled,
+        blocks: updatedBlocks,
+      );
     }
   }
 
@@ -76,8 +183,11 @@ class ScheduleChangeController extends GetxController {
     if (currentDay != null) {
       final updatedBlocks = List<ScheduleBlock>.from(currentDay.blocks)
         ..removeAt(blockIndex);
-      
-      weeklySchedule[dayKey] = DaySchedule(enabled: currentDay.enabled, blocks: updatedBlocks);
+
+      weeklySchedule[dayKey] = DaySchedule(
+        enabled: currentDay.enabled,
+        blocks: updatedBlocks,
+      );
     }
   }
 

@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../components/app_top_bar.dart';
+import '../../components/info_card.dart';
+import '../../components/primary_button.dart';
+import '../../components/schedule_card.dart';
+import '../../components/status_badge.dart';
 import '../../models/schedule.dart';
 import 'admin_schedule_validation_controller.dart';
 
@@ -10,9 +15,16 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.find<AdminScheduleValidationController>();
-    final theme = Theme.of(context);
     final req = c.selectedRequest.value!;
-    const orangeColor = Color(0xffe15d27);
+    final expandedDay = RxnInt();
+    final previewSchedule = RxMap<String, DaySchedule>.from(
+      req.currentSchedule.map(
+        (day, blocks) => MapEntry(
+          day,
+          DaySchedule(enabled: blocks.isNotEmpty, blocks: blocks),
+        ),
+      ),
+    );
 
     return Scaffold(
       body: SafeArea(
@@ -25,124 +37,126 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Ficha Perfil Simplificada
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerLow,
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: theme.colorScheme.outlineVariant),
-                      ),
-                      child: Row(
-                        children: [
-                          CircleAvatar(
-                            backgroundColor: orangeColor,
-                            child: Text(req.initials, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(req.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-                                Text('${req.career} - ${cicloLabel(req.ciclo)}', style: const TextStyle(color: Colors.grey, fontSize: 12)),
-                                const SizedBox(height: 4),
-                                Text('🕒 ${req.targetHours}h / semana  •  📅 ${req.time}', style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.w500)),
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-
-                    // Motivo del Cambio Card
-                    const Text('MOTIVO DEL CAMBIO', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: orangeColor)),
-                    const SizedBox(height: 6),
-                    Container(
-                      padding: const EdgeInsets.all(14),
-                      decoration: BoxDecoration(
-                        color: orangeColor.withOpacity(0.05),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: orangeColor.withOpacity(0.15)),
-                      ),
-                      child: Text(
-                        '"${req.reason}"', 
-                        style: const TextStyle(fontSize: 13, fontStyle: FontStyle.italic, color: Color(0xffa13b12), height: 1.4),
-                      ),
-                    ),
-                    const SizedBox(height: 24),
-
-                    // Encabezado de la comparativa
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('DÍAS CON CAMBIOS (${req.changedDaysCount})', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
-                        Row(
-                          children: [
-                            _buildBadgeDot(Colors.orange, 'Mod.'),
-                            _buildBadgeDot(const Color(0xff10b981), 'Nuevo'),
-                          ],
-                        )
+                        Expanded(
+                          child: Text(
+                            req.name,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w800,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ),
+                        StatusBadge(status: _badgeStatus(req.status)),
                       ],
                     ),
                     const SizedBox(height: 12),
-
-                    // Renderización de los bloques comparativos dinámicos
+                    InfoCard(
+                      title: 'Datos del practicante',
+                      rows: [
+                        InfoRowData(
+                          icon: Icons.school,
+                          label: 'Carrera',
+                          value: req.career,
+                        ),
+                        InfoRowData(
+                          icon: Icons.timeline,
+                          label: 'Ciclo',
+                          value: cicloLabel(req.ciclo),
+                        ),
+                        InfoRowData(
+                          icon: Icons.schedule,
+                          label: 'Horas semanales',
+                          value: '${req.targetHours}h',
+                        ),
+                        InfoRowData(
+                          icon: Icons.calendar_today,
+                          label: 'Fecha de solicitud',
+                          value: req.time,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    InfoCard(
+                      title: 'Motivo del cambio',
+                      rows: [
+                        InfoRowData(
+                          icon: Icons.edit_note,
+                          label: 'Justificación',
+                          value: req.reason,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Horario actual del practicante',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    ScheduleCard(
+                      schedule: previewSchedule,
+                      expandedDay: expandedDay,
+                      onToggleDay: (index) {
+                        expandedDay.value = expandedDay.value == index ? null : index;
+                      },
+                    ),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Comparativa de bloques',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     if (req.currentSchedule.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
-                        child: Text('Cargando mapa de comparación...', textAlign: TextAlign.center, style: TextStyle(color: Colors.grey)),
+                        child: Text(
+                          'Cargando mapa de comparación...',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(color: Colors.grey),
+                        ),
                       )
                     else
                       ...req.proposedSchedule.keys.map((day) => _buildCompareDayTile(context, day, req)),
-
-                    const SizedBox(height: 24),
-
-                    // Botones de acción final del Admin
-                    ElevatedButton.icon(
+                    const SizedBox(height: 20),
+                    PrimaryButton(
+                      text: 'Aprobar horario',
                       onPressed: () => c.actionApprove(req.id),
-                      icon: const Icon(Icons.check_circle_outline, color: Colors.white, size: 20),
-                      label: const Text('Aprobar horario', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 15)),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xff10b981),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
                     ),
                     const SizedBox(height: 12),
-                    OutlinedButton.icon(
+                    PrimaryButton(
+                      text: 'Rechazar solicitud',
+                      variant: PrimaryButtonVariant.secondary,
                       onPressed: () => c.actionReject(req.id),
-                      icon: const Icon(Icons.cancel_outlined, color: Color(0xffef4444), size: 20),
-                      label: const Text('Rechazar solicitud', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xffef4444), fontSize: 15)),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xffef4444), width: 1.5),
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
                     ),
                   ],
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildBadgeDot(Color color, String text) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 10),
-      child: Row(
-        children: [
-          Container(width: 7, height: 7, decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-          const SizedBox(width: 4),
-          Text(text, style: const TextStyle(fontSize: 11, color: Colors.grey, fontWeight: FontWeight.bold)),
-        ],
-      ),
-    );
+  BadgeStatus _badgeStatus(String status) {
+    switch (status) {
+      case 'approved':
+        return BadgeStatus.confirmed;
+      case 'rejected':
+        return BadgeStatus.rejected;
+      default:
+        return BadgeStatus.pending;
+    }
   }
 
   Widget _buildCompareDayTile(BuildContext context, String dayName, ScheduleRequestModel req) {
@@ -176,7 +190,6 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Columna Izquierda: Actual
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -191,7 +204,6 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 4),
                 child: Icon(Icons.arrow_forward_rounded, color: Colors.grey, size: 16),
               ),
-              // Columna Derecha: Propuesto
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
