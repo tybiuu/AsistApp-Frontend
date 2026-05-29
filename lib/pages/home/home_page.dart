@@ -1,5 +1,5 @@
 // lib/pages/home/home_page.dart
-
+import '../report/report_page.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -474,12 +474,22 @@ class HomePage extends StatelessWidget {
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const Text(
-                          'Ver todos',
-                          style: TextStyle(
-                            color: AppColors.chart1,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
+                        InkWell(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ReportPage(),
+                              ),
+                            );
+                          },
+                          child: const Text(
+                            'Ver todos',
+                            style: TextStyle(
+                              color: AppColors.chart1,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ],
@@ -491,7 +501,17 @@ class HomePage extends StatelessWidget {
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
-                        child: _AttendanceRecord(
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(18),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const ReportPage(),
+                              ),
+                            );
+                          },
+                          child: _AttendanceRecord(
                           date: _formatDate(record['date'].toString()),
                           status: status,
                           statusColor: color,
@@ -501,6 +521,7 @@ class HomePage extends StatelessWidget {
                           cardColor: cardColor,
                           textColor: textColor,
                           mutedColor: mutedColor,
+                          ),
                         ),
                       );
                     }),

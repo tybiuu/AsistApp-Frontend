@@ -10,6 +10,7 @@ import '../../services/attendance_request_service.dart';
 import '../../services/organization_service.dart';
 import '../../services/schedule_change_request_service.dart';
 import '../../services/trainee_service.dart';
+import '../admin_validate/admin_missing_attendance_page.dart';
 import 'admin_home_models.dart';
 
 class AdminHomeController extends GetxController {
@@ -178,6 +179,8 @@ class AdminHomeController extends GetxController {
       Get.toNamed(AppRoutes.adminNewMembers);
     } else if (request.type == 'schedule') {
       Get.toNamed(AppRoutes.adminScheduleValidation);
+    } else if (request.type == 'attendance') {
+      Get.to(() => const AdminMissingAttendancePage());
     }
   }
 

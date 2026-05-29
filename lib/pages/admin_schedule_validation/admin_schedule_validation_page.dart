@@ -4,11 +4,20 @@ import 'package:get/get.dart';
 import '../../components/app_top_bar.dart';
 import '../../components/info_card.dart';
 import '../../components/status_badge.dart';
-import '../../models/schedule.dart';
 import 'admin_schedule_validation_controller.dart';
 
-class AdminScheduleValidationPage extends StatelessWidget {
-  const AdminScheduleValidationPage({super.key});
+class AdminScheduleValidationDetailPage extends StatelessWidget {
+  const AdminScheduleValidationDetailPage({super.key});
+
+  String cicloLabel(dynamic ciclo) {
+    if (ciclo == null) return '-';
+
+    final value = int.tryParse(ciclo.toString());
+
+    if (value == null) return ciclo.toString();
+
+    return '${value}mo ciclo';
+  }
 
   @override
   Widget build(BuildContext context) {
