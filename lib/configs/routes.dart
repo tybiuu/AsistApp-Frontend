@@ -19,7 +19,8 @@ class AppRoutes {
   static const String adminNewMembers = '/admin-new-members';
   static const String adminMemberRequest = '/admin-member-request';
   static const String adminMemberDetail = '/admin-member-detail';
-static const String adminScheduleValidation = '/admin-schedule-validation';
-static const String adminScheduleValidationDetail = '/admin-schedule-validation-detail';
+  static const String adminScheduleValidation = '/admin-schedule-validation';
+  static const String adminScheduleValidationDetail = '/admin-schedule-validation-detail';
   static const String scheduleChange = '/schedule-change';
+  static const String pdfReport = '/pdf-report';
 }
