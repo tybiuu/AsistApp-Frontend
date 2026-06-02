@@ -222,6 +222,26 @@ class ScheduleChangeController extends GetxController {
     }
   }
 
+  void changeBlockType(String dayKey, int blockIndex, BlockType newType) {
+    final currentDay = weeklySchedule[dayKey];
+    if (currentDay != null) {
+      if (blockIndex < 0 || blockIndex >= currentDay.blocks.length) return;
+
+      final block = currentDay.blocks[blockIndex];
+      final updatedBlocks = List<ScheduleBlock>.from(currentDay.blocks);
+      updatedBlocks[blockIndex] = ScheduleBlock(
+        type: newType,
+        start: block.start,
+        end: block.end,
+      );
+
+      weeklySchedule[dayKey] = DaySchedule(
+        enabled: currentDay.enabled,
+        blocks: updatedBlocks,
+      );
+    }
+  }
+
   void submitForApproval() {
     // Build a lightweight request object with full week snapshot
     final request = {
