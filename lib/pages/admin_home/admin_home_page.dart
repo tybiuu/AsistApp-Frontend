@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import '../../models/organization.dart';
 import 'admin_home_controller.dart';
 import 'components/active_members_section.dart';
-import 'components/admin_home_top_bar.dart';
 import 'components/admin_summary_card.dart';
 import 'components/pending_requests_section.dart';
 
@@ -33,7 +32,7 @@ class AdminHomePage extends StatelessWidget {
 
       return Column(
         children: [
-          AdminHomeTopBar(organization: organization),
+          _HomeTopBar(organization: organization),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(22, 14, 22, 18),
@@ -67,6 +66,32 @@ class AdminHomePage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       body: SafeArea(child: _content(context, controller)),
+    );
+  }
+}
+
+class _HomeTopBar extends StatelessWidget {
+  final Organization organization;
+
+  const _HomeTopBar({required this.organization});
+
+  @override
+  Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 22),
+      color: colors.surface,
+      alignment: Alignment.centerLeft,
+      child: Text(
+        organization.name,
+        style: TextStyle(
+          color: colors.onSurface,
+          fontSize: 14,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
     );
   }
 }

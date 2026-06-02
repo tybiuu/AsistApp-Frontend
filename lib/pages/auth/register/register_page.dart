@@ -3,11 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import 'register_controller.dart';
+import '../../../components/app_top_bar.dart';
+import '../../../components/role_badge.dart';
 import '../../setup/role_select/role_select_controller.dart';
-
-import 'components/register_header.dart';
-import 'components/role_badge.dart';
+import 'register_controller.dart';
 import 'components/personal_info_fields.dart';
 import 'components/practitioner_fields.dart';
 import 'components/password_fields.dart';
@@ -45,8 +44,14 @@ class _RegisterPageState extends State<RegisterPage> {
       body: SafeArea(
         child: Column(
           children: [
-            const RegisterHeader(),
-            RoleBadge(role: role),
+            const AppTopBar(title: 'Crea tu cuenta', showBack: true),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: RoleBadge(role: role),
+              ),
+            ),
             const SizedBox(height: 16),
             Expanded(
               child: SingleChildScrollView(

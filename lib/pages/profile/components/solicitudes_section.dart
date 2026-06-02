@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../components/status_badge.dart';
+import '../../../configs/theme.dart';
 
 /// Model for a single practitioner request.
 class SolicitudItem {
@@ -122,7 +123,7 @@ class _RequestAbsenceRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
             child: Row(
               children: [
-                const Icon(Icons.error_outline_rounded, color: Color(0xffe15d27), size: 18),
+                const Icon(Icons.error_outline_rounded, color: AppColors.chart1, size: 18),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Text(

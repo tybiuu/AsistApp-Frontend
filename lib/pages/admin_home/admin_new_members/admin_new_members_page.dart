@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../components/app_top_bar.dart';
-import '../../../components/member_request_card.dart';
+import 'components/member_request_card.dart';
 import 'admin_new_members_controller.dart';
 
 class AdminNewMembersPage extends StatelessWidget {

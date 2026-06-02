@@ -50,9 +50,9 @@ class StatusBadge extends StatelessWidget {
     if (status == null) return (customLabel!, customColor!);
     switch (status!) {
       case BadgeStatus.confirmed:
-        return ('Aprobado',  const Color(0xff16a34a));
+        return ('Confirmado', const Color(0xff16a34a));
       case BadgeStatus.pending:
-        return ('Pendiente', const Color(0xffd97706));
+        return ('Pendiente',  const Color(0xff1d4ed8));
       case BadgeStatus.rejected:
         return ('Rechazado', const Color(0xffef4444));
     }

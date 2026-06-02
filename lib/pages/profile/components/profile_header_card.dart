@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../configs/theme.dart';
-import '../../../models/schedule.dart';
+import '../../../utils/label_utils.dart';
 import '../profile_controller.dart';
 
 /// Top card: avatar, name, "Practicante" badge, and the three stats.
@@ -91,7 +91,7 @@ class ProfileHeaderCard extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'ITLAB',
+                c.organizationName.value,
                 style: TextStyle(color: muted, fontSize: 11),
               ),
             ],

@@ -5,7 +5,9 @@ import 'package:get/get.dart';
 
 import '../../../components/app_top_bar.dart';
 import '../../../components/member_metric_card.dart';
+import '../../../components/primary_button.dart';
 import '../../../components/schedule_card.dart';
+import '../../../utils/label_utils.dart';
 import 'admin_member_detail_controller.dart';
 
 class AdminMemberDetailPage extends StatelessWidget {
@@ -82,9 +84,9 @@ class AdminMemberDetailPage extends StatelessWidget {
                                           fontSize: 13,
                                         ),
                                       ),
-                                    if (member.cycle != null)
+                                                    if (member.cycle != null)
                                       Text(
-                                        '${member.cycle}mo ciclo',
+                                        cicloLabel(member.cycle!),
                                         style: TextStyle(
                                           color: colors.onSurfaceVariant,
                                           fontSize: 13,
@@ -157,7 +159,18 @@ class AdminMemberDetailPage extends StatelessWidget {
 
                     // ── Delete button ─────────────────────────────────────────
                     const SizedBox(height: 24),
-                    _DeleteButton(onPressed: controller.deleteMember),
+                    PrimaryButton(
+                      variant: PrimaryButtonVariant.destructive,
+                      onPressed: controller.deleteMember,
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.person_remove_outlined, size: 20),
+                          SizedBox(width: 8),
+                          Text('Eliminar miembro'),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -206,41 +219,3 @@ class _InfoRow extends StatelessWidget {
   }
 }
 
-class _DeleteButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const _DeleteButton({required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 54,
-      child: OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Theme.of(context).colorScheme.error,
-          side: BorderSide(
-            color: Theme.of(context).colorScheme.error,
-            width: 1.5,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: const [
-            Icon(Icons.person_remove_outlined, size: 20),
-            SizedBox(width: 8),
-            Text('Eliminar miembro'),
-          ],
-        ),
-      ),
-    );
-  }
-}

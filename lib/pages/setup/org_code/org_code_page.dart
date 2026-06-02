@@ -4,7 +4,9 @@ import 'package:get/get.dart';
 
 import '../../../components/app_top_bar.dart';
 import '../../../components/primary_button.dart';
+import '../../../components/role_badge.dart';
 import '../../../configs/theme.dart';
+import '../role_select/role_select_controller.dart';
 import 'org_code_controller.dart';
 
 class OrgCodePage extends StatelessWidget {
@@ -78,31 +80,9 @@ class OrgCodePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 32),
 
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.chart1.withValues(alpha: 0.3)
-                            : const Color(0xfffff7ed),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.school_rounded,
-                              size: 13, color: AppColors.chart1),
-                          const SizedBox(width: 6),
-                          Text(
-                            'Practicante',
-                            style: TextStyle(
-                              color: AppColors.chart1,
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                    const RoleBadge(
+                      role: RoleOption.practitioner,
+                      showSubtitle: false,
                     ),
                     const SizedBox(height: 24),
 
@@ -120,7 +100,7 @@ class OrgCodePage extends StatelessWidget {
                     const SizedBox(height: 8),
                     TextField(
                       onChanged: controller.setCode,
-                      maxLength: 9,
+                      maxLength: 14,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 24,

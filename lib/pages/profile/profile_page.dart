@@ -1,15 +1,13 @@
 // lib/pages/profile/profile_page.dart
-
+import '../attendance/missing_attendance_request_page.dart';
 import 'package:asist_app/configs/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
 import '../../components/primary_button.dart';
-import '../../components/status_badge.dart';
-import '../../services/session_service.dart';
 import '../../components/schedule_card.dart';
-import '../dashboard/dashboard_controller.dart';
+import '../../components/status_badge.dart';
 import 'profile_controller.dart';
 import 'components/profile_header_card.dart';
 import 'components/personal_data_card.dart';
@@ -21,10 +19,9 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.put(ProfileController());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xff0f1117) : const Color(0xffffffff),
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
       body: SafeArea(
         child: Column(
           children: [
@@ -44,7 +41,7 @@ class ProfilePage extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     // ── Schedule ─────────────────────────────────────────
-                    _SectionHeader(title: 'Mi horario', isDark: isDark),
+                    const _SectionHeader(title: 'Mi horario'),
                     const SizedBox(height: 10),
                     ScheduleCard(
                       schedule: c.schedule,
@@ -60,23 +57,26 @@ class ProfilePage extends StatelessWidget {
                     const SizedBox(height: 16),
 
                     // ── Solicitudes ───────────────────────────────────────
-                    _SectionHeader(title: 'Mis solicitudes', isDark: isDark),
+                    const _SectionHeader(title: 'Mis solicitudes'),
                     const SizedBox(height: 10),
                     SolicitudesSection(
                       solicitudes: const [
                         SolicitudItem(type: 'Asistencia faltante', date: '15 abril 2025', status: BadgeStatus.confirmed),
                         SolicitudItem(type: 'Cambio de horario', date: '8 abril 2025', status: BadgeStatus.pending),
                       ],
-                      onRequestAbsence: () {}, // TODO: navigate to request-absence
+                      onRequestAbsence: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const MissingAttendanceRequestPage(),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 16),
 
                     // ── Logout ────────────────────────────────────────────
-                    _LogoutButton(onTap: () async {
-                      await SessionService.to.logout();
-                      Get.delete<DashboardController>(force: true);
-                      Get.offAllNamed('/welcome');
-                    }),
+                    _LogoutButton(onTap: c.logout),
                   ],
                 ),
               ),
@@ -92,9 +92,8 @@ class ProfilePage extends StatelessWidget {
 
 class _SectionHeader extends StatelessWidget {
   final String title;
-  final bool isDark;
 
-  const _SectionHeader({required this.title, required this.isDark});
+  const _SectionHeader({required this.title});
 
   @override
   Widget build(BuildContext context) => Padding(
@@ -102,7 +101,7 @@ class _SectionHeader extends StatelessWidget {
     child: Text(
       title,
       style: TextStyle(
-        color: isDark ? Colors.white : const Color(0xff1f2937),
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 15,
         fontWeight: FontWeight.w800,
       ),

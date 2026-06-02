@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../configs/routes.dart';
+import '../../../models/user.dart';
+import '../../../services/session_service.dart';
 import '../../setup/role_select/role_select_controller.dart';
 
 class RegisterController extends GetxController {
@@ -110,30 +112,32 @@ class RegisterController extends GetxController {
 
     if (isLoading.value) return;
     isLoading.value = true;
-    
-    // Form values log
-    debugPrint('--- Registro Nuevo ---');
-    debugPrint('Rol: ${role.toString()}');
-    debugPrint('Nombres: ${nombres()}');
-    debugPrint('Apellidos: ${apellidos()}');
-    debugPrint('Correo: ${correo()}');
-    debugPrint('Celular: ${celular()}');
-    if (role == RoleOption.practitioner) {
-      debugPrint('Carrera: ${selectedCarrera()}');
-      debugPrint('Ciclo: ${selectedCiclo()}');
-    }
-    debugPrint('Password: ${password()}');
-    debugPrint('----------------------');
 
-    // Simulate delay
     await Future.delayed(const Duration(seconds: 1));
-    
+
+    final now = DateTime.now();
+    final isAdmin = role == RoleOption.admin;
+    final user = User(
+      id: now.millisecondsSinceEpoch.toString(),
+      firstName: nombres().trim(),
+      lastName: apellidos().trim(),
+      institutionalEmail: correo().trim(),
+      phoneNumber: celular().trim(),
+      career: isAdmin ? null : selectedCarrera().trim(),
+      cycle: isAdmin ? null : selectedCiclo.value,
+      role: isAdmin ? UserRole.admin : UserRole.trainee,
+      status: isAdmin ? UserStatus.active : UserStatus.pending,
+      createdAt: now,
+      updatedAt: now,
+    );
+    await SessionService.to.saveUser(user);
+
     isLoading.value = false;
 
-    if (role == RoleOption.admin) {
-      Get.toNamed('/admin-setup');
+    if (isAdmin) {
+      Get.toNamed(AppRoutes.adminSetup);
     } else {
-      Get.toNamed('/org-code');
+      Get.toNamed(AppRoutes.orgCode);
     }
   }
 
