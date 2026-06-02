@@ -18,7 +18,10 @@ class ScheduleChangePage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            const AppTopBar(title: 'Configura tu horario'),
+            const AppTopBar(
+              title: 'Configura tu horario',
+              showBack: true,
+            ),
             Expanded(
               child: Obx(() => c.isSubmitted.value ? const StatusView() : const EditorView()),
             ),

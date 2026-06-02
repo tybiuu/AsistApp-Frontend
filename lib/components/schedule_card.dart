@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../pages/schedule_change/schedule_change_controller.dart';
 
 import '../configs/theme.dart';
 import '../models/schedule.dart';
@@ -277,7 +278,7 @@ class _DayRow extends StatelessWidget {
             ),
           ),
         ),
-        if (isExpanded && sched.enabled) _BlockDetail(sched: sched, isDark: isDark),
+                if (isExpanded && sched.enabled) _BlockDetail(dayKey: dayKey, sched: sched, isDark: isDark),
         if (showDivider) Divider(height: 1, thickness: 1, color: _border),
       ],
     );
@@ -355,10 +356,11 @@ class _ScheduleBar extends StatelessWidget {
 // ── Block detail ──────────────────────────────────────────────────────────────
 
 class _BlockDetail extends StatelessWidget {
+  final String dayKey;
   final DaySchedule sched;
   final bool isDark;
 
-  const _BlockDetail({required this.sched, required this.isDark});
+  const _BlockDetail({required this.dayKey, required this.sched, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +368,9 @@ class _BlockDetail extends StatelessWidget {
     final label = isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280);
     final value = isDark ? Colors.white : const Color(0xff1f2937);
 
-    return Container(
+  final controller = Get.isRegistered<ScheduleChangeController>() ? Get.find<ScheduleChangeController>() : null;
+
+  return Container(
       margin: const EdgeInsets.fromLTRB(16, 0, 16, 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
@@ -374,44 +378,70 @@ class _BlockDetail extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
-        children: sched.blocks.map((b) {
-          final isWork = b.type == BlockType.work;
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 3),
-            child: Row(
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: isWork
-                        ? AppColors.chart1
-                        : AppColors.chart1.withValues(alpha: 0.4),
-                    shape: BoxShape.circle,
+        children: [
+          ...sched.blocks.asMap().entries.map((entry) {
+            final idx = entry.key;
+            final b = entry.value;
+            final isWork = b.type == BlockType.work;
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 3),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: isWork
+                          ? AppColors.chart1
+                          : AppColors.chart1.withValues(alpha: 0.3),
+                      shape: BoxShape.circle,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  isWork ? 'Trabajo' : 'Refrigerio',
-                  style: TextStyle(
-                    color: label,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
+                  const SizedBox(width: 8),
+                  Text(
+                    isWork ? 'Trabajo' : 'Descanso',
+                    style: TextStyle(
+                      color: label,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const Spacer(),
-                Text(
-                  '${b.start} – ${b.end}',
-                  style: TextStyle(
-                    color: value,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: controller == null ? null : () => controller.editBlockTime(dayKey, idx),
+                    child: Text(
+                      '${b.start} – ${b.end}',
+                      style: TextStyle(
+                        color: value,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
-                ),
-              ],
+                  const SizedBox(width: 8),
+                  if (controller != null)
+                    InkWell(
+                      onTap: () => controller.removeBlock(dayKey, idx),
+                      child: Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                    ),
+                ],
+              ),
+            );
+          }),
+          const SizedBox(height: 8),
+          if (Get.isRegistered<ScheduleChangeController>())
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                icon: const Icon(Icons.add_circle_outline, size: 18),
+                label: const Text('Agregar bloque'),
+                onPressed: () {
+                  final controller = Get.find<ScheduleChangeController>();
+                  controller.addBlock(dayKey);
+                },
+              ),
             ),
-          );
-        }).toList(),
+        ],
       ),
     );
   }
