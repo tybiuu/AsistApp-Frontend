@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
-import '../../components/info_card.dart';
 import '../../components/primary_button.dart';
-import '../../components/schedule_card.dart';
 import '../../components/status_badge.dart';
 import '../../models/schedule.dart';
 import 'admin_schedule_validation_controller.dart';
@@ -16,17 +14,10 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<AdminScheduleValidationController>();
     final req = c.selectedRequest.value!;
-    final expandedDay = RxnInt();
-    final previewSchedule = RxMap<String, DaySchedule>.from(
-      req.currentSchedule.map(
-        (day, blocks) => MapEntry(
-          day,
-          DaySchedule(enabled: blocks.isNotEmpty, blocks: blocks),
-        ),
-      ),
-    );
+    final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.brightness == Brightness.dark ? const Color(0xff0f1117) : const Color(0xffffffff),
       body: SafeArea(
         child: Column(
           children: [
@@ -37,85 +28,182 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
+                    // Header con nombre y estado
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: Text(
-                            req.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 18,
+                        Container(
+                          width: 56,
+                          height: 56,
+                          decoration: BoxDecoration(
+                            color: Colors.orange,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Center(
+                            child: Text(
+                              req.initials,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                         ),
-                        StatusBadge(status: _badgeStatus(req.status)),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      req.name,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                  StatusBadge(status: _badgeStatus(req.status)),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                req.career,
+                                style: TextStyle(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                cicloLabel(req.ciclo),
+                                style: TextStyle(
+                                  color: theme.colorScheme.onSurfaceVariant,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Métricas: horas, días, hora
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Icon(Icons.schedule, size: 16, color: Colors.orange),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${req.targetHours}h/semana',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Icon(Icons.calendar_today, size: 16, color: Colors.orange),
+                              const SizedBox(width: 6),
+                              Text(
+                                '${req.changedDaysCount} días',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Expanded(
+                          child: Row(
+                            children: [
+                              const Icon(Icons.access_time, size: 16, color: Colors.orange),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  req.time,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Motivo del cambio
+                    Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.orange.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'MOTIVO DEL CAMBIO',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.orange,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              '"${req.reason}"',
+                              style: const TextStyle(
+                                fontStyle: FontStyle.italic,
+                                fontSize: 13,
+                                color: Colors.orange,
+                                height: 1.4,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Días con cambios
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      child: Text(
+                        'DÍAS CON CAMBIOS (${req.proposedSchedule.length})',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: Colors.orange,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 12),
-                    InfoCard(
-                      title: 'Datos del practicante',
-                      rows: [
-                        InfoRowData(
-                          icon: Icons.school,
-                          label: 'Carrera',
-                          value: req.career,
-                        ),
-                        InfoRowData(
-                          icon: Icons.timeline,
-                          label: 'Ciclo',
-                          value: cicloLabel(req.ciclo),
-                        ),
-                        InfoRowData(
-                          icon: Icons.schedule,
-                          label: 'Horas semanales',
-                          value: '${req.targetHours}h',
-                        ),
-                        InfoRowData(
-                          icon: Icons.calendar_today,
-                          label: 'Fecha de solicitud',
-                          value: req.time,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    InfoCard(
-                      title: 'Motivo del cambio',
-                      rows: [
-                        InfoRowData(
-                          icon: Icons.edit_note,
-                          label: 'Justificación',
-                          value: req.reason,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Horario actual del practicante',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    ScheduleCard(
-                      schedule: previewSchedule,
-                      expandedDay: expandedDay,
-                      onToggleDay: (index) {
-                        expandedDay.value = expandedDay.value == index ? null : index;
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Comparativa de bloques',
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.grey,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
+
+                    // Comparativa de bloques por día
                     if (req.currentSchedule.isEmpty)
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
@@ -127,7 +215,10 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                       )
                     else
                       ...req.proposedSchedule.keys.map((day) => _buildCompareDayTile(context, day, req)),
-                    const SizedBox(height: 20),
+
+                    const SizedBox(height: 24),
+
+                    // Botones de acción
                     PrimaryButton(
                       text: 'Aprobar horario',
                       onPressed: () => c.actionApprove(req.id),
@@ -138,6 +229,7 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                       variant: PrimaryButtonVariant.secondary,
                       onPressed: () => c.actionReject(req.id),
                     ),
+                    const SizedBox(height: 16),
                   ],
                 ),
               ),
@@ -165,11 +257,11 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
     final proposedBlocks = req.proposedSchedule[dayName] ?? [];
 
     return Container(
-      margin: const EdgeInsets.only(bottom: 14),
+      margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(12),
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: Column(
@@ -180,7 +272,7 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
             children: [
               Text(dayName, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
                 child: const Text('Modificado', style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.bold)),
               )
@@ -195,21 +287,20 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('ACTUAL', style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     ...actualBlocks.map((b) => _buildSegmentLine(b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withOpacity(0.4), '${b.start} - ${b.end}')),
                   ],
                 ),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 4),
-                child: Icon(Icons.arrow_forward_rounded, color: Colors.grey, size: 16),
-              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.arrow_forward_rounded, color: Colors.grey, size: 18),
+              const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text('PROPUESTO', style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     ...proposedBlocks.map((b) => _buildSegmentLine(b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withOpacity(0.4), '${b.start} - ${b.end}')),
                   ],
                 ),
@@ -223,12 +314,14 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
 
   Widget _buildSegmentLine(Color dotColor, String segment) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
           Container(width: 6, height: 6, decoration: BoxDecoration(color: dotColor, shape: BoxShape.circle)),
-          const SizedBox(width: 6),
-          Text(segment, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(segment, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+          ),
         ],
       ),
     );
