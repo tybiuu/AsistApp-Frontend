@@ -21,7 +21,10 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            AppTopBar(title: 'Cambio de horario — ${req.name}'),
+            AppTopBar(
+              title: 'Cambio de horario — ${req.name}',
+              showBack: true,
+            ),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
