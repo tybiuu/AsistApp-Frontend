@@ -1,0 +1,92 @@
+{
+  "trainee": {
+    "name": "Juan Pérez Torres",
+    "code": "UC-2024-001",
+    "dependency": "ITLAB",
+    "career": "Ing. Sistemas",
+    "weeklyHours": 30
+  },
+  "months": [
+    {
+      "month": "Febrero 2025",
+      "totalHours": "98h",
+      "records": [
+        { "date": "Lun 03", "checkIn": "08:05", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 55m" },
+        { "date": "Mar 04", "checkIn": "08:31", "lunchStart": "13:05", "lunchEnd": "14:05", "checkOut": "17:00", "hoursWorked": "7h 29m" },
+        { "date": "Mié 05", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Jue 06", "checkIn": "08:12", "lunchStart": "13:10", "lunchEnd": "14:05", "checkOut": "17:00", "hoursWorked": "7h 43m" },
+        { "date": "Vie 07", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Lun 10", "checkIn": "08:08", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 52m" },
+        { "date": "Mar 11", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mié 12", "checkIn": "08:22", "lunchStart": "13:05", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 33m" },
+        { "date": "Jue 13", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Vie 14", "checkIn": "08:15", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 45m" },
+        { "date": "Lun 17", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mar 18", "checkIn": "08:40", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 20m" },
+        { "date": "Mié 19", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Jue 20", "checkIn": "08:10", "lunchStart": "13:05", "lunchEnd": "14:05", "checkOut": "17:00", "hoursWorked": "7h 45m" },
+        { "date": "Vie 21", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Lun 24", "checkIn": "08:05", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 55m" },
+        { "date": "Mar 25", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mié 26", "checkIn": "08:18", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 42m" },
+        { "date": "Jue 27", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Vie 28", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" }
+      ]
+    },
+    {
+      "month": "Marzo 2025",
+      "totalHours": "120h",
+      "records": [
+        { "date": "Lun 03", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mar 04", "checkIn": "08:45", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 15m" },
+        { "date": "Mié 05", "checkIn": "08:10", "lunchStart": "13:05", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 45m" },
+        { "date": "Jue 06", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Vie 07", "checkIn": "08:20", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 40m" },
+        { "date": "Lun 10", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mar 11", "checkIn": "08:12", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 48m" },
+        { "date": "Mié 12", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Jue 13", "checkIn": "08:30", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 30m" },
+        { "date": "Vie 14", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Lun 17", "checkIn": "08:05", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 55m" },
+        { "date": "Mar 18", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mié 19", "checkIn": "08:15", "lunchStart": "13:05", "lunchEnd": "14:05", "checkOut": "17:00", "hoursWorked": "7h 45m" },
+        { "date": "Jue 20", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Vie 21", "checkIn": "08:08", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 52m" },
+        { "date": "Lun 24", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mar 25", "checkIn": "08:22", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 38m" },
+        { "date": "Mié 26", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Jue 27", "checkIn": "08:35", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 25m" },
+        { "date": "Vie 28", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Lun 31", "checkIn": "08:10", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 50m" }
+      ]
+    },
+    {
+      "month": "Abril 2025",
+      "totalHours": "142h",
+      "records": [
+        { "date": "Mar 01", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mié 02", "checkIn": "08:15", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 45m" },
+        { "date": "Jue 03", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Vie 04", "checkIn": "08:20", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 40m" },
+        { "date": "Lun 07", "checkIn": "08:12", "lunchStart": "13:05", "lunchEnd": "14:03", "checkOut": "17:00", "hoursWorked": "7h 45m" },
+        { "date": "Mar 08", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mié 09", "checkIn": "08:23", "lunchStart": "13:05", "lunchEnd": "14:05", "checkOut": "17:00", "hoursWorked": "7h 32m" },
+        { "date": "Jue 10", "checkIn": "08:05", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 55m" },
+        { "date": "Vie 11", "checkIn": "08:08", "lunchStart": "13:02", "lunchEnd": "14:02", "checkOut": "17:00", "hoursWorked": "7h 50m" },
+        { "date": "Lun 14", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mar 15", "checkIn": "08:30", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 30m" },
+        { "date": "Mié 16", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Jue 17", "checkIn": "08:10", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 50m" },
+        { "date": "Vie 18", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Lun 21", "checkIn": "08:05", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 55m" },
+        { "date": "Mar 22", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mié 23", "checkIn": "08:18", "lunchStart": "13:05", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 37m" },
+        { "date": "Jue 24", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Vie 25", "checkIn": "08:12", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 48m" },
+        { "date": "Lun 28", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" },
+        { "date": "Mar 29", "checkIn": "08:25", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "7h 35m" },
+        { "date": "Mié 30", "checkIn": "08:00", "lunchStart": "13:00", "lunchEnd": "14:00", "checkOut": "17:00", "hoursWorked": "8h 00m" }
+      ]
+    }
+  ]
+}

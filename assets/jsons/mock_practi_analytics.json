@@ -1,0 +1,56 @@
+{
+  "months": [
+    {
+      "month": "Enero 2025",
+      "hoursCompleted": 98,
+      "hoursRequired": 180,
+      "daysAttended": 20,
+      "totalWorkDays": 22,
+      "daysLate": 1,
+      "daysMissed": 1,
+      "currentHours": 98,
+      "totalHours": 600,
+      "startMonth": "Enero 2025",
+      "endMonth": "Junio 2025"
+    },
+    {
+      "month": "Febrero 2025",
+      "hoursCompleted": 110,
+      "hoursRequired": 180,
+      "daysAttended": 19,
+      "totalWorkDays": 20,
+      "daysLate": 3,
+      "daysMissed": 0,
+      "currentHours": 208,
+      "totalHours": 600,
+      "startMonth": "Enero 2025",
+      "endMonth": "Junio 2025"
+    },
+    {
+      "month": "Marzo 2025",
+      "hoursCompleted": 125,
+      "hoursRequired": 180,
+      "daysAttended": 21,
+      "totalWorkDays": 23,
+      "daysLate": 2,
+      "daysMissed": 1,
+      "currentHours": 333,
+      "totalHours": 600,
+      "startMonth": "Enero 2025",
+      "endMonth": "Junio 2025"
+    },
+    {
+      "month": "Abril 2025",
+      "hoursCompleted": 142,
+      "hoursRequired": 180,
+      "daysAttended": 18,
+      "totalWorkDays": 22,
+      "daysLate": 2,
+      "daysMissed": 0,
+      "currentHours": 432,
+      "totalHours": 600,
+      "startMonth": "Enero 2025",
+      "endMonth": "Junio 2025"
+    }
+  ]
+}

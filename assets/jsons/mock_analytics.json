@@ -1,0 +1,54 @@
+{
+  "members": [
+    { 
+      "name": "Juan Pérez",
+      "hoursLogged": 142,
+      "attendancePercent": 78,
+      "minutesLateSum": 24,
+      "daysMissed": 2
+    },
+    { 
+      "name": "María García",   
+      "hoursLogged": 168, 
+      "attendancePercent": 93,
+      "minutesLateSum": 8,
+      "daysMissed": 1
+    },
+    { 
+      "name": "Carlos Quispe",  
+      "hoursLogged": 95,  
+      "attendancePercent": 53,
+      "minutesLateSum": 45,
+      "daysMissed": 4
+    },
+    { 
+      "name": "Ana Torres",     
+      "hoursLogged": 180, 
+      "attendancePercent": 100,
+      "minutesLateSum": 28,
+      "daysMissed": 0
+    },
+    { 
+      "name": "Luis Mendoza",   
+      "hoursLogged": 158, 
+      "attendancePercent": 88,
+      "minutesLateSum": 32,
+      "daysMissed": 2
+    },
+    { 
+      "name": "Patricia Rojas", 
+      "hoursLogged": 171, 
+      "attendancePercent": 95,
+      "minutesLateSum": 12,
+      "daysMissed": 1
+    }
+  ],
+  "summary": 
+  {
+    "confirmedAttendances": 142,
+    "punctualityPercent": 87,
+    "totalLates": 18,
+    "totalAbsences": 9,
+    "totalPending": 5
+  }
+}

@@ -9,8 +9,8 @@ import '../admin_validate/admin_validate_page.dart';
 import '../home/home_page.dart';
 
 import '../attendance/attendance_page.dart';
-import '../report/report_page.dart';
 import '../profile/profile_page.dart';
+import '../analytics/analytics_page.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -39,7 +39,7 @@ class _DashboardPageState extends State<DashboardPage> {
     final practitionerViews = [
       const HomePage(),
       const AttendancePage(),
-      const ReportPage(),
+      const AnalyticsPage(),
       const ProfilePage(),
     ];
 
