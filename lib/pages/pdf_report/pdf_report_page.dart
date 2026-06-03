@@ -7,6 +7,8 @@ import 'components/month_picker.dart';
 import 'pdf_report_controller.dart';
 import 'components/document_preview.dart';
 
+import '../../services/pdf_generator.dart';
+
 class PdfReportPage extends StatelessWidget {
   const PdfReportPage({super.key});
 
@@ -87,7 +89,10 @@ class PdfReportPage extends StatelessWidget {
                       width: double.infinity,
                       height: 54,
                       child: ElevatedButton.icon(
-                        onPressed: () {}, // PDF generation will be wired up later
+                        onPressed: () => PdfGenerator.downloadAttendanceReport(
+                          trainee: controller.trainee,
+                          month: controller.current!,
+                        ),
                         icon: const Icon(Icons.download_rounded, color: Colors.white),
                         label: const Text(
                           'Descargar PDF',

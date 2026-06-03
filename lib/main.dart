@@ -27,6 +27,7 @@ import 'pages/setup/role_select/role_select_page.dart';
 import './pages/dashboard/dashboard_page.dart';
 import './pages/welcome/welcome_page.dart';
 import 'pages/pdf_report/pdf_report_page.dart';
+import 'pages/admin_activity_log/admin_activity_log_page.dart';
 
 Future<void> main() async {
   final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -86,6 +87,7 @@ class MyApp extends StatelessWidget {
             const AdminScheduleValidationDetailPage(),
         AppRoutes.scheduleChange: (context) => const ScheduleChangePage(),
         AppRoutes.pdfReport: (context) => const PdfReportPage(),
+        AppRoutes.adminActivityLog: (context) => const AdminActivityLogPage(),
       },
     );
   }

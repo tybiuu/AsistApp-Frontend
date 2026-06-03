@@ -176,7 +176,7 @@ class AdminConfigController extends GetxController {
     editingProfile.value = false;
   }
 
-  void openActivityLog() {}
+  void openActivityLog() => Get.toNamed(AppRoutes.adminActivityLog);
 
   Future<void> logout() async {
     await SessionService.to.logout();

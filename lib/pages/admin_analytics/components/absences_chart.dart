@@ -12,32 +12,34 @@ class AbsencesChart extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
     final int maxValue = ranking.first.daysMissed;
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Top inasistencias',
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Top inasistencias',
+          style: TextStyle(
+            color: colors.onSurface,
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
           ),
-          const SizedBox(height: 12),
-          ...ranking.map((member) => _AbsenceRow(
-                member: member,
-                maxValue: maxValue,
-                colors: colors,
-              )),
-        ],
-      ),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: Column(
+            children: ranking.map((member) => _AbsenceRow(
+                  member: member,
+                  maxValue: maxValue,
+                  colors: colors,
+                )).toList(),
+          ),
+        ),
+      ],
     );
   }
 }

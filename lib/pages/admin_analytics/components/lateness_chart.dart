@@ -15,49 +15,31 @@ class LatenessChart extends StatelessWidget {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final maxValue = ranking.first.minutesLateSum.toDouble();
 
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Top tardanzas acumuladas',
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Top tardanzas acumuladas',
+          style: TextStyle(
+            color: colors.onSurface,
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
           ),
-          const SizedBox(height: 24),
-          SizedBox(
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: SizedBox(
             height: 200,
             child: BarChart(
               BarChartData(
                 maxY: (maxValue * 1.2).ceilToDouble(),
                 minY: 0,
-                barTouchData: BarTouchData(
-                  enabled: true,
-                  touchTooltipData: BarTouchTooltipData(
-                    getTooltipColor: (_) => Colors.transparent,
-                    tooltipPadding: EdgeInsets.zero,
-                    tooltipMargin: 6,
-                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                      return BarTooltipItem(
-                        '${ranking[groupIndex].minutesLateSum}',
-                        TextStyle(
-                          color: AppColors.chart1,
-                          fontSize: 11,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      );
-                    },
-                  ),
-                ),
                 gridData: FlGridData(
                   show: true,
                   drawVerticalLine: false,
@@ -71,8 +53,25 @@ class LatenessChart extends StatelessWidget {
                 ),
                 borderData: FlBorderData(show: false),
                 titlesData: FlTitlesData(
-                  topTitles: const AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
+                  topTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 24,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index < 0 || index >= ranking.length) {
+                          return const SizedBox.shrink();
+                        }
+                        return Text(
+                          '${ranking[index].minutesLateSum}',
+                          style: TextStyle(
+                            color: AppColors.chart1,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                   rightTitles: const AxisTitles(
                     sideTitles: SideTitles(showTitles: false),
@@ -137,8 +136,8 @@ class LatenessChart extends StatelessWidget {
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

@@ -1,0 +1,67 @@
+{
+  "entries": [
+    {
+      "type": "asistencia_confirmada",
+      "subject": "Juan Pérez Torres",
+      "datetime": "28 abr, 3:45 PM",
+      "by": "Carlos Díaz",
+      "byRole": "validador"
+    },
+    {
+      "type": "horario_aprobado",
+      "subject": "María García López",
+      "datetime": "28 abr, 11:20 AM",
+      "by": "Carlos Díaz",
+      "byRole": "admin"
+    },
+    {
+      "type": "miembro_aceptado",
+      "subject": "Ana Torres Vega",
+      "datetime": "27 abr, 9:05 AM",
+      "by": "Carlos Díaz",
+      "byRole": "admin"
+    },
+    {
+      "type": "tardanza_registrada",
+      "subject": "Carlos Quispe · 15 min",
+      "datetime": "27 abr, 8:20 AM",
+      "by": "Sistema automático",
+      "byRole": ""
+    },
+    {
+      "type": "miembro_rechazado",
+      "subject": "Pedro Mamani Ríos",
+      "datetime": "26 abr, 4:15 PM",
+      "by": "Carlos Díaz",
+      "byRole": "admin"
+    },
+    {
+      "type": "asistencia_faltante_procesada",
+      "subject": "Luis Mendoza Rivas",
+      "datetime": "25 abr, 2:30 PM",
+      "by": "Carlos Díaz",
+      "byRole": "validador"
+    },
+    {
+      "type": "cambio_de_horario_aprobado",
+      "subject": "Roberto Flores Díaz",
+      "datetime": "24 abr, 10:15 AM",
+      "by": "Carlos Díaz",
+      "byRole": "admin"
+    },
+    {
+      "type": "inasistencia_marcada",
+      "subject": "Carlos Quispe Mamani",
+      "datetime": "23 abr, 5:00 PM",
+      "by": "Sistema automático",
+      "byRole": ""
+    },
+    {
+      "type": "asistencia_confirmada",
+      "subject": "Patricia Rojas Castillo",
+      "datetime": "22 abr, 5:10 PM",
+      "by": "Ana Torres",
+      "byRole": "validador"
+    }
+  ]
+}
