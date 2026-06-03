@@ -23,4 +23,5 @@ class AppRoutes {
   static const String adminScheduleValidationDetail = '/admin-schedule-validation-detail';
   static const String scheduleChange = '/schedule-change';
   static const String pdfReport = '/pdf-report';
+  static const String adminActivityLog = '/admin-activity-log';
 }

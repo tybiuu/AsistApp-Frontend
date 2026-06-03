@@ -1,8 +1,8 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 
+import '../../../configs/theme.dart';
 import '../admin_analytics_controller.dart';
-
 
 class DistributionChart extends StatelessWidget {
   final MonthSummary summary;
@@ -36,50 +36,55 @@ class DistributionChart extends StatelessWidget {
       ),
     ];
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: colors.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: colors.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Distribución general del mes',
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 15,
-              fontWeight: FontWeight.w800,
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Distribución general del mes',
+          style: TextStyle(
+            color: colors.onSurface,
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
           ),
-          const SizedBox(height: 24),
-          SizedBox(
-            height: 200,
-            child: PieChart(
-              PieChartData(
-                sectionsSpace: 2,
-                centerSpaceRadius: 60,
-                sections: sections.map((s) {
-                  return PieChartSectionData(
-                    value: s.value,
-                    color: s.color,
-                    radius: 30,
-                    showTitle: false,
-                  );
-                }).toList(),
+        ),
+        const SizedBox(height: 12),
+        Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: colors.surface,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: colors.outlineVariant),
+          ),
+          child: Column(
+            children: [
+              SizedBox(
+                height: 200,
+                child: PieChart(
+                  PieChartData(
+                    sectionsSpace: 2,
+                    centerSpaceRadius: 60,
+                    sections: sections
+                        .where((s) => s.value > 0)
+                        .map((s) => PieChartSectionData(
+                              value: s.value,
+                              color: s.color,
+                              radius: 30,
+                              showTitle: false,
+                            ))
+                        .toList(),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 16,
+                runSpacing: 8,
+                children: sections.map((s) => _LegendItem(section: s)).toList(),
+              ),
+            ],
           ),
-          const SizedBox(height: 20),
-          Wrap(
-            spacing: 16,
-            runSpacing: 8,
-            children: sections.map((s) => _LegendItem(section: s)).toList(),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
