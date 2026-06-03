@@ -7,10 +7,6 @@ class AdminValidatePage extends StatelessWidget {
   const AdminValidatePage({super.key});
 
   static const Color orange = Color(0xFFFF6A00);
-  static const Color bg = Color(0xFF1F1F1F);
-  static const Color card = Color(0xFF2A2A2A);
-  static const Color border = Color(0xFF3A3A3A);
-  static const Color muted = Color(0xFF9CA3AF);
 
   Future<_AdminValidateData> _loadData() async {
     final recordsString = await rootBundle.loadString(
@@ -108,8 +104,10 @@ class AdminValidatePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Scaffold(
-      backgroundColor: bg,
+      backgroundColor: colors.surface,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -118,14 +116,16 @@ class AdminValidatePage extends StatelessWidget {
               future: _loadData(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(color: colors.primary),
+                  );
                 }
 
                 if (snapshot.hasError) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'Error al cargar datos',
-                      style: TextStyle(color: Colors.white),
+                      style: TextStyle(color: colors.onSurface),
                     ),
                   );
                 }
@@ -240,13 +240,15 @@ class _Header extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text(
+        Text(
           'Validar asistencia',
           style: TextStyle(
-            color: Colors.white,
+            color: colors.onSurface,
             fontSize: 22,
             fontWeight: FontWeight.w800,
           ),
@@ -254,22 +256,22 @@ class _Header extends StatelessWidget {
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           decoration: BoxDecoration(
-            color: AdminValidatePage.card,
+            color: colors.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AdminValidatePage.border),
+            border: Border.all(color: colors.outlineVariant),
           ),
-          child: const Row(
+          child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.calendar_today_rounded,
                 color: AdminValidatePage.orange,
                 size: 16,
               ),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Text(
                 'Hoy',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: colors.onSurface,
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -292,12 +294,14 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       children: [
         Text(
           title.toUpperCase(),
-          style: const TextStyle(
-            color: AdminValidatePage.muted,
+          style: TextStyle(
+            color: colors.onSurfaceVariant,
             fontSize: 12,
             fontWeight: FontWeight.w800,
             letterSpacing: 0.7,
@@ -349,11 +353,13 @@ class _ValidateCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: AdminValidatePage.card,
+        color: colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AdminValidatePage.border),
+        border: Border.all(color: colors.outlineVariant),
       ),
       child: Column(
         children: [
@@ -455,9 +461,11 @@ class _MissingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       decoration: BoxDecoration(
-        color: AdminValidatePage.card,
+        color: colors.surfaceContainerLow,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xFF2563EB)),
       ),
@@ -479,8 +487,8 @@ class _MissingCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 '$inTime - $outTime',
-                style: const TextStyle(
-                  color: AdminValidatePage.muted,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
@@ -524,13 +532,15 @@ class _PersonInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           name,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: colors.onSurface,
             fontWeight: FontWeight.w800,
             fontSize: 14,
           ),
@@ -538,8 +548,8 @@ class _PersonInfo extends StatelessWidget {
         const SizedBox(height: 3),
         Text(
           career,
-          style: const TextStyle(
-            color: AdminValidatePage.muted,
+          style: TextStyle(
+            color: colors.onSurfaceVariant,
             fontSize: 11,
           ),
         ),
@@ -562,7 +572,7 @@ class _StatusBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.14),
+        color: color.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
@@ -593,7 +603,7 @@ class _TimeBox extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
