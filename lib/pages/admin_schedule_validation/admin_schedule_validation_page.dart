@@ -5,8 +5,8 @@ import '../../components/app_top_bar.dart';
 import '../../components/status_badge.dart';
 import 'admin_schedule_validation_controller.dart';
 
-class AdminScheduleValidationDetailPage extends StatelessWidget {
-  const AdminScheduleValidationDetailPage({super.key});
+class AdminScheduleValidationPage extends StatelessWidget {
+  const AdminScheduleValidationPage({super.key});
 
   String cicloLabel(dynamic ciclo) {
     if (ciclo == null) return '-';
