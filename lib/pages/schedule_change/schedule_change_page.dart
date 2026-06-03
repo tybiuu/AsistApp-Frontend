@@ -11,10 +11,9 @@ class ScheduleChangePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.put(ScheduleChangeController());
-    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xff0f1117) : const Color(0xffffffff),
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [

@@ -11,19 +11,19 @@ class StatusView extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<ScheduleChangeController>();
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Saludo
           Text(
             'Buenos días, Juan',
             style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 18,
-              color: theme.colorScheme.onSurface,
+              color: cs.onSurface,
             ),
           ),
           const SizedBox(height: 24),
@@ -34,13 +34,13 @@ class StatusView extends StatelessWidget {
               width: 100,
               height: 100,
               decoration: BoxDecoration(
-                color: Colors.orange.withOpacity(0.15),
+                color: cs.primaryContainer,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.camera_alt_outlined,
                 size: 50,
-                color: Colors.orange,
+                color: cs.onPrimaryContainer,
               ),
             ),
           ),
@@ -55,7 +55,7 @@ class StatusView extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 16,
-                    color: theme.colorScheme.onSurface,
+                    color: cs.onSurface,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -64,7 +64,7 @@ class StatusView extends StatelessWidget {
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: cs.onSurfaceVariant,
                     height: 1.5,
                     fontWeight: FontWeight.w500,
                   ),
@@ -104,20 +104,20 @@ class StatusView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-              color: Colors.orange.withOpacity(0.1),
+              color: cs.surfaceContainerHigh,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.orange.withOpacity(0.2)),
+              border: Border.all(color: cs.outlineVariant),
             ),
             child: Row(
               children: [
-                const Icon(Icons.mail_outline, color: Colors.orange, size: 20),
+                Icon(Icons.mail_outline, color: cs.onSurfaceVariant, size: 20),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     'Te notificaremos al correo institucional cuando sea aprobado.',
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.orange.shade700,
+                      color: cs.onSurfaceVariant,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -127,7 +127,6 @@ class StatusView extends StatelessWidget {
           ),
           const SizedBox(height: 24),
 
-          // Botones de acción
           PrimaryButton(
             text: 'Volver al inicio',
             onPressed: () => Get.offAllNamed('/home'),
@@ -150,15 +149,16 @@ class StatusView extends StatelessWidget {
     required String subtitle,
     required bool isCompleted,
   }) {
-    final theme = Theme.of(context);
-    final statusColor = isCompleted ? const Color(0xff10b981) : Colors.orange;
+    final cs = Theme.of(context).colorScheme;
+    final statusColor =
+        isCompleted ? const Color(0xff10b981) : cs.onSurfaceVariant;
 
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainerLow,
+        color: cs.surfaceContainerLow,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: theme.colorScheme.outlineVariant),
+        border: Border.all(color: cs.outlineVariant),
       ),
       child: Row(
         children: [
@@ -181,7 +181,7 @@ class StatusView extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
                     fontSize: 13,
-                    color: theme.colorScheme.onSurface,
+                    color: cs.onSurface,
                   ),
                 ),
                 const SizedBox(height: 2),
@@ -189,7 +189,7 @@ class StatusView extends StatelessWidget {
                   subtitle,
                   style: TextStyle(
                     fontSize: 11,
-                    color: theme.colorScheme.onSurfaceVariant,
+                    color: cs.onSurfaceVariant,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
