@@ -12,6 +12,7 @@ class EditorView extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<ScheduleChangeController>();
     final theme = Theme.of(context);
+    final cs = theme.colorScheme;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -34,7 +35,7 @@ class EditorView extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: 18,
-                color: theme.colorScheme.onSurface,
+                color: cs.onSurface,
               ),
             ),
             const SizedBox(height: 4),
@@ -42,7 +43,7 @@ class EditorView extends StatelessWidget {
               'Tu jefe deberá aprobar tu propuesta',
               style: TextStyle(
                 fontSize: 13,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -54,7 +55,7 @@ class EditorView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 12),
@@ -70,11 +71,13 @@ class EditorView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: isSelected ? Colors.orange : theme.colorScheme.outlineVariant,
+                            color: isSelected ? cs.primary : cs.outlineVariant,
                             width: isSelected ? 2 : 1,
                           ),
                           borderRadius: BorderRadius.circular(12),
-                          color: isSelected ? Colors.orange.withOpacity(0.08) : Colors.transparent,
+                          color: isSelected
+                              ? cs.primary.withOpacity(0.08)
+                              : Colors.transparent,
                         ),
                         child: Column(
                           children: [
@@ -83,7 +86,7 @@ class EditorView extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
-                                color: isSelected ? Colors.orange : theme.colorScheme.onSurface,
+                                color: isSelected ? cs.primary : cs.onSurface,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -91,7 +94,9 @@ class EditorView extends StatelessWidget {
                               'semanales',
                               style: TextStyle(
                                 fontSize: 10,
-                                color: isSelected ? Colors.orange : theme.colorScheme.onSurfaceVariant,
+                                color: isSelected
+                                    ? cs.primary
+                                    : cs.onSurfaceVariant,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
@@ -105,21 +110,24 @@ class EditorView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Status box - Horario completo o pendiente
+            // Status box
             if (c.isScheduleComplete)
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xff10b981).withOpacity(0.1),
+                  color: const Color(0xff10b981).withOpacity(0.12),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xff10b981).withOpacity(0.2)),
+                  border: Border.all(
+                    color: const Color(0xff10b981).withOpacity(0.25),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
-                        const Icon(Icons.check_circle, color: Color(0xff10b981), size: 20),
+                        const Icon(Icons.check_circle,
+                            color: Color(0xff10b981), size: 20),
                         const SizedBox(width: 8),
                         const Text(
                           '¡Horario completo!',
@@ -150,7 +158,7 @@ class EditorView extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
-                              color: Colors.grey.withOpacity(0.6),
+                              color: cs.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -163,13 +171,13 @@ class EditorView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: Colors.amber.withOpacity(0.1),
+                  color: cs.surfaceContainerHigh,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.amber.withOpacity(0.2)),
+                  border: Border.all(color: cs.outlineVariant),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.info, color: Colors.amber, size: 20),
+                    Icon(Icons.info, color: cs.onSurfaceVariant, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -177,7 +185,7 @@ class EditorView extends StatelessWidget {
                         style: TextStyle(
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
-                          color: Colors.amber.shade700,
+                          color: cs.onSurfaceVariant,
                         ),
                       ),
                     ),
@@ -192,7 +200,7 @@ class EditorView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w800,
-                color: theme.colorScheme.onSurfaceVariant,
+                color: cs.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: 12),
@@ -201,7 +209,6 @@ class EditorView extends StatelessWidget {
             ...c.weeklySchedule.entries.map((entry) {
               final dayKey = entry.key;
               final daySchedule = entry.value;
-              final dayIndex = c.weeklySchedule.keys.toList().indexOf(dayKey);
 
               return Padding(
                 padding: const EdgeInsets.only(bottom: 16),
@@ -217,13 +224,13 @@ class EditorView extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
                             fontSize: 14,
-                            color: theme.colorScheme.onSurface,
+                            color: cs.onSurface,
                           ),
                         ),
                         Switch(
                           value: daySchedule.enabled,
                           onChanged: (value) => c.toggleDay(dayKey, value),
-                          activeColor: Colors.orange,
+                          activeColor: cs.primary,
                         ),
                       ],
                     ),
@@ -239,113 +246,185 @@ class EditorView extends StatelessWidget {
                             (blockIndex) {
                               final block = daySchedule.blocks[blockIndex];
                               final isWork = block.type == BlockType.work;
-                              final bgColor = isWork ? Colors.orange.withOpacity(0.12) : Colors.grey.withOpacity(0.08);
-                              final labelBgColor = isWork ? Colors.orange : Colors.grey.shade400;
+
+                              // Colores semánticos adaptados al tema
+                              final blockBg = isWork
+                                  ? cs.primaryContainer
+                                  : cs.surfaceContainerHigh;
+                              final blockBorder = isWork
+                                  ? cs.primary.withOpacity(0.25)
+                                  : cs.outlineVariant;
+                              final labelBg = isWork
+                                  ? cs.primary
+                                  : cs.onSurfaceVariant;
 
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 12),
                                 child: Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 14, vertical: 12),
                                   decoration: BoxDecoration(
-                                    color: bgColor,
+                                    color: blockBg,
                                     borderRadius: BorderRadius.circular(14),
-                                    border: Border.all(
-                                      color: isWork 
-                                        ? Colors.orange.withOpacity(0.2)
-                                        : Colors.grey.withOpacity(0.2),
-                                    ),
+                                    border: Border.all(color: blockBorder),
                                   ),
                                   child: Row(
                                     children: [
+                                      // Label tipo de bloque
                                       GestureDetector(
                                         onTap: () {
                                           showModalBottomSheet(
                                             context: context,
+                                            backgroundColor:
+                                                cs.surfaceContainerLow,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.vertical(
+                                                      top: Radius.circular(20)),
+                                            ),
                                             builder: (ctx) => Container(
                                               padding: const EdgeInsets.all(16),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.stretch,
                                                 children: [
-                                                  const Text(
+                                                  Text(
                                                     'Tipo de bloque',
                                                     style: TextStyle(
-                                                      fontWeight: FontWeight.w800,
+                                                      fontWeight:
+                                                          FontWeight.w800,
                                                       fontSize: 16,
+                                                      color: cs.onSurface,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 16),
+                                                  // Opción Trabajo
                                                   GestureDetector(
                                                     onTap: () {
-                                                      c.changeBlockType(dayKey, blockIndex, BlockType.work);
+                                                      c.changeBlockType(dayKey,
+                                                          blockIndex,
+                                                          BlockType.work);
                                                       Get.back();
                                                     },
                                                     child: Container(
-                                                      padding: const EdgeInsets.all(14),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              14),
                                                       decoration: BoxDecoration(
-                                                        color: isWork ? Colors.orange.withOpacity(0.1) : Colors.grey.withOpacity(0.05),
-                                                        borderRadius: BorderRadius.circular(12),
+                                                        color: isWork
+                                                            ? cs.primaryContainer
+                                                            : cs.surfaceContainerHigh,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
                                                         border: Border.all(
-                                                          color: isWork ? Colors.orange : Colors.grey.withOpacity(0.2),
-                                                          width: isWork ? 2 : 1,
+                                                          color: isWork
+                                                              ? cs.primary
+                                                              : cs.outlineVariant,
+                                                          width:
+                                                              isWork ? 2 : 1,
                                                         ),
                                                       ),
                                                       child: Row(
                                                         children: [
-                                                          Icon(Icons.work_outline, color: Colors.orange, size: 24),
-                                                          const SizedBox(width: 12),
-                                                          const Expanded(
+                                                          Icon(
+                                                              Icons.work_outline,
+                                                              color: cs.primary,
+                                                              size: 24),
+                                                          const SizedBox(
+                                                              width: 12),
+                                                          Expanded(
                                                             child: Text(
                                                               'Trabajo',
                                                               style: TextStyle(
-                                                                fontWeight: FontWeight.w700,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
                                                                 fontSize: 14,
+                                                                color: cs
+                                                                    .onSurface,
                                                               ),
                                                             ),
                                                           ),
-                                                          if (isWork) const Icon(Icons.check, color: Colors.orange),
+                                                          if (isWork)
+                                                            Icon(Icons.check,
+                                                                color:
+                                                                    cs.primary),
                                                         ],
                                                       ),
                                                     ),
                                                   ),
                                                   const SizedBox(height: 12),
+                                                  // Opción Refrigerio
                                                   GestureDetector(
                                                     onTap: () {
-                                                      c.changeBlockType(dayKey, blockIndex, BlockType.breakTime);
+                                                      c.changeBlockType(
+                                                          dayKey,
+                                                          blockIndex,
+                                                          BlockType.breakTime);
                                                       Get.back();
                                                     },
                                                     child: Container(
-                                                      padding: const EdgeInsets.all(14),
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              14),
                                                       decoration: BoxDecoration(
-                                                        color: !isWork ? Colors.grey.withOpacity(0.1) : Colors.grey.withOpacity(0.05),
-                                                        borderRadius: BorderRadius.circular(12),
+                                                        color: !isWork
+                                                            ? cs.surfaceContainerHighest
+                                                            : cs.surfaceContainerHigh,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
                                                         border: Border.all(
-                                                          color: !isWork ? Colors.grey.shade400 : Colors.grey.withOpacity(0.2),
-                                                          width: !isWork ? 2 : 1,
+                                                          color: !isWork
+                                                              ? cs.onSurfaceVariant
+                                                              : cs.outlineVariant,
+                                                          width:
+                                                              !isWork ? 2 : 1,
                                                         ),
                                                       ),
                                                       child: Row(
                                                         children: [
-                                                          Icon(Icons.local_cafe_outlined, color: Colors.grey.shade400, size: 24),
-                                                          const SizedBox(width: 12),
-                                                          const Expanded(
+                                                          Icon(
+                                                              Icons
+                                                                  .local_cafe_outlined,
+                                                              color: cs
+                                                                  .onSurfaceVariant,
+                                                              size: 24),
+                                                          const SizedBox(
+                                                              width: 12),
+                                                          Expanded(
                                                             child: Text(
                                                               'Refrigerio',
                                                               style: TextStyle(
-                                                                fontWeight: FontWeight.w700,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
                                                                 fontSize: 14,
+                                                                color: cs
+                                                                    .onSurface,
                                                               ),
                                                             ),
                                                           ),
-                                                          if (!isWork) Icon(Icons.check, color: Colors.grey.shade400),
+                                                          if (!isWork)
+                                                            Icon(Icons.check,
+                                                                color: cs
+                                                                    .onSurfaceVariant),
                                                         ],
                                                       ),
                                                     ),
                                                   ),
                                                   const SizedBox(height: 16),
                                                   TextButton(
-                                                    onPressed: () => Get.back(),
-                                                    child: const Text('Cancelar'),
+                                                    onPressed: () =>
+                                                        Get.back(),
+                                                    child: Text(
+                                                      'Cancelar',
+                                                      style: TextStyle(
+                                                          color: cs
+                                                              .onSurfaceVariant),
+                                                    ),
                                                   ),
                                                 ],
                                               ),
@@ -353,24 +432,32 @@ class EditorView extends StatelessWidget {
                                           );
                                         },
                                         child: Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10, vertical: 6),
                                           decoration: BoxDecoration(
-                                            color: labelBgColor,
-                                            borderRadius: BorderRadius.circular(20),
+                                            color: labelBg,
+                                            borderRadius:
+                                                BorderRadius.circular(20),
                                           ),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
-                                                isWork ? Icons.work_outline : Icons.local_cafe_outlined,
-                                                color: Colors.white,
+                                                isWork
+                                                    ? Icons.work_outline
+                                                    : Icons.local_cafe_outlined,
+                                                color: isWork
+                                                    ? cs.onPrimary
+                                                    : cs.surface,
                                                 size: 14,
                                               ),
                                               const SizedBox(width: 6),
                                               Text(
                                                 isWork ? 'Trabajo' : 'Refrig.',
-                                                style: const TextStyle(
-                                                  color: Colors.white,
+                                                style: TextStyle(
+                                                  color: isWork
+                                                      ? cs.onPrimary
+                                                      : cs.surface,
                                                   fontWeight: FontWeight.w800,
                                                   fontSize: 11,
                                                 ),
@@ -380,24 +467,27 @@ class EditorView extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(width: 12),
+                                      // Input hora inicio
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: () => c.editBlockTime(dayKey, blockIndex),
+                                          onTap: () => c.editBlockTime(
+                                              dayKey, blockIndex),
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
                                             decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(12),
+                                              color: cs.surfaceContainerLowest,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               border: Border.all(
-                                                color: Colors.grey.withOpacity(0.2),
-                                              ),
+                                                  color: cs.outlineVariant),
                                             ),
                                             child: Text(
                                               block.start,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
                                                 fontSize: 16,
-                                                color: theme.colorScheme.onSurface,
+                                                color: cs.onSurface,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -407,28 +497,32 @@ class EditorView extends StatelessWidget {
                                       const SizedBox(width: 8),
                                       Icon(
                                         Icons.arrow_forward_rounded,
-                                        color: Colors.grey.withOpacity(0.5),
+                                        color: cs.onSurfaceVariant
+                                            .withOpacity(0.5),
                                         size: 18,
                                       ),
                                       const SizedBox(width: 8),
+                                      // Input hora fin
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: () => c.editBlockTime(dayKey, blockIndex),
+                                          onTap: () => c.editBlockTime(
+                                              dayKey, blockIndex),
                                           child: Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
                                             decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius: BorderRadius.circular(12),
+                                              color: cs.surfaceContainerLowest,
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                               border: Border.all(
-                                                color: Colors.grey.withOpacity(0.2),
-                                              ),
+                                                  color: cs.outlineVariant),
                                             ),
                                             child: Text(
                                               block.end,
                                               style: TextStyle(
                                                 fontWeight: FontWeight.w700,
                                                 fontSize: 16,
-                                                color: theme.colorScheme.onSurface,
+                                                color: cs.onSurface,
                                               ),
                                               textAlign: TextAlign.center,
                                             ),
@@ -437,9 +531,12 @@ class EditorView extends StatelessWidget {
                                       ),
                                       const SizedBox(width: 8),
                                       IconButton(
-                                        icon: const Icon(Icons.delete_outline, size: 20),
-                                        color: Colors.red.withOpacity(0.6),
-                                        onPressed: () => c.removeBlock(dayKey, blockIndex),
+                                        icon: const Icon(
+                                            Icons.delete_outline,
+                                            size: 20),
+                                        color: cs.error.withOpacity(0.7),
+                                        onPressed: () =>
+                                            c.removeBlock(dayKey, blockIndex),
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
                                       ),
@@ -453,10 +550,11 @@ class EditorView extends StatelessWidget {
                           Center(
                             child: TextButton.icon(
                               onPressed: () => c.addBlock(dayKey),
-                              icon: const Icon(Icons.add),
-                              label: const Text('Agregar bloque'),
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.grey.shade400,
+                              icon: Icon(Icons.add, color: cs.onSurfaceVariant),
+                              label: Text(
+                                'Agregar bloque',
+                                style:
+                                    TextStyle(color: cs.onSurfaceVariant),
                               ),
                             ),
                           ),
