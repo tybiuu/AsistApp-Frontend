@@ -15,10 +15,8 @@ class EditorView extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
 
-    // Extraemos de forma dinámica el color naranja institucional desde tu AppColors
-    // Si necesitas que afecte a los PrimaryButton de todo el sistema, lo ideal es pasarlo como primary en el ThemeData.
-    // Aquí lo asignamos de forma limpia a través de tus constantes de estilo.
-    const brandColor = AppColors.chart1; // Color(0xffe15d27) institucional
+    // Uso del color institucional extraído de tus tokens de diseño
+    const brandColor = AppColors.chart1; 
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -138,16 +136,29 @@ class EditorView extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // Status box adaptado al Mockup (Grilla de días)
-            if (c.isScheduleComplete)
-              Container(
-                padding: const EdgeInsets.all(14),
+            // Tarjeta de estado reactiva y dinámica (Muestra completado o faltante)
+            Obx(() {
+              final targetHours = c.selectedTargetHours.value;
+              final currentHours = c.currentWeeklyWorkHours;
+              final isComplete = c.isScheduleComplete;
+              final missingHours = c.missingHours;
+
+              final successColor = const Color(0xff10b981); 
+              
+              final containerBg = isComplete 
+                  ? successColor.withOpacity(0.06) 
+                  : cs.surfaceContainerHigh;
+                  
+              final containerBorder = isComplete 
+                  ? successColor.withOpacity(0.3) 
+                  : cs.outlineVariant;
+
+              return Container(
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: const Color(0xff10b981).withOpacity(0.08), 
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: const Color(0xff10b981).withOpacity(0.3),
-                  ),
+                  color: containerBg,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: containerBorder, width: 1.5),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,102 +168,119 @@ class EditorView extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.check_circle,
-                                color: Color(0xff10b981), size: 18),
+                            Icon(
+                              isComplete ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                              color: isComplete ? successColor : cs.onSurfaceVariant,
+                              size: 20,
+                            ),
                             const SizedBox(width: 8),
-                            const Text(
-                              '¡Horario completo!',
+                            Text(
+                              isComplete 
+                                  ? '¡Horario completo!' 
+                                  : 'Te faltan ${missingHours % 1 == 0 ? missingHours.toInt() : missingHours.toStringAsFixed(1)}h',
                               style: TextStyle(
                                 fontWeight: FontWeight.w800,
-                                fontSize: 13,
-                                color: Color(0xff10b981),
+                                fontSize: 14,
+                                color: isComplete ? successColor : cs.onSurface,
                               ),
                             ),
                           ],
                         ),
-                        Text(
-                          '${c.selectedTargetHours.value}h / ${c.selectedTargetHours.value}h',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 12,
-                            color: cs.onSurfaceVariant,
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: cs.onSurfaceVariant.withOpacity(0.4),
+                            ),
+                            children: [
+                              TextSpan(
+                                text: '${currentHours % 1 == 0 ? currentHours.toInt() : currentHours.toStringAsFixed(1)}h',
+                                style: TextStyle(color: isComplete ? successColor : cs.onSurface),
+                              ),
+                              const TextSpan(text: '  /  '),
+                              TextSpan(text: '${targetHours}h'),
+                            ],
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 14),
+                    const SizedBox(height: 12),
+
+                    // Barra de progreso adaptada
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: (currentHours / targetHours).clamp(0.0, 1.0),
+                        backgroundColor: isComplete ? successColor.withOpacity(0.1) : cs.outlineVariant.withOpacity(0.5),
+                        color: isComplete ? successColor : brandColor,
+                        minHeight: 8,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Grilla resumen de días de la semana
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'].map((day) {
-                        String hoursText = '6h'; 
-                        if (day == 'MIÉ') hoursText = '8h';
-                        if (day == 'JUE') hoursText = '4h';
-                        if (day == 'SÁB') hoursText = '—';
+                      children: ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'].map((dayName) {
+                        final String fullDayKey = _mapAbbreviationToKey(dayName);
+                        final dayData = c.weeklySchedule[fullDayKey];
+                        
+                        String hoursText = '—';
+                        bool hasHours = false;
 
-                        final isOff = hoursText == '—';
+                        if (dayData != null && dayData.enabled && dayData.blocks.isNotEmpty) {
+                          final double dayHours = c.dayWorkMins(dayData) / 60;
+                          if (dayHours > 0) {
+                            hoursText = '${dayHours % 1 == 0 ? dayHours.toInt() : dayHours.toStringAsFixed(1)}h';
+                            hasHours = true;
+                          }
+                        }
 
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: cs.surface,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: cs.outlineVariant),
-                          ),
-                          child: Column(
-                            children: [
-                              Text(
-                                day,
-                                style: TextStyle(
-                                  fontSize: 9,
-                                  fontWeight: FontWeight.w600,
-                                  color: cs.onSurfaceVariant,
-                                ),
+                        return Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: cs.surfaceContainerLowest,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: cs.outlineVariant.withOpacity(0.8)),
                               ),
-                              const SizedBox(height: 2),
-                              Text(
-                                hoursText,
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  color: isOff ? cs.outline : const Color(0xff10b981),
-                                ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    dayName,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: cs.onSurfaceVariant.withOpacity(0.5),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    hoursText,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w800,
+                                      color: hasHours ? (isComplete ? successColor : brandColor) : cs.outline,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
                         );
                       }).toList(),
                     ),
                   ],
                 ),
-              )
-            else
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: cs.surfaceContainerHigh,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: cs.outlineVariant),
-                ),
-                child: Row(
-                  children: [
-                    Icon(Icons.info, color: cs.onSurfaceVariant, size: 20),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        'Completa tu horario con los bloques necesarios',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 12,
-                          color: cs.onSurfaceVariant,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              );
+            }),
             const SizedBox(height: 24),
 
-            // Días de la semana
+            // Bloques de Horarios por Día
             ...c.weeklySchedule.entries.map((entry) {
               final dayKey = entry.key;
               final daySchedule = entry.value;
@@ -427,7 +455,7 @@ class EditorView extends StatelessWidget {
             }),
             const SizedBox(height: 24),
 
-            // Botón con el color institucional aplicado de manera segura
+            // Botón con el color institucional
             Theme(
               data: theme.copyWith(
                 colorScheme: cs.copyWith(primary: brandColor),
@@ -486,5 +514,17 @@ class EditorView extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _mapAbbreviationToKey(String crypto) {
+    switch (crypto) {
+      case 'LUN': return 'Lunes';
+      case 'MAR': return 'Martes';
+      case 'MIÉ': return 'Miércoles';
+      case 'JUE': return 'Jueves';
+      case 'VIE': return 'Viernes';
+      case 'SÁB': return 'Sábado';
+      default: return 'Lunes';
+    }
   }
 }
