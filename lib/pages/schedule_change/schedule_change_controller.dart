@@ -176,6 +176,31 @@ class ScheduleChangeController extends GetxController {
     return value;
   }
 
+  int dayWorkMins(DaySchedule day) {
+    if (!day.enabled || day.blocks.isEmpty) return 0;
+
+    int totalMins = 0;
+    for (final block in day.blocks) {
+      if (block.type == BlockType.work) {
+        try {
+          final startParts = block.start.split(':');
+          final endParts = block.end.split(':');
+
+          final startMinutes = int.parse(startParts[0]) * 60 + int.parse(startParts[1]);
+          final endMinutes = int.parse(endParts[0]) * 60 + int.parse(endParts[1]);
+
+          if (endMinutes > startMinutes) {
+            totalMins += (endMinutes - startMinutes);
+          }
+        } catch (_) {
+          // En caso de que un string de hora venga corrupto o vacío durante la edición
+          continue;
+        }
+      }
+    }
+    return totalMins;
+  }
+
   /// Calcula el total de minutos de trabajo acumulados en la semana
   int get totalWeeklyWorkMins {
     return weeklySchedule.values.fold(0, (sum, day) => sum + dayWorkMins(day));
@@ -184,6 +209,16 @@ class ScheduleChangeController extends GetxController {
   /// Verifica si se cumple exactamente la meta horaria
   bool get isScheduleComplete {
     return (totalWeeklyWorkMins / 60).floor() == selectedTargetHours.value;
+  }
+
+  double get currentWeeklyWorkHours {
+    return totalWeeklyWorkMins / 60;
+  }
+
+  /// Obtiene las horas que faltan para completar la meta elegida
+  double get missingHours {
+    final missing = selectedTargetHours.value - currentWeeklyWorkHours;
+    return missing > 0 ? missing : 0;
   }
 
   void toggleDay(String dayKey, bool enabled) {

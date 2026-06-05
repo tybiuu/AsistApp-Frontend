@@ -14,6 +14,12 @@ class EditorView extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
 
+<<<<<<< Updated upstream
+=======
+    // Uso del color institucional extraído de tus tokens de diseño
+    const brandColor = AppColors.chart1; 
+
+>>>>>>> Stashed changes
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Obx(() {
@@ -110,6 +116,7 @@ class EditorView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
+<<<<<<< Updated upstream
             // Status box
             if (c.isScheduleComplete)
               Container(
@@ -120,12 +127,59 @@ class EditorView extends StatelessWidget {
                   border: Border.all(
                     color: const Color(0xff10b981).withOpacity(0.25),
                   ),
+=======
+            // PASO 2 - Título Informativo
+            Text(
+              'PASO 2 — BLOQUES HORARIOS POR DÍA',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: cs.onSurfaceVariant,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Agrega los bloques que necesites. Toca Trabajo o Refrigerio para cambiar el tipo. Solo un refrigerio por día.',
+              style: TextStyle(
+                fontSize: 11,
+                color: cs.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Tarjeta de estado reactiva y dinámica (Muestra completado o faltante)
+            Obx(() {
+              final targetHours = c.selectedTargetHours.value;
+              final currentHours = c.currentWeeklyWorkHours;
+              final isComplete = c.isScheduleComplete;
+              final missingHours = c.missingHours;
+
+              final successColor = const Color(0xff10b981); 
+              
+              final containerBg = isComplete 
+                  ? successColor.withOpacity(0.06) 
+                  : cs.surfaceContainerHigh;
+                  
+              final containerBorder = isComplete 
+                  ? successColor.withOpacity(0.3) 
+                  : cs.outlineVariant;
+
+              return Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: containerBg,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: containerBorder, width: 1.5),
+>>>>>>> Stashed changes
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
+<<<<<<< Updated upstream
                         const Icon(Icons.check_circle,
                             color: Color(0xff10b981), size: 20),
                         const SizedBox(width: 8),
@@ -135,11 +189,49 @@ class EditorView extends StatelessWidget {
                             fontWeight: FontWeight.w800,
                             fontSize: 13,
                             color: Color(0xff10b981),
+=======
+                        Row(
+                          children: [
+                            Icon(
+                              isComplete ? Icons.check_circle_rounded : Icons.info_outline_rounded,
+                              color: isComplete ? successColor : cs.onSurfaceVariant,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              isComplete 
+                                  ? '¡Horario completo!' 
+                                  : 'Te faltan ${missingHours % 1 == 0 ? missingHours.toInt() : missingHours.toStringAsFixed(1)}h',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 14,
+                                color: isComplete ? successColor : cs.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: cs.onSurfaceVariant.withOpacity(0.4),
+                            ),
+                            children: [
+                              TextSpan(
+                                text: '${currentHours % 1 == 0 ? currentHours.toInt() : currentHours.toStringAsFixed(1)}h',
+                                style: TextStyle(color: isComplete ? successColor : cs.onSurface),
+                              ),
+                              const TextSpan(text: '  /  '),
+                              TextSpan(text: '${targetHours}h'),
+                            ],
+>>>>>>> Stashed changes
                           ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 12),
+<<<<<<< Updated upstream
                     Row(
                       children: [
                         Expanded(
@@ -159,6 +251,71 @@ class EditorView extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               fontSize: 12,
                               color: cs.onSurfaceVariant,
+=======
+
+                    // Barra de progreso adaptada
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: LinearProgressIndicator(
+                        value: (currentHours / targetHours).clamp(0.0, 1.0),
+                        backgroundColor: isComplete ? successColor.withOpacity(0.1) : cs.outlineVariant.withOpacity(0.5),
+                        color: isComplete ? successColor : brandColor,
+                        minHeight: 8,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Grilla resumen de días de la semana
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'].map((dayName) {
+                        final String fullDayKey = _mapAbbreviationToKey(dayName);
+                        final dayData = c.weeklySchedule[fullDayKey];
+                        
+                        String hoursText = '—';
+                        bool hasHours = false;
+
+                        if (dayData != null && dayData.enabled && dayData.blocks.isNotEmpty) {
+                          final double dayHours = c.dayWorkMins(dayData) / 60;
+                          if (dayHours > 0) {
+                            hoursText = '${dayHours % 1 == 0 ? dayHours.toInt() : dayHours.toStringAsFixed(1)}h';
+                            hasHours = true;
+                          }
+                        }
+
+                        return Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 3),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              decoration: BoxDecoration(
+                                color: cs.surfaceContainerLowest,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(color: cs.outlineVariant.withOpacity(0.8)),
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    dayName,
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w700,
+                                      color: cs.onSurfaceVariant.withOpacity(0.5),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    hoursText,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w800,
+                                      color: hasHours ? (isComplete ? successColor : brandColor) : cs.outline,
+                                    ),
+                                  ),
+                                ],
+                              ),
+>>>>>>> Stashed changes
                             ),
                           ),
                         ),
@@ -166,6 +323,7 @@ class EditorView extends StatelessWidget {
                     ),
                   ],
                 ),
+<<<<<<< Updated upstream
               )
             else
               Container(
@@ -204,8 +362,13 @@ class EditorView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 12),
+=======
+              );
+            }),
+            const SizedBox(height: 24),
+>>>>>>> Stashed changes
 
-            // Días de la semana
+            // Bloques de Horarios por Día
             ...c.weeklySchedule.entries.map((entry) {
               final dayKey = entry.key;
               final daySchedule = entry.value;
@@ -566,10 +729,22 @@ class EditorView extends StatelessWidget {
             }),
             const SizedBox(height: 24),
 
+<<<<<<< Updated upstream
             // Submit button
             PrimaryButton(
               text: 'Enviar para aprobación',
               onPressed: () => c.submitForApproval(),
+=======
+            // Botón con el color institucional
+            Theme(
+              data: theme.copyWith(
+                colorScheme: cs.copyWith(primary: brandColor),
+              ),
+              child: PrimaryButton(
+                text: 'Enviar para aprobación',
+                onPressed: () => c.submitForApproval(),
+              ),
+>>>>>>> Stashed changes
             ),
             const SizedBox(height: 16),
           ],
@@ -577,4 +752,63 @@ class EditorView extends StatelessWidget {
       }),
     );
   }
+<<<<<<< Updated upstream
+=======
+
+  void _showBlockTypeModal(BuildContext context, ScheduleChangeController c, String dayKey, int blockIndex, bool isWork, Color brandColor) {
+    final cs = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: cs.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Tipo de bloque',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: cs.onSurface),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: Icon(Icons.work_outline, color: isWork ? brandColor : cs.onSurfaceVariant),
+              title: Text('Trabajo', style: TextStyle(fontWeight: FontWeight.w600, color: cs.onSurface)),
+              trailing: isWork ? Icon(Icons.check_circle, color: brandColor) : null,
+              onTap: () {
+                c.changeBlockType(dayKey, blockIndex, BlockType.work);
+                Get.back();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.local_cafe_outlined, color: !isWork ? brandColor : cs.onSurfaceVariant),
+              title: Text('Refrigerio', style: TextStyle(fontWeight: FontWeight.w600, color: cs.onSurface)),
+              trailing: !isWork ? Icon(Icons.check_circle, color: brandColor) : null,
+              onTap: () {
+                c.changeBlockType(dayKey, blockIndex, BlockType.breakTime);
+                Get.back();
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _mapAbbreviationToKey(String crypto) {
+    switch (crypto) {
+      case 'LUN': return 'Lunes';
+      case 'MAR': return 'Martes';
+      case 'MIÉ': return 'Miércoles';
+      case 'JUE': return 'Jueves';
+      case 'VIE': return 'Viernes';
+      case 'SÁB': return 'Sábado';
+      default: return 'Lunes';
+    }
+  }
+>>>>>>> Stashed changes
 }
