@@ -4,16 +4,15 @@ import 'package:flutter/material.dart';
 
 import 'admin_member_tile.dart';
 import '../../../models/user.dart';
-import '../admin_home_controller.dart';
 
 class ActiveMembersSection extends StatelessWidget {
-  final AdminHomeController controller;
   final List<User> members;
+  final ValueChanged<User> onMemberTap;
 
   const ActiveMembersSection({
     super.key,
-    required this.controller,
     required this.members,
+    required this.onMemberTap,
   });
 
   @override
@@ -37,7 +36,7 @@ class ActiveMembersSection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: AdminMemberTile(
               member: member,
-              onTap: () => controller.openMember(member),
+              onTap: () => onMemberTap(member),
             ),
           ),
         ),

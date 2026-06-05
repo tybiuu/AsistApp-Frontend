@@ -2,18 +2,17 @@
 
 import 'package:flutter/material.dart';
 
-import '../admin_home_controller.dart';
 import '../admin_home_models.dart';
 import 'admin_request_card.dart';
 
 class PendingRequestsSection extends StatelessWidget {
-  final AdminHomeController controller;
   final List<AdminRequestSummary> requests;
+  final ValueChanged<AdminRequestSummary> onRequestTap;
 
   const PendingRequestsSection({
     super.key,
-    required this.controller,
     required this.requests,
+    required this.onRequestTap,
   });
 
   @override
@@ -37,7 +36,7 @@ class PendingRequestsSection extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 8),
             child: AdminRequestCard(
               request: request,
-              onTap: () => controller.openRequest(request),
+              onTap: () => onRequestTap(request),
             ),
           ),
         ),

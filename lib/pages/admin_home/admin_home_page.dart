@@ -3,16 +3,36 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../components/app_top_bar.dart';
 import '../../models/organization.dart';
 import 'admin_home_controller.dart';
 import 'components/active_members_section.dart';
 import 'components/admin_summary_card.dart';
 import 'components/pending_requests_section.dart';
 
-class AdminHomePage extends StatelessWidget {
+class AdminHomePage extends StatefulWidget {
   const AdminHomePage({super.key});
 
-  Widget _content(BuildContext context, AdminHomeController controller) {
+  @override
+  State<AdminHomePage> createState() => _AdminHomePageState();
+}
+
+class _AdminHomePageState extends State<AdminHomePage> {
+  late final AdminHomeController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(AdminHomeController());
+  }
+
+  @override
+  void dispose() {
+    Get.delete<AdminHomeController>(force: true);
+    super.dispose();
+  }
+
+  Widget _content(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Obx(() {
@@ -32,7 +52,7 @@ class AdminHomePage extends StatelessWidget {
 
       return Column(
         children: [
-          _HomeTopBar(organization: organization),
+          AppTopBar(title: organization.name),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.fromLTRB(22, 14, 22, 18),
@@ -42,13 +62,13 @@ class AdminHomePage extends StatelessWidget {
                   AdminSummaryCard(controller: controller),
                   const SizedBox(height: 18),
                   PendingRequestsSection(
-                    controller: controller,
                     requests: controller.requests,
+                    onRequestTap: controller.openRequest,
                   ),
                   const SizedBox(height: 12),
                   ActiveMembersSection(
-                    controller: controller,
                     members: controller.activeMembers,
+                    onMemberTap: controller.openMember,
                   ),
                 ],
               ),
@@ -61,37 +81,9 @@ class AdminHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AdminHomeController controller = Get.put(AdminHomeController());
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-      body: SafeArea(child: _content(context, controller)),
-    );
-  }
-}
-
-class _HomeTopBar extends StatelessWidget {
-  final Organization organization;
-
-  const _HomeTopBar({required this.organization});
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
-
-    return Container(
-      height: 48,
-      padding: const EdgeInsets.symmetric(horizontal: 22),
-      color: colors.surface,
-      alignment: Alignment.centerLeft,
-      child: Text(
-        organization.name,
-        style: TextStyle(
-          color: colors.onSurface,
-          fontSize: 14,
-          fontWeight: FontWeight.w900,
-        ),
-      ),
+      body: SafeArea(child: _content(context)),
     );
   }
 }

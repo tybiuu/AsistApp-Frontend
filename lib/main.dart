@@ -20,17 +20,19 @@ import 'pages/admin_setup/admin_setup_page.dart';
 import 'pages/admin_setup_success/admin_setup_success_page.dart';
 import 'pages/admin_validate/admin_validate_page.dart';
 import 'pages/auth/login/login_page.dart';
+import 'pages/home/home_page.dart';
 import 'pages/setup/org_code/org_code_page.dart';
 import 'pages/setup/pending/pending_page.dart';
 import 'pages/auth/register/register_page.dart';
 import 'pages/setup/role_select/role_select_page.dart';
-import './pages/dashboard/dashboard_page.dart';
+import './pages/root/root_page.dart';
 import './pages/welcome/welcome_page.dart';
 import 'pages/pdf_report/pdf_report_page.dart';
 import 'pages/admin_activity_log/admin_activity_log_page.dart';
 
 Future<void> main() async {
-  final WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  final WidgetsBinding widgetsBinding =
+      WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
   // Initialize SessionService and restore any saved session from prefs.
@@ -50,7 +52,7 @@ class MyApp extends StatelessWidget {
     final MaterialTheme materialTheme = MaterialTheme(baseTextTheme);
 
     final String initialRoute = SessionService.to.isLoggedIn
-        ? AppRoutes.home
+        ? AppRoutes.root
         : AppRoutes.welcome;
 
     return GetMaterialApp(
@@ -69,7 +71,8 @@ class MyApp extends StatelessWidget {
         AppRoutes.orgCode: (context) => const OrgCodePage(),
         AppRoutes.pending: (context) => const PendingPage(),
         AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.home: (context) => const DashboardPage(),
+        AppRoutes.root: (context) => const RootPage(),
+        AppRoutes.home: (context) => const HomePage(),
         AppRoutes.adminHome: (context) => const AdminHomePage(),
         AppRoutes.adminValidate: (context) => const AdminValidatePage(),
         AppRoutes.adminAnalytics: (context) => const AdminAnalyticsPage(),
@@ -77,14 +80,10 @@ class MyApp extends StatelessWidget {
         AppRoutes.adminSetup: (context) => AdminSetupPage(),
         AppRoutes.adminSetupSuccess: (context) => AdminSetupSuccessPage(),
         AppRoutes.adminNewMembers: (context) => const AdminNewMembersPage(),
-        AppRoutes.adminMemberRequest: (context) =>
-            const AdminMemberRequestPage(),
-        AppRoutes.adminMemberDetail: (context) =>
-            const AdminMemberDetailPage(),
-        AppRoutes.adminScheduleValidation: (context) =>
-            const AdminScheduleValidationPage(),
-        AppRoutes.adminScheduleValidationDetail: (context) =>
-            const AdminScheduleValidationDetailPage(),
+        AppRoutes.adminMemberRequest: (context) => const AdminMemberRequestPage(),
+        AppRoutes.adminMemberDetail: (context) => const AdminMemberDetailPage(),
+        AppRoutes.adminScheduleValidation: (context) => const AdminScheduleValidationPage(),
+        AppRoutes.adminScheduleValidationDetail: (context) => const AdminScheduleValidationDetailPage(),
         AppRoutes.scheduleChange: (context) => const ScheduleChangePage(),
         AppRoutes.pdfReport: (context) => const PdfReportPage(),
         AppRoutes.adminActivityLog: (context) => const AdminActivityLogPage(),

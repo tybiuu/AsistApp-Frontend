@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../components/primary_button.dart';
+import '../../../configs/routes.dart';
 import '../schedule_change_controller.dart';
 
 class StatusView extends StatelessWidget {
@@ -13,9 +14,9 @@ class StatusView extends StatelessWidget {
     final c = Get.find<ScheduleChangeController>();
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    
+
     // Inyección limpia del color naranja corporativo
-    const brandColor = AppColors.chart1; 
+    const brandColor = AppColors.chart1;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -42,7 +43,7 @@ class StatusView extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: const Icon(
-                Icons.calendar_month_rounded, 
+                Icons.calendar_month_rounded,
                 size: 44,
                 color: brandColor,
               ),
@@ -125,17 +126,28 @@ class StatusView extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.mail_outline_rounded, color: brandColor, size: 20),
+                const Icon(
+                  Icons.mail_outline_rounded,
+                  color: brandColor,
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: RichText(
                     text: TextSpan(
-                      style: TextStyle(fontSize: 12, color: cs.onSurfaceVariant, height: 1.3),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: cs.onSurfaceVariant,
+                        height: 1.3,
+                      ),
                       children: [
                         const TextSpan(text: 'Te notificaremos al '),
                         TextSpan(
                           text: 'correo institucional',
-                          style: TextStyle(fontWeight: FontWeight.w700, color: brandColor),
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            color: brandColor,
+                          ),
                         ),
                         const TextSpan(text: ' cuando sea aprobado.'),
                       ],
@@ -149,15 +161,13 @@ class StatusView extends StatelessWidget {
 
           // Envoltura del tema para obligar a los botones a heredar el color institucional
           Theme(
-            data: theme.copyWith(
-              colorScheme: cs.copyWith(primary: brandColor),
-            ),
+            data: theme.copyWith(colorScheme: cs.copyWith(primary: brandColor)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 PrimaryButton(
                   text: 'Volver al inicio',
-                  onPressed: () => Get.offAllNamed('/home'),
+                  onPressed: () => Get.offAllNamed(AppRoutes.root),
                 ),
                 const SizedBox(height: 12),
                 PrimaryButton(
@@ -184,11 +194,11 @@ class StatusView extends StatelessWidget {
     required Color brandColor,
   }) {
     final cs = Theme.of(context).colorScheme;
-    
-    final Color stepColor = isCompleted 
-        ? const Color(0xff10b981) 
+
+    final Color stepColor = isCompleted
+        ? const Color(0xff10b981)
         : (isActive ? brandColor : cs.onSurfaceVariant.withOpacity(0.4));
-        
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -212,7 +222,9 @@ class StatusView extends StatelessWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
-                    color: isActive ? cs.onSurface : cs.onSurface.withOpacity(0.8),
+                    color: isActive
+                        ? cs.onSurface
+                        : cs.onSurface.withOpacity(0.8),
                   ),
                 ),
                 const SizedBox(height: 2),

@@ -25,14 +25,13 @@ class AdminScheduleValidationPage extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? const Color(0xff0f1117) : const Color(0xffffffff),
+      backgroundColor: isDark
+          ? const Color(0xff0f1117)
+          : const Color(0xffffffff),
       body: SafeArea(
         child: Column(
           children: [
-            const AppTopBar(
-              title: 'Cambios de horario',
-              showBack: true,
-            ),
+            const AppTopBar(title: 'Cambios de horario', showBack: true),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
               child: Row(
@@ -41,31 +40,37 @@ class AdminScheduleValidationPage extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          '3 solicitudes de horario pendientes',
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w800,
+                        Obx(
+                          () => Text(
+                            '${c.requests.length} solicitudes de horario pendientes',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 4),
-                        Obx(() => Text(
-                          '${c.requests.length} solicitudes cargadas desde los JSONs de assets',
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
+                        Obx(
+                          () => Text(
+                            '${c.requests.length} solicitudes cargadas desde los JSONs de assets',
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                        )),
+                        ),
                       ],
                     ),
                   ),
-                  Obx(() => StatusBadge(
-                    status: c.requests.isEmpty
-                        ? BadgeStatus.confirmed
-                        : BadgeStatus.pending,
-                  )),
+                  Obx(
+                    () => StatusBadge(
+                      status: c.requests.isEmpty
+                          ? BadgeStatus.confirmed
+                          : BadgeStatus.pending,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -96,13 +101,20 @@ class AdminScheduleValidationPage extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: theme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: theme.colorScheme.outlineVariant),
+                          border: Border.all(
+                            color: theme.colorScheme.outlineVariant,
+                          ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+                              padding: const EdgeInsets.fromLTRB(
+                                16,
+                                16,
+                                16,
+                                12,
+                              ),
                               child: Row(
                                 children: [
                                   Container(
@@ -126,7 +138,8 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                   const SizedBox(width: 12),
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -139,14 +152,18 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
-                                            StatusBadge(status: _badgeStatus(req.status)),
+                                            StatusBadge(
+                                              status: _badgeStatus(req.status),
+                                            ),
                                           ],
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           req.career,
                                           style: TextStyle(
-                                            color: theme.colorScheme.onSurfaceVariant,
+                                            color: theme
+                                                .colorScheme
+                                                .onSurfaceVariant,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -158,13 +175,19 @@ class AdminScheduleValidationPage extends StatelessWidget {
                               ),
                             ),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Row(
                                 children: [
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.schedule, size: 14, color: Colors.grey),
+                                        const Icon(
+                                          Icons.schedule,
+                                          size: 14,
+                                          color: Colors.grey,
+                                        ),
                                         const SizedBox(width: 4),
                                         Text(
                                           '${req.targetHours}h / sem',
@@ -180,7 +203,11 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.calendar_today, size: 14, color: Colors.grey),
+                                        const Icon(
+                                          Icons.calendar_today,
+                                          size: 14,
+                                          color: Colors.grey,
+                                        ),
                                         const SizedBox(width: 4),
                                         Text(
                                           '${req.changedDaysCount} días',
@@ -196,7 +223,11 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        const Icon(Icons.access_time, size: 14, color: Colors.grey),
+                                        const Icon(
+                                          Icons.access_time,
+                                          size: 14,
+                                          color: Colors.grey,
+                                        ),
                                         const SizedBox(width: 4),
                                         Expanded(
                                           child: Text(
@@ -217,7 +248,9 @@ class AdminScheduleValidationPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 12),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: Text(
                                 '"${req.reason}"',
                                 style: const TextStyle(
@@ -230,7 +263,9 @@ class AdminScheduleValidationPage extends StatelessWidget {
                             ),
                             const SizedBox(height: 16),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                              ),
                               child: SizedBox(
                                 height: 40,
                                 child: Row(
@@ -245,7 +280,9 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                           ),
                                           elevation: 0,
                                           shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(8),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
+                                            ),
                                           ),
                                         ),
                                         child: Text(
@@ -277,7 +314,9 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                         ),
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                       ),
                                       child: const Text(
@@ -295,10 +334,14 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                     child: ElevatedButton(
                                       onPressed: () => c.actionApprove(req.id),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(0xff10b981),
+                                        backgroundColor: const Color(
+                                          0xff10b981,
+                                        ),
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                       ),
                                       child: const Text(

@@ -38,7 +38,9 @@ class LoginController extends GetxController {
       final user = response.data!;
       await SessionService.to.saveUser(user);
 
-      String roleName = user.role == UserRole.admin ? 'Administrador' : 'Practicante';
+      String roleName = user.role == UserRole.admin
+          ? 'Administrador'
+          : 'Practicante';
 
       Get.snackbar(
         'Bienvenido',
@@ -48,7 +50,7 @@ class LoginController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );
-      Get.offAllNamed(AppRoutes.home);
+      Get.offAllNamed(AppRoutes.root);
     } else {
       Get.snackbar(
         'Error',
@@ -62,7 +64,8 @@ class LoginController extends GetxController {
   }
 
   void goToRegister() {
-    if (Get.previousRoute == AppRoutes.roleSelect || Get.previousRoute == AppRoutes.register) {
+    if (Get.previousRoute == AppRoutes.roleSelect ||
+        Get.previousRoute == AppRoutes.register) {
       Get.back();
     } else {
       Get.toNamed(AppRoutes.roleSelect);

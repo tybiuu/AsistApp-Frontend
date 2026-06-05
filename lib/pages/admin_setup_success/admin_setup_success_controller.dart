@@ -35,6 +35,6 @@ class AdminSetupSuccessController extends GetxController {
   }
 
   void goHome() {
-    Get.offAllNamed(AppRoutes.home);
+    Get.offAllNamed(AppRoutes.root);
   }
 }

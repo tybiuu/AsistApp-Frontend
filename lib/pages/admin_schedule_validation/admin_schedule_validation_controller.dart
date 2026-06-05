@@ -61,8 +61,8 @@ class AdminScheduleValidationController extends GetxController {
 
     try {
       final traineesResponse = await _traineeService.fetchAll();
-      final scheduleChangeRequestsResponse =
-          await _scheduleChangeRequestService.fetchAll();
+      final scheduleChangeRequestsResponse = await _scheduleChangeRequestService
+          .fetchAll();
       final String schedulePayload = await rootBundle.loadString(
         'assets/jsons/mock_schedules.json',
       );
@@ -94,6 +94,9 @@ class AdminScheduleValidationController extends GetxController {
         final List<ScheduleRequestModel> loadedRequests = [];
 
         for (final rawRequest in scheduleChangeRequestsResponse.data ?? []) {
+          final String status = rawRequest['status'] as String? ?? 'pending';
+          if (status.trim().toLowerCase() != 'pending') continue;
+
           final String userId = rawRequest['user_id'] as String? ?? '';
           final User? trainee = traineesById[userId];
           final Map<String, dynamic>? userSchedule = scheduleByUser[userId];
@@ -122,8 +125,10 @@ class AdminScheduleValidationController extends GetxController {
               targetHours: userSchedule?['weekly_hours'] as int? ?? 30,
               changedDaysCount: proposedBlocks.isEmpty ? 0 : 1,
               time: _formatRequestTime(rawRequest['created_at'] as String?),
-              reason: rawRequest['reason'] as String? ?? 'Solicitud de ajuste de horario',
-              status: rawRequest['status'] as String? ?? 'pending',
+              reason:
+                  rawRequest['reason'] as String? ??
+                  'Solicitud de ajuste de horario',
+              status: status,
               currentSchedule: {dayKey: currentBlocks},
               proposedSchedule: {dayKey: proposedBlocks},
             ),
@@ -180,7 +185,11 @@ class AdminScheduleValidationController extends GetxController {
   List<ScheduleBlock> _fallbackScheduleBlocks() {
     return [
       const ScheduleBlock(type: BlockType.work, start: '08:00', end: '13:00'),
-      const ScheduleBlock(type: BlockType.breakTime, start: '13:00', end: '14:00'),
+      const ScheduleBlock(
+        type: BlockType.breakTime,
+        start: '13:00',
+        end: '14:00',
+      ),
       const ScheduleBlock(type: BlockType.work, start: '14:00', end: '17:00'),
     ];
   }
@@ -198,7 +207,11 @@ class AdminScheduleValidationController extends GetxController {
         ScheduleBlock(type: BlockType.work, start: checkIn, end: lunchStart),
       );
       blocks.add(
-        ScheduleBlock(type: BlockType.breakTime, start: lunchStart, end: lunchEnd),
+        ScheduleBlock(
+          type: BlockType.breakTime,
+          start: lunchStart,
+          end: lunchEnd,
+        ),
       );
       blocks.add(
         ScheduleBlock(type: BlockType.work, start: lunchEnd, end: checkOut),
@@ -206,7 +219,9 @@ class AdminScheduleValidationController extends GetxController {
       return blocks;
     }
 
-    blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
+    blocks.add(
+      ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut),
+    );
     return blocks;
   }
 
@@ -214,7 +229,9 @@ class AdminScheduleValidationController extends GetxController {
     Map<String, dynamic> rawRequest,
   ) {
     final String checkIn = _normalizeTime(rawRequest['new_check_in_time']);
-    final String lunchStart = _normalizeTime(rawRequest['new_lunch_start_time']);
+    final String lunchStart = _normalizeTime(
+      rawRequest['new_lunch_start_time'],
+    );
     final String lunchEnd = _normalizeTime(rawRequest['new_lunch_end_time']);
     final String checkOut = _normalizeTime(rawRequest['new_check_out_time']);
 
@@ -225,7 +242,11 @@ class AdminScheduleValidationController extends GetxController {
         ScheduleBlock(type: BlockType.work, start: checkIn, end: lunchStart),
       );
       blocks.add(
-        ScheduleBlock(type: BlockType.breakTime, start: lunchStart, end: lunchEnd),
+        ScheduleBlock(
+          type: BlockType.breakTime,
+          start: lunchStart,
+          end: lunchEnd,
+        ),
       );
       blocks.add(
         ScheduleBlock(type: BlockType.work, start: lunchEnd, end: checkOut),
@@ -233,7 +254,9 @@ class AdminScheduleValidationController extends GetxController {
       return blocks;
     }
 
-    blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
+    blocks.add(
+      ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut),
+    );
     return blocks;
   }
 
@@ -262,7 +285,10 @@ class AdminScheduleValidationController extends GetxController {
   void actionApprove(String id) {
     requests.removeWhere((r) => r.id == id);
     if (Get.currentRoute == AppRoutes.adminScheduleValidationDetail) Get.back();
-    Get.snackbar('Aprobado', 'El nuevo horario del practicante ha sido autorizado.');
+    Get.snackbar(
+      'Aprobado',
+      'El nuevo horario del practicante ha sido autorizado.',
+    );
   }
 
   void actionReject(String id) {

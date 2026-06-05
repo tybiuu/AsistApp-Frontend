@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../components/custom_bottom_nav.dart';
-import 'dashboard_controller.dart';
+import 'root_controller.dart';
 import '../admin_analytics/admin_analytics_page.dart';
 import '../admin_config/admin_config_page.dart';
 import '../admin_home/admin_home_page.dart';
@@ -12,25 +12,25 @@ import '../attendance/attendance_page.dart';
 import '../profile/profile_page.dart';
 import '../analytics/analytics_page.dart';
 
-class DashboardPage extends StatefulWidget {
-  const DashboardPage({super.key});
+class RootPage extends StatefulWidget {
+  const RootPage({super.key});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState();
+  State<RootPage> createState() => _RootPageState();
 }
 
-class _DashboardPageState extends State<DashboardPage> {
-  late final DashboardController controller;
+class _RootPageState extends State<RootPage> {
+  late final RootController controller;
 
   @override
   void initState() {
     super.initState();
-    controller = Get.put(DashboardController());
+    controller = Get.put(RootController());
   }
 
   @override
   void dispose() {
-    Get.delete<DashboardController>(force: true);
+    Get.delete<RootController>(force: true);
     super.dispose();
   }
 
@@ -58,11 +58,13 @@ class _DashboardPageState extends State<DashboardPage> {
           children: views,
         );
       }),
-      bottomNavigationBar: Obx(() => CustomBottomNav(
-        isAdmin: controller.isAdmin,
-        currentIndex: controller.currentIndex.value,
-        onTap: controller.changeTab,
-      )),
+      bottomNavigationBar: Obx(
+        () => CustomBottomNav(
+          isAdmin: controller.isAdmin,
+          currentIndex: controller.currentIndex.value,
+          onTap: controller.changeTab,
+        ),
+      ),
     );
   }
 }

@@ -1,10 +1,10 @@
-// lib/pages/dashboard/dashboard_controller.dart
+// lib/pages/root/root_controller.dart
 
 import 'package:get/get.dart';
 
 import '../../services/session_service.dart';
 
-class DashboardController extends GetxController {
+class RootController extends GetxController {
   final RxInt currentIndex = 0.obs;
 
   /// Derived from the persisted session — no route arguments needed.
