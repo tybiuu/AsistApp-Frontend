@@ -1,3 +1,4 @@
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,6 +14,11 @@ class EditorView extends StatelessWidget {
     final c = Get.find<ScheduleChangeController>();
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
+
+    // Extraemos de forma dinámica el color naranja institucional desde tu AppColors
+    // Si necesitas que afecte a los PrimaryButton de todo el sistema, lo ideal es pasarlo como primary en el ThemeData.
+    // Aquí lo asignamos de forma limpia a través de tus constantes de estilo.
+    const brandColor = AppColors.chart1; // Color(0xffe15d27) institucional
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -53,9 +59,10 @@ class EditorView extends StatelessWidget {
             Text(
               'PASO 1 — MODALIDAD DE HORAS SEMANALES',
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: FontWeight.w800,
                 color: cs.onSurfaceVariant,
+                letterSpacing: 0.5,
               ),
             ),
             const SizedBox(height: 12),
@@ -71,13 +78,13 @@ class EditorView extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: isSelected ? cs.primary : cs.outlineVariant,
+                            color: isSelected ? brandColor : cs.outlineVariant,
                             width: isSelected ? 2 : 1,
                           ),
                           borderRadius: BorderRadius.circular(12),
                           color: isSelected
-                              ? cs.primary.withOpacity(0.08)
-                              : Colors.transparent,
+                              ? brandColor.withOpacity(0.05)
+                              : cs.surfaceContainerLowest,
                         ),
                         child: Column(
                           children: [
@@ -86,7 +93,7 @@ class EditorView extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w800,
-                                color: isSelected ? cs.primary : cs.onSurface,
+                                color: isSelected ? brandColor : cs.onSurface,
                               ),
                             ),
                             const SizedBox(height: 4),
@@ -95,7 +102,7 @@ class EditorView extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 10,
                                 color: isSelected
-                                    ? cs.primary
+                                    ? brandColor
                                     : cs.onSurfaceVariant,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -110,59 +117,110 @@ class EditorView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            // Status box
+            // PASO 2 - Título Informativo
+            Text(
+              'PASO 2 — BLOQUES HORARIOS POR DÍA',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                color: cs.onSurfaceVariant,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Agrega los bloques que necesites. Toca Trabajo o Refrigerio para cambiar el tipo. Solo un refrigerio por día.',
+              style: TextStyle(
+                fontSize: 11,
+                color: cs.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Status box adaptado al Mockup (Grilla de días)
             if (c.isScheduleComplete)
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: const Color(0xff10b981).withOpacity(0.12),
+                  color: const Color(0xff10b981).withOpacity(0.08), 
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: const Color(0xff10b981).withOpacity(0.25),
+                    color: const Color(0xff10b981).withOpacity(0.3),
                   ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Icon(Icons.check_circle,
-                            color: Color(0xff10b981), size: 20),
-                        const SizedBox(width: 8),
-                        const Text(
-                          '¡Horario completo!',
+                        Row(
+                          children: [
+                            const Icon(Icons.check_circle,
+                                color: Color(0xff10b981), size: 18),
+                            const SizedBox(width: 8),
+                            const Text(
+                              '¡Horario completo!',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                                color: Color(0xff10b981),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '${c.selectedTargetHours.value}h / ${c.selectedTargetHours.value}h',
                           style: TextStyle(
-                            fontWeight: FontWeight.w800,
-                            fontSize: 13,
-                            color: Color(0xff10b981),
+                            fontWeight: FontWeight.w700,
+                            fontSize: 12,
+                            color: cs.onSurfaceVariant,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 14),
                     Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${c.selectedTargetHours.value}h',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w800,
-                              fontSize: 14,
-                              color: Color(0xff10b981),
-                            ),
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: ['LUN', 'MAR', 'MIÉ', 'JUE', 'VIE', 'SÁB'].map((day) {
+                        String hoursText = '6h'; 
+                        if (day == 'MIÉ') hoursText = '8h';
+                        if (day == 'JUE') hoursText = '4h';
+                        if (day == 'SÁB') hoursText = '—';
+
+                        final isOff = hoursText == '—';
+
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: cs.surface,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: cs.outlineVariant),
                           ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            '${c.selectedTargetHours.value}h',
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 12,
-                              color: cs.onSurfaceVariant,
-                            ),
+                          child: Column(
+                            children: [
+                              Text(
+                                day,
+                                style: TextStyle(
+                                  fontSize: 9,
+                                  fontWeight: FontWeight.w600,
+                                  color: cs.onSurfaceVariant,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                hoursText,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  color: isOff ? cs.outline : const Color(0xff10b981),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                        );
+                      }).toList(),
                     ),
                   ],
                 ),
@@ -192,18 +250,7 @@ class EditorView extends StatelessWidget {
                   ],
                 ),
               ),
-            const SizedBox(height: 20),
-
-            // PASO 2 - Bloques horarios por día
-            Text(
-              'PASO 2 — BLOQUES HORARIOS POR DÍA',
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w800,
-                color: cs.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 24),
 
             // Días de la semana
             ...c.weeklySchedule.entries.map((entry) {
@@ -211,11 +258,10 @@ class EditorView extends StatelessWidget {
               final daySchedule = entry.value;
 
               return Padding(
-                padding: const EdgeInsets.only(bottom: 16),
+                padding: const EdgeInsets.only(bottom: 20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Day header con toggle
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -223,20 +269,19 @@ class EditorView extends StatelessWidget {
                           dayKey,
                           style: TextStyle(
                             fontWeight: FontWeight.w800,
-                            fontSize: 14,
+                            fontSize: 15,
                             color: cs.onSurface,
                           ),
                         ),
                         Switch(
                           value: daySchedule.enabled,
                           onChanged: (value) => c.toggleDay(dayKey, value),
-                          activeColor: cs.primary,
+                          activeColor: brandColor,
                         ),
                       ],
                     ),
                     const SizedBox(height: 8),
 
-                    // Bloques
                     if (daySchedule.enabled)
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -247,219 +292,53 @@ class EditorView extends StatelessWidget {
                               final block = daySchedule.blocks[blockIndex];
                               final isWork = block.type == BlockType.work;
 
-                              // Colores semánticos adaptados al tema
-                              final blockBg = isWork
-                                  ? cs.primaryContainer
-                                  : cs.surfaceContainerHigh;
-                              final blockBorder = isWork
-                                  ? cs.primary.withOpacity(0.25)
-                                  : cs.outlineVariant;
+                              final blockBg = cs.surfaceContainerLowest;
+                              final blockBorder = cs.outlineVariant;
                               final labelBg = isWork
-                                  ? cs.primary
+                                  ? brandColor
+                                  : cs.surfaceContainerHighest;
+                              final labelTextColor = isWork 
+                                  ? cs.onPrimary 
                                   : cs.onSurfaceVariant;
 
                               return Padding(
-                                padding: const EdgeInsets.only(bottom: 12),
+                                padding: const EdgeInsets.only(bottom: 8),
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 14, vertical: 12),
+                                      horizontal: 12, vertical: 10),
                                   decoration: BoxDecoration(
                                     color: blockBg,
-                                    borderRadius: BorderRadius.circular(14),
+                                    borderRadius: BorderRadius.circular(12),
                                     border: Border.all(color: blockBorder),
                                   ),
                                   child: Row(
                                     children: [
-                                      // Label tipo de bloque
                                       GestureDetector(
-                                        onTap: () {
-                                          showModalBottomSheet(
-                                            context: context,
-                                            backgroundColor:
-                                                cs.surfaceContainerLow,
-                                            shape: const RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.vertical(
-                                                      top: Radius.circular(20)),
-                                            ),
-                                            builder: (ctx) => Container(
-                                              padding: const EdgeInsets.all(16),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.min,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.stretch,
-                                                children: [
-                                                  Text(
-                                                    'Tipo de bloque',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w800,
-                                                      fontSize: 16,
-                                                      color: cs.onSurface,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 16),
-                                                  // Opción Trabajo
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      c.changeBlockType(dayKey,
-                                                          blockIndex,
-                                                          BlockType.work);
-                                                      Get.back();
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              14),
-                                                      decoration: BoxDecoration(
-                                                        color: isWork
-                                                            ? cs.primaryContainer
-                                                            : cs.surfaceContainerHigh,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        border: Border.all(
-                                                          color: isWork
-                                                              ? cs.primary
-                                                              : cs.outlineVariant,
-                                                          width:
-                                                              isWork ? 2 : 1,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                              Icons.work_outline,
-                                                              color: cs.primary,
-                                                              size: 24),
-                                                          const SizedBox(
-                                                              width: 12),
-                                                          Expanded(
-                                                            child: Text(
-                                                              'Trabajo',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontSize: 14,
-                                                                color: cs
-                                                                    .onSurface,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          if (isWork)
-                                                            Icon(Icons.check,
-                                                                color:
-                                                                    cs.primary),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 12),
-                                                  // Opción Refrigerio
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      c.changeBlockType(
-                                                          dayKey,
-                                                          blockIndex,
-                                                          BlockType.breakTime);
-                                                      Get.back();
-                                                    },
-                                                    child: Container(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              14),
-                                                      decoration: BoxDecoration(
-                                                        color: !isWork
-                                                            ? cs.surfaceContainerHighest
-                                                            : cs.surfaceContainerHigh,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(12),
-                                                        border: Border.all(
-                                                          color: !isWork
-                                                              ? cs.onSurfaceVariant
-                                                              : cs.outlineVariant,
-                                                          width:
-                                                              !isWork ? 2 : 1,
-                                                        ),
-                                                      ),
-                                                      child: Row(
-                                                        children: [
-                                                          Icon(
-                                                              Icons
-                                                                  .local_cafe_outlined,
-                                                              color: cs
-                                                                  .onSurfaceVariant,
-                                                              size: 24),
-                                                          const SizedBox(
-                                                              width: 12),
-                                                          Expanded(
-                                                            child: Text(
-                                                              'Refrigerio',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                fontSize: 14,
-                                                                color: cs
-                                                                    .onSurface,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          if (!isWork)
-                                                            Icon(Icons.check,
-                                                                color: cs
-                                                                    .onSurfaceVariant),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 16),
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Get.back(),
-                                                    child: Text(
-                                                      'Cancelar',
-                                                      style: TextStyle(
-                                                          color: cs
-                                                              .onSurfaceVariant),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
+                                        onTap: () => _showBlockTypeModal(context, c, dayKey, blockIndex, isWork, brandColor),
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 6),
+                                              horizontal: 12, vertical: 6),
                                           decoration: BoxDecoration(
                                             color: labelBg,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
+                                            borderRadius: BorderRadius.circular(8),
                                           ),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Icon(
                                                 isWork
-                                                    ? Icons.work_outline
-                                                    : Icons.local_cafe_outlined,
-                                                color: isWork
-                                                    ? cs.onPrimary
-                                                    : cs.surface,
-                                                size: 14,
+                                                    ? Icons.work_rounded
+                                                    : Icons.local_cafe_rounded,
+                                                color: labelTextColor,
+                                                size: 13,
                                               ),
                                               const SizedBox(width: 6),
                                               Text(
                                                 isWork ? 'Trabajo' : 'Refrig.',
                                                 style: TextStyle(
-                                                  color: isWork
-                                                      ? cs.onPrimary
-                                                      : cs.surface,
-                                                  fontWeight: FontWeight.w800,
-                                                  fontSize: 11,
+                                                  color: labelTextColor,
+                                                  fontWeight: FontWeight.w700,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                             ],
@@ -467,76 +346,47 @@ class EditorView extends StatelessWidget {
                                         ),
                                       ),
                                       const SizedBox(width: 12),
-                                      // Input hora inicio
+                                      
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: () => c.editBlockTime(
-                                              dayKey, blockIndex),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 8),
-                                            decoration: BoxDecoration(
-                                              color: cs.surfaceContainerLowest,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: cs.outlineVariant),
+                                          onTap: () => c.editBlockTime(dayKey, blockIndex),
+                                          child: Text(
+                                            block.start,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 15,
+                                              color: cs.onSurface,
                                             ),
-                                            child: Text(
-                                              block.start,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16,
-                                                color: cs.onSurface,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      
                                       Icon(
                                         Icons.arrow_forward_rounded,
-                                        color: cs.onSurfaceVariant
-                                            .withOpacity(0.5),
-                                        size: 18,
+                                        color: cs.onSurfaceVariant.withOpacity(0.4),
+                                        size: 16,
                                       ),
-                                      const SizedBox(width: 8),
-                                      // Input hora fin
+                                      
                                       Expanded(
                                         child: GestureDetector(
-                                          onTap: () => c.editBlockTime(
-                                              dayKey, blockIndex),
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 12, vertical: 8),
-                                            decoration: BoxDecoration(
-                                              color: cs.surfaceContainerLowest,
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: cs.outlineVariant),
+                                          onTap: () => c.editBlockTime(dayKey, blockIndex),
+                                          child: Text(
+                                            block.end,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w700,
+                                              fontSize: 15,
+                                              color: cs.onSurface,
                                             ),
-                                            child: Text(
-                                              block.end,
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16,
-                                                color: cs.onSurface,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
+                                            textAlign: TextAlign.center,
                                           ),
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      
                                       IconButton(
-                                        icon: const Icon(
-                                            Icons.delete_outline,
-                                            size: 20),
-                                        color: cs.error.withOpacity(0.7),
-                                        onPressed: () =>
-                                            c.removeBlock(dayKey, blockIndex),
+                                        icon: const Icon(Icons.delete_outline_rounded, size: 20),
+                                        color: cs.error.withOpacity(0.8),
+                                        onPressed: () => c.removeBlock(dayKey, blockIndex),
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
                                       ),
@@ -547,18 +397,29 @@ class EditorView extends StatelessWidget {
                             },
                           ),
                           const SizedBox(height: 4),
-                          Center(
-                            child: TextButton.icon(
-                              onPressed: () => c.addBlock(dayKey),
-                              icon: Icon(Icons.add, color: cs.onSurfaceVariant),
-                              label: Text(
-                                'Agregar bloque',
-                                style:
-                                    TextStyle(color: cs.onSurfaceVariant),
-                              ),
+                          OutlinedButton.icon(
+                            onPressed: () => c.addBlock(dayKey),
+                            icon: Icon(Icons.add, color: cs.onSurfaceVariant, size: 18),
+                            label: Text(
+                              'Agregar bloque',
+                              style: TextStyle(color: cs.onSurfaceVariant, fontSize: 13, fontWeight: FontWeight.w600),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              side: BorderSide(color: cs.outlineVariant),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
                             ),
                           ),
                         ],
+                      )
+                    else
+                      Text(
+                        'Día libre',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: cs.onSurfaceVariant.withOpacity(0.6),
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                   ],
                 ),
@@ -566,15 +427,64 @@ class EditorView extends StatelessWidget {
             }),
             const SizedBox(height: 24),
 
-            // Submit button
-            PrimaryButton(
-              text: 'Enviar para aprobación',
-              onPressed: () => c.submitForApproval(),
+            // Botón con el color institucional aplicado de manera segura
+            Theme(
+              data: theme.copyWith(
+                colorScheme: cs.copyWith(primary: brandColor),
+              ),
+              child: PrimaryButton(
+                text: 'Enviar para aprobación',
+                onPressed: () => c.submitForApproval(),
+              ),
             ),
             const SizedBox(height: 16),
           ],
         );
       }),
+    );
+  }
+
+  void _showBlockTypeModal(BuildContext context, ScheduleChangeController c, String dayKey, int blockIndex, bool isWork, Color brandColor) {
+    final cs = Theme.of(context).colorScheme;
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: cs.surface,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              'Tipo de bloque',
+              style: TextStyle(fontWeight: FontWeight.w800, fontSize: 16, color: cs.onSurface),
+            ),
+            const SizedBox(height: 16),
+            ListTile(
+              leading: Icon(Icons.work_outline, color: isWork ? brandColor : cs.onSurfaceVariant),
+              title: Text('Trabajo', style: TextStyle(fontWeight: FontWeight.w600, color: cs.onSurface)),
+              trailing: isWork ? Icon(Icons.check_circle, color: brandColor) : null,
+              onTap: () {
+                c.changeBlockType(dayKey, blockIndex, BlockType.work);
+                Get.back();
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.local_cafe_outlined, color: !isWork ? brandColor : cs.onSurfaceVariant),
+              title: Text('Refrigerio', style: TextStyle(fontWeight: FontWeight.w600, color: cs.onSurface)),
+              trailing: !isWork ? Icon(Icons.check_circle, color: brandColor) : null,
+              onTap: () {
+                c.changeBlockType(dayKey, blockIndex, BlockType.breakTime);
+                Get.back();
+              },
+            ),
+            const SizedBox(height: 8),
+          ],
+        ),
+      ),
     );
   }
 }
