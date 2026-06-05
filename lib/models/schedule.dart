@@ -32,10 +32,10 @@ class DaySchedule {
   });
 
   factory DaySchedule.fromJson(Map<String, dynamic> json) {
-    String? checkIn     = _trim(json['check_in_time'] as String?);
-    String? lunchStart  = _trim(json['lunch_start_time'] as String?);
-    String? lunchEnd    = _trim(json['lunch_end_time'] as String?);
-    String? checkOut    = _trim(json['check_out_time'] as String?);
+    String? checkIn = _trim(json['check_in_time'] as String?);
+    String? lunchStart = _trim(json['lunch_start_time'] as String?);
+    String? lunchEnd = _trim(json['lunch_end_time'] as String?);
+    String? checkOut = _trim(json['check_out_time'] as String?);
 
     if (checkIn == null || checkOut == null) {
       return const DaySchedule(enabled: false, blocks: []);
@@ -44,9 +44,9 @@ class DaySchedule {
     final blocks = <ScheduleBlock>[];
     if (lunchStart != null && lunchEnd != null) {
       blocks.addAll([
-        ScheduleBlock(type: BlockType.work,      start: checkIn,    end: lunchStart),
+        ScheduleBlock(type: BlockType.work, start: checkIn,    end: lunchStart),
         ScheduleBlock(type: BlockType.breakTime, start: lunchStart, end: lunchEnd),
-        ScheduleBlock(type: BlockType.work,      start: lunchEnd,   end: checkOut),
+        ScheduleBlock(type: BlockType.work, start: lunchEnd,   end: checkOut),
       ]);
     } else {
       blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
@@ -87,22 +87,21 @@ class Schedule {
   });
 
   static const _dayMap = {
-    'monday':    'Lunes',
-    'tuesday':   'Martes',
+    'monday': 'Lunes',
+    'tuesday': 'Martes',
     'wednesday': 'Miércoles',
-    'thursday':  'Jueves',
-    'friday':    'Viernes',
-    'saturday':  'Sábado',
-    'sunday':    'Domingo',
+    'thursday': 'Jueves',
+    'friday': 'Viernes',
+    'saturday': 'Sábado',
+    'sunday': 'Domingo',
   };
 
   static Map<String, DaySchedule> emptyDays() => {
-    'Lunes':     const DaySchedule(enabled: false, blocks: []),
-    'Martes':    const DaySchedule(enabled: false, blocks: []),
+    'Lunes': const DaySchedule(enabled: false, blocks: []),
+    'Martes': const DaySchedule(enabled: false, blocks: []),
     'Miércoles': const DaySchedule(enabled: false, blocks: []),
-    'Jueves':    const DaySchedule(enabled: false, blocks: []),
-    'Viernes':   const DaySchedule(enabled: false, blocks: []),
-    'Sábado':    const DaySchedule(enabled: false, blocks: []),
+    'Jueves': const DaySchedule(enabled: false, blocks: []),
+    'Viernes': const DaySchedule(enabled: false, blocks: [])
   };
 
   factory Schedule.fromJson(Map<String, dynamic> json) {
@@ -115,49 +114,26 @@ class Schedule {
       }
     }
     return Schedule(
-      id:             json['id'] as String? ?? '',
-      userId:         json['user_id'] as String? ?? '',
+      id: json['id'] as String? ?? '',
+      userId: json['user_id'] as String? ?? '',
       organizationId: json['organization_id'] as String?,
-      weeklyHours:    json['weekly_hours'] as int? ?? 0,
-      status:         json['status'] as String? ?? 'pending',
-      createdAt:      dateFromJson(json['created_at'] as String?),
-      updatedAt:      dateFromJson(json['updated_at'] as String?),
-      days:           days,
+      weeklyHours: json['weekly_hours'] as int? ?? 0,
+      status: json['status'] as String? ?? 'pending',
+      createdAt: dateFromJson(json['created_at'] as String?),
+      updatedAt: dateFromJson(json['updated_at'] as String?),
+      days: days,
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'id':              id,
-    'user_id':         userId,
+    'id': id,
+    'user_id': userId,
     'organization_id': organizationId,
-    'weekly_hours':    weeklyHours,
-    'status':          status,
-    'created_at':      createdAt.toIso8601String(),
-    'updated_at':      updatedAt.toIso8601String(),
-    'days':            days.map((k, v) => MapEntry(k, v.toJson())),
+    'weekly_hours': weeklyHours,
+    'status': status,
+    'created_at': createdAt.toIso8601String(),
+    'updated_at': updatedAt.toIso8601String(),
+    'days': days.map((k, v) => MapEntry(k, v.toJson())),
   };
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-int schedToMins(String t) {
-  final parts = t.split(':');
-  return int.parse(parts[0]) * 60 + int.parse(parts[1]);
-}
-
-int dayWorkMins(DaySchedule day) {
-  if (!day.enabled) return 0;
-  return day.blocks
-      .where((b) => b.type == BlockType.work)
-      .fold(0, (sum, b) => sum + schedToMins(b.end) - schedToMins(b.start));
-}
-
-String fmtMins(int totalMins) {
-  final h = totalMins ~/ 60;
-  final m = totalMins % 60;
-  if (m == 0) return '${h}h';
-  return '${h}h ${m}m';
 }
 

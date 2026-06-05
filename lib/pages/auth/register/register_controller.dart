@@ -134,6 +134,16 @@ class RegisterController extends GetxController {
 
     isLoading.value = false;
 
+    final String roleName = isAdmin ? 'Administrador' : 'Practicante';
+    Get.snackbar(
+      'Registro exitoso',
+      'Cuenta creada como $roleName',
+      backgroundColor: Colors.green.shade600,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+      margin: const EdgeInsets.all(16),
+    );
+
     if (isAdmin) {
       Get.toNamed(AppRoutes.adminSetup);
     } else {

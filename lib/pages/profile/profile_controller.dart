@@ -1,5 +1,6 @@
 // lib/pages/profile/profile_controller.dart
 
+import 'package:asist_app/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -45,8 +46,7 @@ class ProfileController extends GetxController {
     'Martes': const DaySchedule(enabled: false, blocks: []),
     'Miércoles': const DaySchedule(enabled: false, blocks: []),
     'Jueves': const DaySchedule(enabled: false, blocks: []),
-    'Viernes': const DaySchedule(enabled: false, blocks: []),
-    'Sábado': const DaySchedule(enabled: false, blocks: []),
+    'Viernes': const DaySchedule(enabled: false, blocks: [])
   }.obs;
   final carreras = kCarreras;
 
@@ -54,9 +54,7 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Load user from the active session
-    user.value = SessionService.to.currentUser.value;
-
+    
     cFirstName = TextEditingController(text: firstName);
     cLastName = TextEditingController(text: lastName);
     cPhone = TextEditingController(text: phone);

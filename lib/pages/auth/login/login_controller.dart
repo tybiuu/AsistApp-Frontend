@@ -1,13 +1,12 @@
 // lib/pages/auth/login/login_controller.dart
 
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../../configs/routes.dart';
 import '../../../models/user.dart';
 import '../../../services/session_service.dart';
+import '../../../services/user_service.dart';
 
 class LoginController extends GetxController {
   final formKey = GlobalKey<FormState>();
@@ -33,48 +32,27 @@ class LoginController extends GetxController {
     final mail = email.value.trim();
     final pass = password.value;
 
-    try {
-      final String response = await rootBundle.loadString('assets/jsons/mock_users.json');
-      final List<dynamic> data = jsonDecode(response);
-      
-      Map<String, dynamic>? foundUserMap;
+    final response = await UserService().login(mail, pass);
 
-      for (var item in data) {
-        if (item['institutional_email'] == mail && item['password'] == pass) {
-          foundUserMap = item;
-          break;
-        }
-      }
+    if (response.success && response.data != null) {
+      final user = response.data!;
+      await SessionService.to.saveUser(user);
 
-      if (foundUserMap != null) {
-        final user = User.fromJson(foundUserMap);
-        await SessionService.to.saveUser(user);
+      String roleName = user.role == UserRole.admin ? 'Administrador' : 'Practicante';
 
-        String roleName = user.role == UserRole.admin ? 'Administrador' : 'Practicante';
-
-        Get.snackbar(
-          'Bienvenido',
-          'Sesión iniciada como $roleName',
-          backgroundColor: Colors.green.shade600,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-        );
-        Get.offAllNamed(AppRoutes.home);
-      } else {
-        Get.snackbar(
-          'Error',
-          'Credenciales incorrectas. Intenta con admin@ulima.edu.pe o practicante@ulima.edu.pe',
-          backgroundColor: Colors.red.shade600,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.BOTTOM,
-          margin: const EdgeInsets.all(16),
-        );
-      }
-    } catch (e) {
+      Get.snackbar(
+        'Bienvenido',
+        'Sesión iniciada como $roleName',
+        backgroundColor: Colors.green.shade600,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+      Get.offAllNamed(AppRoutes.home);
+    } else {
       Get.snackbar(
         'Error',
-        'Ocurrió un error al cargar los datos de prueba.',
+        response.message,
         backgroundColor: Colors.red.shade600,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
