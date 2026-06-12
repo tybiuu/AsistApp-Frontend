@@ -6,6 +6,8 @@ import '../../../configs/routes.dart';
 import '../../../services/organization_service.dart';
 
 class OrgCodeController extends GetxController {
+  final OrganizationService _organizationService = Get.find();
+
   final RxString code = ''.obs;
   final RxBool isLoading = false.obs;
 
@@ -17,7 +19,7 @@ class OrgCodeController extends GetxController {
     if (code.value.length < 8 || isLoading.value) return;
     isLoading.value = true;
 
-    final response = await OrganizationService().fetchCurrent();
+    final response = await _organizationService.fetchCurrent();
 
     isLoading.value = false;
 

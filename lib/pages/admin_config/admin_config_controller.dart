@@ -12,7 +12,7 @@ import '../../services/organization_service.dart';
 import '../../services/session_service.dart';
 
 class AdminConfigController extends GetxController {
-  final OrganizationService _organizationService = OrganizationService();
+  final OrganizationService _organizationService = Get.find();
   final ImagePicker _imagePicker = ImagePicker();
 
   final RxBool isLoading = false.obs;

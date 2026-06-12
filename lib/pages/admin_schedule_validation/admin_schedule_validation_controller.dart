@@ -42,9 +42,9 @@ class ScheduleRequestModel {
 }
 
 class AdminScheduleValidationController extends GetxController {
-  final TraineeService _traineeService = TraineeService();
+  final TraineeService _traineeService = Get.find();
   final ScheduleChangeRequestService _scheduleChangeRequestService =
-      ScheduleChangeRequestService();
+      Get.find();
 
   final requests = <ScheduleRequestModel>[].obs;
   final selectedRequest = Rxn<ScheduleRequestModel>();

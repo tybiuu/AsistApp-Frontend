@@ -29,12 +29,6 @@ class _RootPageState extends State<RootPage> {
   }
 
   @override
-  void dispose() {
-    Get.delete<RootController>(force: true);
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final practitionerViews = [
       const HomePage(),

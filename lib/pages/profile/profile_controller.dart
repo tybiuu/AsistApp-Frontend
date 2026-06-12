@@ -13,6 +13,9 @@ import '../../services/session_service.dart';
 
 
 class ProfileController extends GetxController {
+  final OrganizationService _organizationService = Get.find();
+  final ScheduleService _scheduleService = Get.find();
+
   // ── Current user — direct reference to SessionService ────────────────────
   Rx<User?> get user => SessionService.to.currentUser;
 
@@ -66,11 +69,11 @@ class ProfileController extends GetxController {
   }
 
   Future<void> _loadMockSchedule() async {
-    schedule.assignAll(await ScheduleService.loadMock(user.value?.id));
+    schedule.assignAll(await _scheduleService.loadMock(user.value?.id));
   }
 
   Future<void> _loadOrganizationName() async {
-    final response = await OrganizationService().fetchCurrent();
+    final response = await _organizationService.fetchCurrent();
     if (response.success && response.data != null) {
       organizationName.value = response.data!.name;
     }

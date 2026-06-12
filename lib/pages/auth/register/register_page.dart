@@ -29,12 +29,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   @override
-  void dispose() {
-    Get.delete<RegisterController>();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final role = controller.role;
     final bool isPractitioner = role == RoleOption.practitioner;

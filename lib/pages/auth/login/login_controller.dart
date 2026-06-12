@@ -9,6 +9,8 @@ import '../../../services/session_service.dart';
 import '../../../services/user_service.dart';
 
 class LoginController extends GetxController {
+  final UserService _userService = Get.find();
+
   final formKey = GlobalKey<FormState>();
 
   final RxBool showPass = false.obs;
@@ -32,7 +34,7 @@ class LoginController extends GetxController {
     final mail = email.value.trim();
     final pass = password.value;
 
-    final response = await UserService().login(mail, pass);
+    final response = await _userService.login(mail, pass);
 
     if (response.success && response.data != null) {
       final user = response.data!;

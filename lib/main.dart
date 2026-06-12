@@ -9,7 +9,14 @@ import 'package:get/get.dart';
 
 import './configs/routes.dart';
 import './configs/theme.dart';
+import './services/attendance_record_service.dart';
+import './services/attendance_request_service.dart';
+import './services/organization_service.dart';
+import './services/schedule_change_request_service.dart';
+import './services/schedule_service.dart';
 import './services/session_service.dart';
+import './services/trainee_service.dart';
+import './services/user_service.dart';
 import 'pages/admin_analytics/admin_analytics_page.dart';
 import 'pages/admin_config/admin_config_page.dart';
 import 'pages/admin_home/admin_home_page.dart';
@@ -63,31 +70,46 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       defaultTransition: Transition.noTransition,
       transitionDuration: Duration.zero,
+      // Shared data services, resolved with Get.find() from the controllers.
+      // lazyPut defers creation until first use; fenix re-creates an instance
+      // if it is ever removed, so a find() never fails.
+      initialBinding: BindingsBuilder(() {
+        Get.lazyPut(() => UserService(), fenix: true);
+        Get.lazyPut(() => OrganizationService(), fenix: true);
+        Get.lazyPut(() => TraineeService(), fenix: true);
+        Get.lazyPut(() => ScheduleService(), fenix: true);
+        Get.lazyPut(() => ScheduleChangeRequestService(), fenix: true);
+        Get.lazyPut(() => AttendanceRecordService(), fenix: true);
+        Get.lazyPut(() => AttendanceRequestService(), fenix: true);
+      }),
       initialRoute: initialRoute,
-      routes: {
-        AppRoutes.welcome: (context) => const WelcomePage(),
-        AppRoutes.roleSelect: (context) => const RoleSelectPage(),
-        AppRoutes.register: (context) => const RegisterPage(),
-        AppRoutes.orgCode: (context) => const OrgCodePage(),
-        AppRoutes.pending: (context) => const PendingPage(),
-        AppRoutes.login: (context) => const LoginPage(),
-        AppRoutes.root: (context) => const RootPage(),
-        AppRoutes.home: (context) => const HomePage(),
-        AppRoutes.adminHome: (context) => const AdminHomePage(),
-        AppRoutes.adminValidate: (context) => const AdminValidatePage(),
-        AppRoutes.adminAnalytics: (context) => const AdminAnalyticsPage(),
-        AppRoutes.adminConfig: (context) => const AdminConfigPage(),
-        AppRoutes.adminSetup: (context) => AdminSetupPage(),
-        AppRoutes.adminSetupSuccess: (context) => AdminSetupSuccessPage(),
-        AppRoutes.adminNewMembers: (context) => const AdminNewMembersPage(),
-        AppRoutes.adminMemberRequest: (context) => const AdminMemberRequestPage(),
-        AppRoutes.adminMemberDetail: (context) => const AdminMemberDetailPage(),
-        AppRoutes.adminScheduleValidation: (context) => const AdminScheduleValidationPage(),
-        AppRoutes.adminScheduleValidationDetail: (context) => const AdminScheduleValidationDetailPage(),
-        AppRoutes.scheduleChange: (context) => const ScheduleChangePage(),
-        AppRoutes.pdfReport: (context) => const PdfReportPage(),
-        AppRoutes.adminActivityLog: (context) => const AdminActivityLogPage(),
-      },
+      // GetPage routes let GetX track each screen's lifecycle, so the
+      // controllers created with Get.put inside a page are disposed
+      // automatically when its route is popped.
+      getPages: [
+        GetPage(name: AppRoutes.welcome, page: () => const WelcomePage()),
+        GetPage(name: AppRoutes.roleSelect, page: () => const RoleSelectPage()),
+        GetPage(name: AppRoutes.register, page: () => const RegisterPage()),
+        GetPage(name: AppRoutes.orgCode, page: () => const OrgCodePage()),
+        GetPage(name: AppRoutes.pending, page: () => const PendingPage()),
+        GetPage(name: AppRoutes.login, page: () => const LoginPage()),
+        GetPage(name: AppRoutes.root, page: () => const RootPage()),
+        GetPage(name: AppRoutes.home, page: () => const HomePage()),
+        GetPage(name: AppRoutes.adminHome, page: () => const AdminHomePage()),
+        GetPage(name: AppRoutes.adminValidate, page: () => const AdminValidatePage()),
+        GetPage(name: AppRoutes.adminAnalytics, page: () => const AdminAnalyticsPage()),
+        GetPage(name: AppRoutes.adminConfig, page: () => const AdminConfigPage()),
+        GetPage(name: AppRoutes.adminSetup, page: () => AdminSetupPage()),
+        GetPage(name: AppRoutes.adminSetupSuccess, page: () => AdminSetupSuccessPage()),
+        GetPage(name: AppRoutes.adminNewMembers, page: () => const AdminNewMembersPage()),
+        GetPage(name: AppRoutes.adminMemberRequest, page: () => const AdminMemberRequestPage()),
+        GetPage(name: AppRoutes.adminMemberDetail, page: () => const AdminMemberDetailPage()),
+        GetPage(name: AppRoutes.adminScheduleValidation, page: () => const AdminScheduleValidationPage()),
+        GetPage(name: AppRoutes.adminScheduleValidationDetail, page: () => const AdminScheduleValidationDetailPage()),
+        GetPage(name: AppRoutes.scheduleChange, page: () => const ScheduleChangePage()),
+        GetPage(name: AppRoutes.pdfReport, page: () => const PdfReportPage()),
+        GetPage(name: AppRoutes.adminActivityLog, page: () => const AdminActivityLogPage()),
+      ],
     );
   }
 }

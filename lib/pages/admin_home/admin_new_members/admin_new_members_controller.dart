@@ -6,7 +6,7 @@ import '../../../models/user.dart';
 import '../../../services/trainee_service.dart';
 
 class AdminNewMembersController extends GetxController {
-  final TraineeService _traineeService = TraineeService();
+  final TraineeService _traineeService = Get.find();
 
   final RxBool isLoading = false.obs;
   final RxString message = ''.obs;

@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import '../models/schedule.dart';
 
 class ScheduleService {
-  static Future<Map<String, DaySchedule>> loadMock(String? userId) async {
+  Future<Map<String, DaySchedule>> loadMock(String? userId) async {
     try {
       final String response =
           await rootBundle.loadString('assets/jsons/mock_schedules.json');

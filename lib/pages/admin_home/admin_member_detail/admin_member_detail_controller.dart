@@ -9,6 +9,8 @@ import '../../../services/schedule_service.dart';
 import '../admin_home_models.dart';
 
 class AdminMemberDetailController extends GetxController {
+  final ScheduleService _scheduleService = Get.find();
+
   late final User member;
 
   final RxMap<String, DaySchedule> schedule = <String, DaySchedule>{
@@ -63,7 +65,7 @@ class AdminMemberDetailController extends GetxController {
   }
 
   Future<void> _loadSchedule() async {
-    schedule.assignAll(await ScheduleService.loadMock(member.id));
+    schedule.assignAll(await _scheduleService.loadMock(member.id));
   }
 
   void toggleDay(int idx) {

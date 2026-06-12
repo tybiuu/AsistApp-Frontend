@@ -26,12 +26,6 @@ class _AdminHomePageState extends State<AdminHomePage> {
     controller = Get.put(AdminHomeController());
   }
 
-  @override
-  void dispose() {
-    Get.delete<AdminHomeController>(force: true);
-    super.dispose();
-  }
-
   Widget _content(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 

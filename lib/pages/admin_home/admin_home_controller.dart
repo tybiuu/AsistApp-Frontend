@@ -15,14 +15,12 @@ import '../root/root_controller.dart';
 import 'admin_home_models.dart';
 
 class AdminHomeController extends GetxController {
-  final OrganizationService _organizationService = OrganizationService();
-  final TraineeService _traineeService = TraineeService();
-  final AttendanceRecordService _attendanceRecordService =
-      AttendanceRecordService();
+  final OrganizationService _organizationService = Get.find();
+  final TraineeService _traineeService = Get.find();
+  final AttendanceRecordService _attendanceRecordService = Get.find();
   final ScheduleChangeRequestService _scheduleChangeRequestService =
-      ScheduleChangeRequestService();
-  final AttendanceRequestService _attendanceRequestService =
-      AttendanceRequestService();
+      Get.find();
+  final AttendanceRequestService _attendanceRequestService = Get.find();
 
   final RxBool isLoading = false.obs;
   final RxString message = ''.obs;
