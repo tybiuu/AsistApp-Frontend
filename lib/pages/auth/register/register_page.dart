@@ -12,44 +12,32 @@ import 'components/practitioner_fields.dart';
 import 'components/password_fields.dart';
 import 'components/register_footer.dart';
 
-class RegisterPage extends StatefulWidget {
+class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
 
   @override
-  State<RegisterPage> createState() => _RegisterPageState();
-}
-
-class _RegisterPageState extends State<RegisterPage> {
-  late final RegisterController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = Get.put(RegisterController());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.put(RegisterController());
     final role = controller.role;
     final bool isPractitioner = role == RoleOption.practitioner;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Column(
           children: [
             const AppTopBar(title: 'Crea tu cuenta', showBack: true),
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 0),
                 child: RoleBadge(role: role),
               ),
             ),
             const SizedBox(height: 16),
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

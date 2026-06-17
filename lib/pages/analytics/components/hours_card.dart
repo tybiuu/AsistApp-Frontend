@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../configs/theme.dart';
 import '../analytics_controller.dart';
 
 class HoursCard extends StatelessWidget {
@@ -36,10 +35,10 @@ class HoursCard extends StatelessWidget {
             children: [
               Text(
                 '${data.hoursCompleted}h',
-                style: const TextStyle(
-                  color: AppColors.chart1,
+                style: TextStyle(
+                  color: colors.primary,
                   fontSize: 36,
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w900,
                   height: 1,
                 ),
               ),
@@ -59,12 +58,12 @@ class HoursCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           ClipRRect(
-            borderRadius: BorderRadius.circular(4),
+            borderRadius: BorderRadius.circular(999),
             child: LinearProgressIndicator(
               value: data.hoursProgress.clamp(0.0, 1.0),
-              minHeight: 8,
+              minHeight: 12,
               backgroundColor: colors.surfaceContainerHigh,
-              valueColor: const AlwaysStoppedAnimation<Color>(AppColors.chart1),
+              valueColor: AlwaysStoppedAnimation<Color>(colors.primary),
             ),
           ),
           const SizedBox(height: 10),
@@ -80,8 +79,8 @@ class HoursCard extends StatelessWidget {
               ),
               Text(
                 '${data.hoursRemaining}h restantes',
-                style: const TextStyle(
-                  color: AppColors.chart1,
+                style: TextStyle(
+                  color: colors.primary,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                 ),

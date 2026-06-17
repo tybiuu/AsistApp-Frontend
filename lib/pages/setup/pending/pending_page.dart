@@ -12,22 +12,22 @@ import '../role_select/role_select_controller.dart';
 class PendingPage extends StatelessWidget {
   const PendingPage({super.key});
 
+  static const _steps = [
+    {'step': '1', 'text': 'El jefe de área revisa tu solicitud', 'done': true},
+    {'step': '2', 'text': 'Recibirás un correo con la decisión', 'done': false},
+    {'step': '3', 'text': 'Propones tu horario semanal', 'done': false},
+    {'step': '4', 'text': '¡Empiezas a usar AsistApp!', 'done': false},
+  ];
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final args = (Get.arguments as Map<String, dynamic>?) ?? {};
     final String organizationName = args['organizationName'] as String? ?? '';
 
-    final List<Map<String, dynamic>> steps = [
-      {'step': '1', 'text': 'El jefe de área revisa tu solicitud', 'done': true},
-      {'step': '2', 'text': 'Recibirás un correo con la decisión', 'done': false},
-      {'step': '3', 'text': 'Propones tu horario semanal', 'done': false},
-      {'step': '4', 'text': '¡Empiezas a usar AsistApp!', 'done': false},
-    ];
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Column(
           children: [
             AppTopBar(
@@ -71,7 +71,7 @@ class PendingPage extends StatelessWidget {
                           size: 40,
                           color: isDark
                               ? const Color(0xff60a5fa)
-                              : const Color(0xff1d4ed8),
+                              : AppColors.info,
                         ),
                       ),
                     ),
@@ -129,7 +129,7 @@ class PendingPage extends StatelessWidget {
                             : const Color(0xffdbeafe),
                         border: Border.all(
                           color: isDark
-                              ? const Color(0xff1d4ed8)
+                              ? AppColors.info
                               : const Color(0xffbfdbfe),
                         ),
                         borderRadius: BorderRadius.circular(16),
@@ -153,7 +153,7 @@ class PendingPage extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               color: isDark
                                   ? const Color(0xff60a5fa)
-                                  : const Color(0xff1d4ed8),
+                                  : AppColors.info,
                             ),
                           ),
                         ],
@@ -187,7 +187,7 @@ class PendingPage extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(height: 16),
-                          ...steps.map((s) {
+                          ..._steps.map((s) {
                             final bool isDone = s['done'] as bool;
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),

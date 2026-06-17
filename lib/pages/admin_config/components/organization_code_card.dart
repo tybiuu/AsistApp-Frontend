@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../configs/theme.dart';
 import '../../../models/organization.dart';
 import '../admin_config_controller.dart';
 
@@ -27,7 +26,7 @@ class OrganizationCodeCard extends StatelessWidget {
         color: colors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: AppColors.chart1.withValues(alpha: 0.45),
+          color: colors.primary.withValues(alpha: 0.45),
           width: 1.5,
         ),
       ),
@@ -38,7 +37,7 @@ class OrganizationCodeCard extends StatelessWidget {
             'CÓDIGO DE ORGANIZACIÓN',
             style: TextStyle(
               color: colors.onSurfaceVariant,
-              fontSize: 12,
+              fontSize: 14,
               fontWeight: FontWeight.w900,
               letterSpacing: 1.2,
             ),
@@ -47,8 +46,8 @@ class OrganizationCodeCard extends StatelessWidget {
           Text(
             organization.code,
             textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: AppColors.chart1,
+            style: TextStyle(
+              color: colors.primary,
               fontSize: 28,
               fontWeight: FontWeight.w900,
               letterSpacing: 4,
@@ -60,8 +59,8 @@ class OrganizationCodeCard extends StatelessWidget {
             icon: const Icon(Icons.copy_rounded, size: 18),
             label: const Text('Copiar'),
             style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.chart1,
-              side: const BorderSide(color: AppColors.chart1, width: 1.3),
+              foregroundColor: colors.primary,
+              side: BorderSide(color: colors.primary, width: 1.3),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(14),
               ),

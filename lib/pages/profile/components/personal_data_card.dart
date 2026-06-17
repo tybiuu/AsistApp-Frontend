@@ -17,19 +17,16 @@ class PersonalDataCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.find<ProfileController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Obx(
       () => _Card(
-        isDark: isDark,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _CardHeader(c: c, isDark: isDark),
+            _CardHeader(c: c),
             if (c.editing.value)
-              _EditForm(c: c, isDark: isDark)
+              _EditForm(c: c)
             else
-              _ViewRows(c: c, isDark: isDark),
+              _ViewRows(c: c),
           ],
         ),
       ),
@@ -40,14 +37,13 @@ class PersonalDataCard extends StatelessWidget {
 // ── Shell ─────────────────────────────────────────────────────────────────────
 
 class _Card extends StatelessWidget {
-  final bool isDark;
   final Widget child;
-  const _Card({required this.isDark, required this.child});
+  const _Card({required this.child});
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? const Color(0xff1A1D27) : Colors.white;
-    final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
+    final bg = Theme.of(context).colorScheme.surface;
+    final border = Theme.of(context).colorScheme.outlineVariant;
     return Container(
       decoration: BoxDecoration(
         color: bg,
@@ -64,14 +60,13 @@ class _Card extends StatelessWidget {
 
 class _CardHeader extends StatelessWidget {
   final ProfileController c;
-  final bool isDark;
-  const _CardHeader({required this.c, required this.isDark});
+  const _CardHeader({required this.c});
 
   @override
   Widget build(BuildContext context) {
-    final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-    final onCard = isDark ? Colors.white : const Color(0xff1f2937);
-    final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final onCard = Theme.of(context).colorScheme.onSurface;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -150,14 +145,13 @@ class _IconTextBtn extends StatelessWidget {
 
 class _ViewRows extends StatelessWidget {
   final ProfileController c;
-  final bool isDark;
-  const _ViewRows({required this.c, required this.isDark});
+  const _ViewRows({required this.c});
 
   @override
   Widget build(BuildContext context) {
-    final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-    final label = isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280);
-    final value = isDark ? Colors.white : const Color(0xff1f2937);
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final label = Theme.of(context).colorScheme.onSurfaceVariant;
+    final value = Theme.of(context).colorScheme.onSurface;
 
     final rows = [
       (Icons.person_outline, 'Nombres', c.firstName),
@@ -212,31 +206,20 @@ class _ViewRows extends StatelessWidget {
 
 class _EditForm extends StatelessWidget {
   final ProfileController c;
-  final bool isDark;
-  const _EditForm({required this.c, required this.isDark});
+  const _EditForm({required this.c});
 
-  Color get _inputBg =>
-      isDark ? const Color(0xff242836) : const Color(0xfff9fafb);
-  Color get _border =>
-      isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-  Color get _label =>
-      isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280);
-  Color get _muted =>
-      isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
-  Color get _value => isDark ? Colors.white : const Color(0xff1f2937);
-
-  InputDecoration _decoration() => InputDecoration(
+  InputDecoration _decoration(BuildContext context) => InputDecoration(
     filled: true,
-    fillColor: _inputBg,
+    fillColor: Theme.of(context).colorScheme.surfaceContainerHigh,
     isDense: true,
     contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: _border),
+      borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: _border),
+      borderSide: BorderSide(color: Theme.of(context).colorScheme.outlineVariant),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(12),
@@ -245,16 +228,18 @@ class _EditForm extends StatelessWidget {
   );
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
     padding: const EdgeInsets.all(16),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _field('Nombres', Icons.person_outline, c.cFirstName),
+        _field('Nombres', Icons.person_outline, c.cFirstName, context),
         const SizedBox(height: 12),
-        _field('Apellidos', Icons.person_outline, c.cLastName),
+        _field('Apellidos', Icons.person_outline, c.cLastName, context),
         const SizedBox(height: 12),
-        _phoneField(),
+        _phoneField(context),
         const SizedBox(height: 12),
         _CarreraDropdown(c: c, isDark: isDark),
         const SizedBox(height: 12),
@@ -274,16 +259,17 @@ class _EditForm extends StatelessWidget {
         PrimaryButton(text: 'Guardar cambios', onPressed: c.saveEdit),
       ],
     ),
-  );
+    );
+  }
 
-  Widget _labelRow(String text, IconData icon) => Row(
+  Widget _labelRow(String text, IconData icon, BuildContext context) => Row(
     children: [
-      Icon(icon, size: 12, color: _label),
+      Icon(icon, size: 12, color: Theme.of(context).colorScheme.onSurfaceVariant),
       const SizedBox(width: 5),
       Text(
         text,
         style: TextStyle(
-          color: _label,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
           fontSize: 12,
           fontWeight: FontWeight.w600,
         ),
@@ -291,51 +277,51 @@ class _EditForm extends StatelessWidget {
     ],
   );
 
-  Widget _field(String label, IconData icon, TextEditingController ctrl) =>
+  Widget _field(String label, IconData icon, TextEditingController ctrl, BuildContext context) =>
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _labelRow(label, icon),
+          _labelRow(label, icon, context),
           const SizedBox(height: 6),
           TextField(
             controller: ctrl,
-            style: TextStyle(color: _value, fontSize: 14),
-            decoration: _decoration(),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
+            decoration: _decoration(context),
           ),
         ],
       );
 
-  Widget _phoneField() => Column(
+  Widget _phoneField(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      _labelRow('Celular', Icons.phone_outlined),
+      _labelRow('Celular', Icons.phone_outlined, context),
       const SizedBox(height: 6),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 14),
         decoration: BoxDecoration(
-          color: _inputBg,
+          color: Theme.of(context).colorScheme.surfaceContainerHigh,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: _border),
+          border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
         ),
         child: Row(
           children: [
             Text(
               '+51',
               style: TextStyle(
-                color: _muted,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(width: 8),
-            Container(width: 1, height: 18, color: _border),
+            Container(width: 1, height: 18, color: Theme.of(context).colorScheme.outlineVariant),
             const SizedBox(width: 8),
             Expanded(
               child: TextField(
                 controller: c.cPhone,
                 keyboardType: TextInputType.phone,
                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                style: TextStyle(color: _value, fontSize: 14),
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 14),
                 decoration: const InputDecoration(
                   border: InputBorder.none,
                   isDense: true,
@@ -358,19 +344,16 @@ class _CarreraDropdown extends StatelessWidget {
   final bool isDark;
   const _CarreraDropdown({required this.c, required this.isDark});
 
-  Color get _inputBg =>
-      isDark ? const Color(0xff242836) : const Color(0xfff9fafb);
-  Color get _border =>
-      isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-  Color get _label =>
-      isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280);
-  Color get _muted =>
-      isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
-  Color get _value => isDark ? Colors.white : const Color(0xff1f2937);
-  Color get _cardBg => isDark ? const Color(0xff1A1D27) : Colors.white;
-
   @override
-  Widget build(BuildContext context) => Obx(() {
+  Widget build(BuildContext context) {
+    final inputBg = Theme.of(context).colorScheme.surfaceContainerHigh;
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final label = Theme.of(context).colorScheme.onSurfaceVariant;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    final cardBg = Theme.of(context).colorScheme.surfaceContainerHigh;
+    final value = Theme.of(context).colorScheme.onSurface;
+
+    return Obx(() {
     final isOpen = c.carreraOpen.value;
     final selected = c.dCarrera.value;
 
@@ -379,12 +362,12 @@ class _CarreraDropdown extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(Icons.school_outlined, size: 12, color: _label),
+            Icon(Icons.school_outlined, size: 12, color: label),
             const SizedBox(width: 5),
             Text(
               'Carrera',
               style: TextStyle(
-                color: _label,
+                color: label,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
               ),
@@ -398,11 +381,11 @@ class _CarreraDropdown extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
             decoration: BoxDecoration(
-              color: _inputBg,
+              color: inputBg,
               borderRadius: isOpen
                   ? const BorderRadius.vertical(top: Radius.circular(12))
                   : BorderRadius.circular(12),
-              border: Border.all(color: isOpen ? AppColors.chart1 : _border),
+              border: Border.all(color: isOpen ? AppColors.chart1 : border),
             ),
             child: Row(
               children: [
@@ -410,7 +393,7 @@ class _CarreraDropdown extends StatelessWidget {
                   child: Text(
                     selected.isEmpty ? 'Selecciona tu carrera' : selected,
                     style: TextStyle(
-                      color: selected.isEmpty ? _muted : _value,
+                      color: selected.isEmpty ? muted : value,
                       fontSize: 14,
                     ),
                     overflow: TextOverflow.ellipsis,
@@ -420,7 +403,7 @@ class _CarreraDropdown extends StatelessWidget {
                   isOpen
                       ? Icons.keyboard_arrow_up_rounded
                       : Icons.keyboard_arrow_down_rounded,
-                  color: _muted,
+                  color: muted,
                   size: 20,
                 ),
               ],
@@ -432,7 +415,7 @@ class _CarreraDropdown extends StatelessWidget {
           Container(
             constraints: const BoxConstraints(maxHeight: 180),
             decoration: BoxDecoration(
-              color: _cardBg,
+              color: cardBg,
               borderRadius: const BorderRadius.vertical(
                 bottom: Radius.circular(12),
               ),
@@ -479,7 +462,7 @@ class _CarreraDropdown extends StatelessWidget {
                               ? (isDark
                                     ? const Color(0xfffb923c)
                                     : AppColors.chart1)
-                              : _value,
+                              : value,
                           fontSize: 14,
                           fontWeight: isActive
                               ? FontWeight.w700
@@ -495,4 +478,5 @@ class _CarreraDropdown extends StatelessWidget {
       ],
     );
   });
+  }
 }

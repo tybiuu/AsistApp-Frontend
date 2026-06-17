@@ -8,6 +8,12 @@ enum RoleOption { practitioner, admin }
 class RoleSelectController extends GetxController {
   final Rx<RoleOption?> selectedRole = Rx<RoleOption?>(null);
 
+  @override
+  void onInit() {
+    super.onInit();
+    selectedRole.value = null;
+  }
+
   void selectRole(RoleOption role) {
     selectedRole.value = role;
   }

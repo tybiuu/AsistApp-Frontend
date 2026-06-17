@@ -1,4 +1,5 @@
 // lib/pages/profile/profile_page.dart
+import 'package:asist_app/configs/theme.dart';
 import '../attendance/missing_attendance_request_page.dart';
 import 'package:asist_app/configs/routes.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,7 @@ class ProfilePage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Column(
           children: [
             const AppTopBar(title: 'Mi perfil'),
@@ -126,7 +127,7 @@ class _LogoutButton extends StatelessWidget {
           'Cerrar sesión',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: Color(0xffef4444),
+            color: AppColors.error,
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),

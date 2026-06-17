@@ -39,7 +39,7 @@ class StatusView extends StatelessWidget {
               width: 90,
               height: 90,
               decoration: BoxDecoration(
-                color: brandColor.withOpacity(0.08),
+                color: brandColor.withValues(alpha: 0.08),
                 shape: BoxShape.circle,
               ),
               child: const Icon(
@@ -120,9 +120,9 @@ class StatusView extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: brandColor.withOpacity(0.04),
+              color: brandColor.withValues(alpha: 0.04),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: brandColor.withOpacity(0.15)),
+              border: Border.all(color: brandColor.withValues(alpha: 0.15)),
             ),
             child: Row(
               children: [
@@ -196,8 +196,8 @@ class StatusView extends StatelessWidget {
     final cs = Theme.of(context).colorScheme;
 
     final Color stepColor = isCompleted
-        ? const Color(0xff10b981)
-        : (isActive ? brandColor : cs.onSurfaceVariant.withOpacity(0.4));
+        ? AppColors.success
+        : (isActive ? brandColor : cs.onSurfaceVariant.withValues(alpha: 0.4));
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -205,7 +205,7 @@ class StatusView extends StatelessWidget {
         color: cs.surfaceContainerLowest,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isActive ? brandColor.withOpacity(0.3) : cs.outlineVariant,
+          color: isActive ? brandColor.withValues(alpha: 0.3) : cs.outlineVariant,
           width: isActive ? 1.5 : 1,
         ),
       ),
@@ -224,7 +224,7 @@ class StatusView extends StatelessWidget {
                     fontSize: 13,
                     color: isActive
                         ? cs.onSurface
-                        : cs.onSurface.withOpacity(0.8),
+                        : cs.onSurface.withValues(alpha: 0.8),
                   ),
                 ),
                 const SizedBox(height: 2),

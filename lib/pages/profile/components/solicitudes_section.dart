@@ -34,16 +34,14 @@ class SolicitudesSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark  = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ...solicitudes.map((s) => Padding(
           padding: const EdgeInsets.only(bottom: 8),
-          child: _SolicitudCard(item: s, isDark: isDark),
+          child: _SolicitudCard(item: s),
         )),
-        _RequestAbsenceRow(isDark: isDark, onTap: onRequestAbsence),
+        _RequestAbsenceRow(onTap: onRequestAbsence),
       ],
     );
   }
@@ -53,16 +51,15 @@ class SolicitudesSection extends StatelessWidget {
 
 class _SolicitudCard extends StatelessWidget {
   final SolicitudItem item;
-  final bool isDark;
 
-  const _SolicitudCard({required this.item, required this.isDark});
+  const _SolicitudCard({required this.item});
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? const Color(0xff1A1D27) : Colors.white;
-    final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-    final value = isDark ? Colors.white : const Color(0xff1f2937);
-    final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
+    final bg = Theme.of(context).colorScheme.surface;
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final value = Theme.of(context).colorScheme.onSurface;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -96,17 +93,16 @@ class _SolicitudCard extends StatelessWidget {
 // ── Request absence row ───────────────────────────────────────────────────────
 
 class _RequestAbsenceRow extends StatelessWidget {
-  final bool isDark;
   final VoidCallback? onTap;
 
-  const _RequestAbsenceRow({required this.isDark, this.onTap});
+  const _RequestAbsenceRow({this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? const Color(0xff1A1D27) : Colors.white;
-    final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-    final value = isDark ? Colors.white : const Color(0xff1f2937);
-    final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
+    final bg = Theme.of(context).colorScheme.surface;
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final value = Theme.of(context).colorScheme.onSurface;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Container(
       decoration: BoxDecoration(

@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../configs/theme.dart';
 import '../admin_analytics_controller.dart';
 
 class MemberRow extends StatelessWidget {
@@ -30,15 +29,15 @@ class MemberRow extends StatelessWidget {
           Container(
             width: 42,
             height: 42,
-            decoration: const BoxDecoration(
-              color: AppColors.chart1,
+            decoration: BoxDecoration(
+              color: colors.primary,
               shape: BoxShape.circle,
             ),
             alignment: Alignment.center,
             child: Text(
               member.initials,
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: colors.onPrimary,
                 fontSize: 13,
                 fontWeight: FontWeight.w800,
               ),
@@ -46,60 +45,44 @@ class MemberRow extends StatelessWidget {
           ),
           const SizedBox(width: 12),
 
-          // Name + bar
+          // Name + percentage + bar
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  member.name,
-                  style: TextStyle(
-                    color: colors.onSurface,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(4),
-                        child: LinearProgressIndicator(
-                          value: member.attendancePercent / 100,
-                          minHeight: 6,
-                          backgroundColor: colors.surfaceContainerHigh,
-                          valueColor: AlwaysStoppedAnimation<Color>(barColor),
+                      child: Text(
+                        member.name,
+                        style: TextStyle(
+                          color: colors.onSurface,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
                     Text(
-                      '${member.hoursLogged}h',
+                      '${member.attendancePercent}%',
                       style: TextStyle(
                         color: barColor,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w900,
                       ),
                     ),
                   ],
                 ),
+                const SizedBox(height: 5),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(999),
+                  child: LinearProgressIndicator(
+                    value: member.attendancePercent / 100,
+                    minHeight: 8,
+                    backgroundColor: colors.surfaceContainerHigh,
+                    valueColor: AlwaysStoppedAnimation<Color>(barColor),
+                  ),
+                ),
               ],
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Percentage
-          SizedBox(
-            width: 36,
-            child: Text(
-              '${member.attendancePercent}%',
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-              ),
             ),
           ),
         ],

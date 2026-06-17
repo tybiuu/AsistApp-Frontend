@@ -17,6 +17,7 @@ class SummaryGrid extends StatelessWidget {
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
       childAspectRatio: 1.8,
@@ -24,14 +25,13 @@ class SummaryGrid extends StatelessWidget {
         MemberMetricCard(
           label: 'Asistencias confirmadas',
           value: '${summary.confirmedAttendances}',
-          valueColor: const Color(0xff16a34a),
+          valueColor: AppColors.success,
           subtitle: '',
         ),
         MemberMetricCard(
           label: 'Puntualidad promedio',
           value: '${summary.punctualityPercent}%',
-          valueColor: AdminAnalyticsController.percentColor(
-              summary.punctualityPercent),
+          valueColor: Theme.of(context).colorScheme.primary,
           subtitle: '',
         ),
         MemberMetricCard(
@@ -43,7 +43,7 @@ class SummaryGrid extends StatelessWidget {
         MemberMetricCard(
           label: 'Total inasistencias',
           value: '${summary.totalAbsences}',
-          valueColor: const Color(0xffef4444),
+          valueColor: AppColors.error,
           subtitle: '',
         ),
       ],

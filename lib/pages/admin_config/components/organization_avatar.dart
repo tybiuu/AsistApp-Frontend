@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../../configs/theme.dart';
 import '../../../models/organization.dart';
 
 class OrganizationAvatar extends StatelessWidget {
@@ -31,7 +30,7 @@ class OrganizationAvatar extends StatelessWidget {
       height: size,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: AppColors.chart1,
+        color: Theme.of(context).colorScheme.primary,
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       clipBehavior: Clip.antiAlias,
@@ -47,7 +46,7 @@ class OrganizationAvatar extends StatelessWidget {
         }
 
         if (photoUrl == null || photoUrl.isEmpty) {
-          return OrganizationInitialsAvatar(organization: organization);
+          return OrganizationInitialsAvatar(organization: organization, fontSize: size * 0.30);
         }
 
         return Image.network(
@@ -56,7 +55,7 @@ class OrganizationAvatar extends StatelessWidget {
           height: size,
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
-            return OrganizationInitialsAvatar(organization: organization);
+            return OrganizationInitialsAvatar(organization: organization, fontSize: size * 0.30);
           },
         );
       }),
@@ -66,8 +65,9 @@ class OrganizationAvatar extends StatelessWidget {
 
 class OrganizationInitialsAvatar extends StatelessWidget {
   final Organization organization;
+  final double fontSize;
 
-  const OrganizationInitialsAvatar({super.key, required this.organization});
+  const OrganizationInitialsAvatar({super.key, required this.organization, this.fontSize = 15});
 
   String get _initials {
     final String name = organization.name.trim();
@@ -80,9 +80,9 @@ class OrganizationInitialsAvatar extends StatelessWidget {
     return Center(
       child: Text(
         _initials,
-        style: const TextStyle(
-          color: AppColors.primaryForeground,
-          fontSize: 15,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onPrimary,
+          fontSize: fontSize,
           fontWeight: FontWeight.w900,
         ),
       ),

@@ -43,67 +43,50 @@ class RoleDef {
   });
 }
 
-class RoleSelectPage extends StatefulWidget {
+class RoleSelectPage extends StatelessWidget {
   const RoleSelectPage({super.key});
 
-  @override
-  State<RoleSelectPage> createState() => _RoleSelectPageState();
-}
-
-class _RoleSelectPageState extends State<RoleSelectPage> {
-  late final RoleSelectController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = Get.put(RoleSelectController());
-    // Resetear siempre la opción seleccionada al entrar a la página
-    controller.selectedRole.value = null;
-  }
+  static final List<RoleDef> _roles = [
+    RoleDef(
+      id: RoleOption.practitioner,
+      icon: Icons.school_rounded,
+      title: 'Soy practicante',
+      subtitle: 'Estudiante universitario',
+      description:
+          'Marca tu asistencia, propón tu horario semanal y genera reportes de tus prácticas.',
+      tag: 'Practicante',
+      iconColor: AppColors.chart1,
+      iconBgLight: const Color(0xfffff7ed),
+      iconBgDark: Color(0xff431407).withValues(alpha: 0.3),
+      selectedBorder: AppColors.chart1,
+      selectedBgLight: const Color(0xfffff7ed),
+      selectedBgDark: Color(0xff431407).withValues(alpha: 0.2),
+      tagColorLight: const Color(0xffea580c),
+      tagColorDark: const Color(0xfffb923c),
+    ),
+    RoleDef(
+      id: RoleOption.admin,
+      icon: Icons.shield_rounded,
+      title: 'Soy administrador',
+      subtitle: 'Profesional del laboratorio',
+      description:
+          'Crea y administra la organización, gestiona miembros y accede a todas las funciones.',
+      tag: 'Administrador',
+      iconColor: AppColors.chart1,
+      iconBgLight: const Color(0xfff1f5f9),
+      iconBgDark: Color(0xff1e293b).withValues(alpha: 0.5),
+      selectedBorder: AppColors.chart1,
+      selectedBgLight: const Color(0xfff8fafc),
+      selectedBgDark: Color(0xff1e293b).withValues(alpha: 0.3),
+      tagColorLight: const Color(0xff334155),
+      tagColorDark: const Color(0xffe2e8f0),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(RoleSelectController());
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final List<RoleDef> roles = [
-      RoleDef(
-        id: RoleOption.practitioner,
-        icon: Icons.school_rounded,
-        title: 'Soy practicante',
-        subtitle: 'Estudiante universitario',
-        description:
-            'Marca tu asistencia, propón tu horario semanal y genera reportes de tus prácticas.',
-        tag: 'Practicante',
-        iconColor: AppColors.chart1,
-        iconBgLight: const Color(0xfffff7ed),
-        iconBgDark: const Color(0xff431407).withValues(alpha: 0.3),
-        selectedBorder: AppColors.chart1,
-        selectedBgLight: const Color(0xfffff7ed),
-        selectedBgDark: const Color(0xff431407).withValues(alpha: 0.2),
-        tagColorLight: const Color(0xffea580c),
-        tagColorDark: const Color(0xfffb923c),
-
-      ),
-
-      RoleDef(
-        id: RoleOption.admin,
-        icon: Icons.shield_rounded,
-        title: 'Soy administrador',
-        subtitle: 'Profesional del laboratorio',
-        description:
-            'Crea y administra la organización, gestiona miembros y accede a todas las funciones.',
-        tag: 'Administrador',
-        iconColor: AppColors.chart1,
-        iconBgLight: const Color(0xfff1f5f9),
-        iconBgDark: const Color(0xff1e293b).withValues(alpha: 0.5),
-        selectedBorder: AppColors.chart1,
-        selectedBgLight: const Color(0xfff8fafc),
-        selectedBgDark: const Color(0xff1e293b).withValues(alpha: 0.3),
-        tagColorLight: const Color(0xff334155),
-        tagColorDark: const Color(0xffe2e8f0),
-
-      ),
-    ];
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
@@ -126,12 +109,12 @@ class _RoleSelectPageState extends State<RoleSelectPage> {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.arrow_back, size: 18, color: Color(0xfff97316)),
+                            Icon(Icons.arrow_back, size: 18, color: AppColors.chart1),
                             SizedBox(width: 6),
                             Text(
                               'Volver',
                               style: TextStyle(
-                                color: Color(0xfff97316),
+                                color: AppColors.chart1,
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -154,7 +137,7 @@ class _RoleSelectPageState extends State<RoleSelectPage> {
                         TextSpan(text: '¿Cómo vas a usar '),
                         TextSpan(
                           text: 'AsistApp?',
-                          style: TextStyle(color: Color(0xfff97316)),
+                          style: TextStyle(color: AppColors.chart1),
                         ),
                       ],
                     ),
@@ -175,10 +158,10 @@ class _RoleSelectPageState extends State<RoleSelectPage> {
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                itemCount: roles.length,
+                itemCount: _roles.length,
                 separatorBuilder: (context, index) => const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  final role = roles[index];
+                  final role = _roles[index];
                   return Obx(() {
                     final bool isSelected = controller.selectedRole() == role.id;
                     return GestureDetector(

@@ -9,11 +9,92 @@ import '../../configs/theme.dart';
 import 'admin_setup_controller.dart';
 
 class AdminSetupPage extends StatelessWidget {
-  final AdminSetupController control = Get.put(AdminSetupController());
+  const AdminSetupPage({super.key});
 
-  AdminSetupPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    Get.put(AdminSetupController());
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      body: const _Body(),
+    );
+  }
+}
 
-  Widget _photoPicker(BuildContext context) {
+class _Body extends StatelessWidget {
+  const _Body();
+
+  @override
+  Widget build(BuildContext context) {
+    final AdminSetupController control = Get.find();
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return SafeArea(top: false,
+      child: Column(
+        children: [
+          AppTopBar(
+            title: 'Crea tu laboratorio',
+            showBack: true,
+            onBack: control.goBack,
+          ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 22, 16, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _PhotoPicker(),
+                  const SizedBox(height: 22),
+                  _TextInput(
+                    label: 'Nombre del laboratorio',
+                    hint: 'Ej: ITLAB, BioLab, QuimLab...',
+                    controller: control.nameController,
+                  ),
+                  const SizedBox(height: 18),
+                  const _TardinessStepper(),
+                  const SizedBox(height: 18),
+                  _TextInput(
+                    label: 'Descripcion (opcional)',
+                    hint: 'Describe brevemente tu laboratorio...',
+                    controller: control.descriptionController,
+                  ),
+                  const SizedBox(height: 18),
+                  Obx(
+                    () => PrimaryButton(
+                      text: control.isLoading.value ? 'Creando...' : 'Crear organizacion',
+                      onPressed: control.canCreate ? control.createOrganization : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 18,
+            color: colors.surfaceContainerLow,
+            alignment: Alignment.center,
+            child: Container(
+              width: 98,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colors.outline,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PhotoPicker extends StatelessWidget {
+  const _PhotoPicker();
+
+  @override
+  Widget build(BuildContext context) {
+    final AdminSetupController control = Get.find();
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return GestureDetector(
@@ -85,14 +166,21 @@ class AdminSetupPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _textInput({
-    required BuildContext context,
-    required String label,
-    required String hint,
-    required TextEditingController controller,
-    int maxLines = 1,
-  }) {
+class _TextInput extends StatelessWidget {
+  final String label;
+  final String hint;
+  final TextEditingController controller;
+
+  const _TextInput({
+    required this.label,
+    required this.hint,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Column(
@@ -109,17 +197,11 @@ class AdminSetupPage extends StatelessWidget {
         const SizedBox(height: 6),
         TextField(
           controller: controller,
-          maxLines: maxLines,
-          style: TextStyle(
-            color: colors.onSurface,
-            fontSize: 14,
-          ),
+          maxLines: 1,
+          style: TextStyle(color: colors.onSurface, fontSize: 14),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontSize: 14,
-            ),
+            hintStyle: TextStyle(color: colors.onSurfaceVariant, fontSize: 14),
             filled: true,
             fillColor: colors.surfaceContainerLowest,
             contentPadding:
@@ -141,8 +223,14 @@ class AdminSetupPage extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _tardinessStepper(BuildContext context) {
+class _TardinessStepper extends StatelessWidget {
+  const _TardinessStepper();
+
+  @override
+  Widget build(BuildContext context) {
+    final AdminSetupController control = Get.find();
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Column(
@@ -167,8 +255,7 @@ class AdminSetupPage extends StatelessWidget {
           ),
           child: Row(
             children: [
-              _stepperButton(
-                context: context,
+              _StepperButton(
                 icon: Icons.remove_rounded,
                 onPressed: control.decreaseTardinessLimit,
               ),
@@ -185,8 +272,7 @@ class AdminSetupPage extends StatelessWidget {
                   ),
                 ),
               ),
-              _stepperButton(
-                context: context,
+              _StepperButton(
                 icon: Icons.add_rounded,
                 onPressed: control.increaseTardinessLimit,
               ),
@@ -196,12 +282,16 @@ class AdminSetupPage extends StatelessWidget {
       ],
     );
   }
+}
 
-  Widget _stepperButton({
-    required BuildContext context,
-    required IconData icon,
-    required VoidCallback onPressed,
-  }) {
+class _StepperButton extends StatelessWidget {
+  final IconData icon;
+  final VoidCallback onPressed;
+
+  const _StepperButton({required this.icon, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return SizedBox(
@@ -217,83 +307,6 @@ class AdminSetupPage extends StatelessWidget {
           shape: const CircleBorder(),
         ),
       ),
-    );
-  }
-
-  Widget _buildBody(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
-
-    return SafeArea(
-      child: Column(
-        children: [
-          AppTopBar(
-            title: 'Crea tu laboratorio',
-            showBack: true,
-            onBack: control.goBack,
-          ),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 22, 16, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _photoPicker(context),
-                  const SizedBox(height: 22),
-                  _textInput(
-                    context: context,
-                    label: 'Nombre del laboratorio',
-                    hint: 'Ej: ITLAB, BioLab, QuimLab...',
-                    controller: control.nameController,
-                  ),
-                  const SizedBox(height: 18),
-                  _tardinessStepper(context),
-                  const SizedBox(height: 18),
-                  _textInput(
-                    context: context,
-                    label: 'Descripcion (opcional)',
-                    hint: 'Describe brevemente tu laboratorio...',
-                    controller: control.descriptionController,
-                    maxLines: 1,
-                  ),
-                  const SizedBox(height: 18),
-                  Obx(
-                    () => PrimaryButton(
-                      text: control.isLoading.value
-                          ? 'Creando...'
-                          : 'Crear organizacion',
-                      onPressed: control.canCreate
-                          ? control.createOrganization
-                          : null,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            height: 18,
-            color: colors.surfaceContainerLow,
-            alignment: Alignment.center,
-            child: Container(
-              width: 98,
-              height: 4,
-              decoration: BoxDecoration(
-                color: colors.outline,
-                borderRadius: BorderRadius.circular(99),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-      body: _buildBody(context),
     );
   }
 }

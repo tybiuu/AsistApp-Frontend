@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../configs/theme.dart';
+import '../../utils/date_utils.dart';
 
 class MissingAttendanceRequestPage extends StatelessWidget {
   const MissingAttendanceRequestPage({super.key});
@@ -21,54 +22,16 @@ class MissingAttendanceRequestPage extends StatelessWidget {
     ) as Map<String, dynamic>;
   }
 
-  String _formatDate(String date) {
-    final parts = date.split('-');
-    if (parts.length != 3) return date;
-
-    const months = {
-      '01': 'ene',
-      '02': 'feb',
-      '03': 'mar',
-      '04': 'abr',
-      '05': 'may',
-      '06': 'jun',
-      '07': 'jul',
-      '08': 'ago',
-      '09': 'sep',
-      '10': 'oct',
-      '11': 'nov',
-      '12': 'dic',
-    };
-
-    return '${parts[2]} ${months[parts[1]] ?? parts[1]}';
-  }
-
-  String _formatTimeFromIso(String value) {
-    if (value.length < 16) return '--:--';
-
-    final hour = int.tryParse(value.substring(11, 13)) ?? 0;
-    final minute = value.substring(14, 16);
-
-    final suffix = hour >= 12 ? 'PM' : 'AM';
-    final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-
-    return '${hour12.toString().padLeft(2, '0')}:$minute $suffix';
-  }
-
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final background =
-        isDark ? const Color(0xff0f1117) : const Color(0xfff7f8fa);
-    final cardColor = isDark ? const Color(0xff1A1D27) : Colors.white;
-    final textColor = isDark ? Colors.white : AppColors.foreground;
-    final mutedColor =
-        isDark ? const Color(0xff9ca3af) : AppColors.mutedForeground;
-    final borderColor = isDark ? const Color(0xff333333) : AppColors.border;
+    final colors = Theme.of(context).colorScheme;
+    final cardColor = colors.surfaceContainerHigh;
+    final textColor = colors.onSurface;
+    final mutedColor = colors.onSurfaceVariant;
+    final borderColor = colors.outlineVariant;
 
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: colors.surfaceContainerLow,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -91,9 +54,9 @@ class MissingAttendanceRequestPage extends StatelessWidget {
 
                 final request = snapshot.data!;
                 final requestedDate =
-                    _formatDate(request['requested_date'].toString());
+                    formatDateShort(request['requested_date'].toString());
                 final createdAt =
-                    _formatTimeFromIso(request['created_at'].toString());
+                    formatTime12h(request['created_at'].toString());
                 final reason = request['reason'].toString();
 
                 return ListView(
@@ -314,7 +277,7 @@ class MissingAttendanceRequestPage extends StatelessWidget {
                       child: ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.chart1.withOpacity(0.65),
+                          backgroundColor: AppColors.chart1.withValues(alpha: 0.65),
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(

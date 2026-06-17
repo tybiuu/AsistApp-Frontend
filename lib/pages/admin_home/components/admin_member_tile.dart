@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../configs/theme.dart';
 import '../../../models/user.dart';
 
 class AdminMemberTile extends StatelessWidget {
@@ -26,7 +25,7 @@ class AdminMemberTile extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Container(
-          height: 56,
+          height: 72,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
@@ -38,14 +37,14 @@ class AdminMemberTile extends StatelessWidget {
                 width: 34,
                 height: 34,
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: AppColors.chart1,
+                decoration: BoxDecoration(
+                  color: colors.primary,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
                   member.initials,
-                  style: const TextStyle(
-                    color: AppColors.primaryForeground,
+                  style: TextStyle(
+                    color: colors.onPrimary,
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                   ),
@@ -63,7 +62,7 @@ class AdminMemberTile extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: colors.onSurface,
-                        fontSize: 13,
+                        fontSize: 15,
                         fontWeight: FontWeight.w800,
                       ),
                     ),

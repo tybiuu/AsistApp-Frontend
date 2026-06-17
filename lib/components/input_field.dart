@@ -36,8 +36,8 @@ class InputField extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: Theme.of(context).colorScheme.onSurface,
           ),
         ),
@@ -69,9 +69,7 @@ class InputField extends StatelessWidget {
                           Text(
                             prefixText!,
                             style: TextStyle(
-                              color: isDark
-                                  ? const Color(0xff9ca3af)
-                                  : const Color(0xff6b7280),
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
                               fontWeight: FontWeight.w500,
                             ),
                           ),

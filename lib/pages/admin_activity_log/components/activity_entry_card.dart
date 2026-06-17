@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:asist_app/configs/theme.dart';
 import '../admin_activity_log_controller.dart';
 
 class ActivityEntryCard extends StatelessWidget {
@@ -94,55 +95,55 @@ class ActivityEntryCard extends StatelessWidget {
         return _EntryStyle(
           label: 'Asistencia confirmada',
           icon: Icons.check_box_rounded,
-          color: const Color(0xff16a34a),
+          color: AppColors.success,
         );
       case 'asistencia_faltante_procesada':
         return _EntryStyle(
           label: 'Asistencia faltante procesada',
           icon: Icons.edit_note_rounded,
-          color: const Color(0xff1d4ed8),
+          color: AppColors.info,
         );
       case 'tardanza_registrada':
         return _EntryStyle(
           label: 'Tardanza registrada',
           icon: Icons.alarm_rounded,
-          color: const Color(0xffe15d27),
+          color: AppColors.chart1,
         );
       case 'inasistencia_marcada':
         return _EntryStyle(
           label: 'Inasistencia marcada',
           icon: Icons.close_rounded,
-          color: const Color(0xffef4444),
+          color: AppColors.error,
         );
       case 'horario_aprobado':
         return _EntryStyle(
           label: 'Horario aprobado',
           icon: Icons.calendar_month_rounded,
-          color: const Color(0xff16a34a),
+          color: AppColors.success,
         );
       case 'cambio_de_horario_aprobado':
         return _EntryStyle(
           label: 'Cambio de horario aprobado',
           icon: Icons.edit_calendar_rounded,
-          color: const Color(0xff1d4ed8),
+          color: AppColors.info,
         );
       case 'miembro_aceptado':
         return _EntryStyle(
           label: 'Miembro aceptado',
           icon: Icons.person_add_rounded,
-          color: const Color(0xff16a34a),
+          color: AppColors.success,
         );
       case 'miembro_rechazado':
         return _EntryStyle(
           label: 'Miembro rechazado',
           icon: Icons.person_off_rounded,
-          color: const Color(0xffef4444),
+          color: AppColors.error,
         );
       default:
         return _EntryStyle(
           label: type,
           icon: Icons.info_outline_rounded,
-          color: const Color(0xff6b7280),
+          color: AppColors.mutedForeground,
         );
     }
   }

@@ -1,6 +1,6 @@
 // lib/pages/admin_home/admin_member_detail/admin_member_detail_controller.dart
 
-import 'package:flutter/material.dart';
+import 'package:asist_app/configs/theme.dart';
 import 'package:get/get.dart';
 
 import '../../../models/schedule.dart';
@@ -40,26 +40,26 @@ class AdminMemberDetailController extends GetxController {
         label: 'Horas completadas',
         value: '102h',
         subtitle: 'de 120h',
-        valueColor: const Color(0xffe15d27),
+        valueColor: AppColors.primary,
         progress: 102 / 120,
       ),
       const MemberMetric(
         label: '% Asistencia',
         value: '82%',
         subtitle: 'este mes',
-        valueColor: Color(0xff16a34a),
+        valueColor: AppColors.success,
       ),
       const MemberMetric(
         label: 'Tardanzas',
         value: '2',
         subtitle: 'este mes',
-        valueColor: Color(0xffe15d27),
+        valueColor: AppColors.primary,
       ),
       const MemberMetric(
         label: 'Inasistencias',
         value: '0',
         subtitle: 'este mes',
-        valueColor: Color(0xff16a34a),
+        valueColor: AppColors.success,
       ),
     ];
   }

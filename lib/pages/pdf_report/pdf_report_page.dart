@@ -18,7 +18,7 @@ class PdfReportPage extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
@@ -55,10 +55,10 @@ class PdfReportPage extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: const Color(0xff1d4ed8).withValues(alpha: 0.1),
+                        color: AppColors.info.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
-                          color: const Color(0xff1d4ed8).withValues(alpha: 0.3),
+                          color: AppColors.info.withValues(alpha: 0.3),
                         ),
                       ),
                       child: Row(
@@ -66,7 +66,7 @@ class PdfReportPage extends StatelessWidget {
                         children: [
                           const Icon(
                             Icons.info_outline_rounded,
-                            color: Color(0xff1d4ed8),
+                            color: AppColors.info,
                             size: 18,
                           ),
                           const SizedBox(width: 10),

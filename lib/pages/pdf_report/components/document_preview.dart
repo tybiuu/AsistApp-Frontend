@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../configs/theme.dart';
 import '../pdf_report_controller.dart';
 
 class DocumentPreview extends StatelessWidget {
@@ -14,12 +15,11 @@ class DocumentPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     final headerBg = isDark ? const Color(0xff1A1D27) : const Color(0xff1f2937);
-    final docBg = isDark ? const Color(0xff1A1D27) : Colors.white;
-    final mutedColor = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
+    final docBg = Theme.of(context).colorScheme.surfaceContainerHigh;
+    final mutedColor = Theme.of(context).colorScheme.onSurfaceVariant;
     final textColor = isDark ? Colors.white : const Color(0xff1f2937);
     final borderColor = isDark ? const Color(0xff2D3042) : const Color(0xffe5e7eb);
     final rowAltBg = isDark ? const Color(0xff0f1117) : const Color(0xfffdf8f0);
@@ -42,7 +42,7 @@ class DocumentPreview extends StatelessWidget {
               children: [
                 const Icon(
                   Icons.description_rounded,
-                  color: Color(0xffe15d27),
+                  color: AppColors.chart1,
                   size: 18,
                 ),
                 const SizedBox(width: 10),
@@ -195,7 +195,7 @@ class DocumentPreview extends StatelessWidget {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: isHours
-                                    ? const Color(0xffe15d27)
+                                    ? AppColors.chart1
                                     : textColor,
                                 fontSize: 11,
                                 fontWeight: isHours
@@ -234,7 +234,7 @@ class DocumentPreview extends StatelessWidget {
                       Text(
                         month.totalHours,
                         style: const TextStyle(
-                          color: Color(0xffe15d27),
+                          color: AppColors.chart1,
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
                         ),

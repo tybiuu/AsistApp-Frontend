@@ -1,5 +1,6 @@
 // lib/components/status_badge.dart
 
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 
 enum BadgeStatus { confirmed, pending, rejected }
@@ -50,11 +51,11 @@ class StatusBadge extends StatelessWidget {
     if (status == null) return (customLabel!, customColor!);
     switch (status!) {
       case BadgeStatus.confirmed:
-        return ('Confirmado', const Color(0xff16a34a));
+        return ('Confirmado', AppColors.success);
       case BadgeStatus.pending:
-        return ('Pendiente',  const Color(0xff1d4ed8));
+        return ('Pendiente',  AppColors.info);
       case BadgeStatus.rejected:
-        return ('Rechazado', const Color(0xffef4444));
+        return ('Rechazado', AppColors.error);
     }
   }
 }

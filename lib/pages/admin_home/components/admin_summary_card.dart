@@ -31,7 +31,14 @@ class AdminSummaryCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colors.surface,
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            colors.surface,
+            Color.alphaBlend(Colors.black.withValues(alpha: 0.08), colors.surface),
+          ],
+        ),
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
@@ -44,22 +51,39 @@ class AdminSummaryCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'HOY',
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 10,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 2),
-          Text(
-            controller.currentDateLabel,
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 15,
-              fontWeight: FontWeight.w900,
-            ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'HOY',
+                    style: TextStyle(
+                      color: colors.onSurface.withValues(alpha: 0.4),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    controller.currentDateLabel,
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              Icon(
+                Icons.calendar_today_rounded,
+                size: 18,
+                color: colors.onSurface.withValues(alpha: 0.4),
+              ),
+            ],
           ),
           const SizedBox(height: 16),
           Row(
@@ -103,10 +127,10 @@ class _StatBox extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
-      height: 64,
+      height: 76,
       padding: const EdgeInsets.symmetric(vertical: 8),
       decoration: BoxDecoration(
-        color: colors.surfaceContainer,
+        color: Color.alphaBlend(Colors.white.withValues(alpha: 0.06), colors.surface),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -116,7 +140,7 @@ class _StatBox extends StatelessWidget {
             '${stat.value}',
             style: TextStyle(
               color: color,
-              fontSize: 23,
+              fontSize: 26,
               fontWeight: FontWeight.w900,
               height: 1,
             ),
@@ -126,8 +150,8 @@ class _StatBox extends StatelessWidget {
             stat.label,
             style: TextStyle(
               color: colors.onSurfaceVariant,
-              fontSize: 9,
-              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],

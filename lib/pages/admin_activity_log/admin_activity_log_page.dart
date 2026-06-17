@@ -14,7 +14,8 @@ class AdminActivityLogPage extends StatelessWidget {
     final controller = Get.put(AdminActivityLogController());
 
     return Scaffold(
-      body: SafeArea(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      body: SafeArea(top: false,
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());

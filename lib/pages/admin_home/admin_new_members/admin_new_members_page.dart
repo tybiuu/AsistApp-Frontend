@@ -18,7 +18,7 @@ class AdminNewMembersPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colors.surfaceContainerLow,
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Column(
           children: [
             const AppTopBar(title: 'Nuevos miembros', showBack: true),

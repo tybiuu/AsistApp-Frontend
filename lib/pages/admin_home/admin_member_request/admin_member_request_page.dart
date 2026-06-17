@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../components/app_top_bar.dart';
+import '../../../components/info_row.dart';
 import '../../../components/primary_button.dart';
 import '../../../models/user.dart';
 import '../../../utils/date_utils.dart';
@@ -21,7 +22,7 @@ class AdminMemberRequestPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colors.surfaceContainerLow,
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Column(
           children: [
             const AppTopBar(title: 'Solicitud de ingreso', showBack: true),
@@ -47,7 +48,7 @@ class AdminMemberRequestPage extends StatelessWidget {
                                 width: 56,
                                 height: 56,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xff374151),
+                                  color: colors.primary,
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 alignment: Alignment.center,
@@ -56,7 +57,7 @@ class AdminMemberRequestPage extends StatelessWidget {
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 18,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                 ),
                               ),
@@ -68,16 +69,15 @@ class AdminMemberRequestPage extends StatelessWidget {
                                     member.fullName,
                                     style: TextStyle(
                                       color: colors.onSurface,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
+                                      fontSize: 19,
+                                      fontWeight: FontWeight.w900,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
                                   Text(
                                     member.academicDetail,
                                     style: TextStyle(
                                       color: colors.onSurfaceVariant,
-                                      fontSize: 13,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                     ),
                                   ),
@@ -88,25 +88,22 @@ class AdminMemberRequestPage extends StatelessWidget {
                           const SizedBox(height: 16),
                           Divider(color: colors.outlineVariant, height: 1),
                           const SizedBox(height: 16),
-                          _InfoRow(
+                          InfoRow(
                             label: 'Correo',
                             value: member.institutionalEmail,
-                            colors: colors,
                           ),
                           const SizedBox(height: 10),
-                          _InfoRow(
+                          InfoRow(
                             label: 'Celular',
                             value: member.phoneNumber.isNotEmpty
                                 ? member.phoneNumber
                                 : '—',
-                            colors: colors,
                           ),
                           const SizedBox(height: 10),
-                          _InfoRow(
+                          InfoRow(
                             label: 'Solicitó',
                             value: formatRequestDate(member.createdAt),
                             icon: Icons.calendar_today_outlined,
-                            colors: colors,
                           ),
                         ],
                       ),
@@ -148,47 +145,4 @@ class AdminMemberRequestPage extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData? icon;
-  final ColorScheme colors;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    required this.colors,
-    this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(
-          width: 72,
-          child: Text(
-            label,
-            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-          ),
-        ),
-        if (icon != null) ...[
-          Icon(icon, size: 14, color: colors.onSurface),
-          const SizedBox(width: 4),
-        ],
-        Expanded(
-          child: Text(
-            value,
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
 

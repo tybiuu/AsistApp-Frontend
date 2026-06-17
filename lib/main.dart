@@ -42,7 +42,6 @@ Future<void> main() async {
       WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
-  // Initialize SessionService and restore any saved session from prefs.
   await Get.putAsync<SessionService>(() => SessionService().init());
 
   FlutterNativeSplash.remove();
@@ -70,9 +69,6 @@ class MyApp extends StatelessWidget {
       themeMode: ThemeMode.system,
       defaultTransition: Transition.noTransition,
       transitionDuration: Duration.zero,
-      // Shared data services, resolved with Get.find() from the controllers.
-      // lazyPut defers creation until first use; fenix re-creates an instance
-      // if it is ever removed, so a find() never fails.
       initialBinding: BindingsBuilder(() {
         Get.lazyPut(() => UserService(), fenix: true);
         Get.lazyPut(() => OrganizationService(), fenix: true);
@@ -83,9 +79,6 @@ class MyApp extends StatelessWidget {
         Get.lazyPut(() => AttendanceRequestService(), fenix: true);
       }),
       initialRoute: initialRoute,
-      // GetPage routes let GetX track each screen's lifecycle, so the
-      // controllers created with Get.put inside a page are disposed
-      // automatically when its route is popped.
       getPages: [
         GetPage(name: AppRoutes.welcome, page: () => const WelcomePage()),
         GetPage(name: AppRoutes.roleSelect, page: () => const RoleSelectPage()),
@@ -96,19 +89,52 @@ class MyApp extends StatelessWidget {
         GetPage(name: AppRoutes.root, page: () => const RootPage()),
         GetPage(name: AppRoutes.home, page: () => const HomePage()),
         GetPage(name: AppRoutes.adminHome, page: () => const AdminHomePage()),
-        GetPage(name: AppRoutes.adminValidate, page: () => const AdminValidatePage()),
-        GetPage(name: AppRoutes.adminAnalytics, page: () => const AdminAnalyticsPage()),
-        GetPage(name: AppRoutes.adminConfig, page: () => const AdminConfigPage()),
-        GetPage(name: AppRoutes.adminSetup, page: () => AdminSetupPage()),
-        GetPage(name: AppRoutes.adminSetupSuccess, page: () => AdminSetupSuccessPage()),
-        GetPage(name: AppRoutes.adminNewMembers, page: () => const AdminNewMembersPage()),
-        GetPage(name: AppRoutes.adminMemberRequest, page: () => const AdminMemberRequestPage()),
-        GetPage(name: AppRoutes.adminMemberDetail, page: () => const AdminMemberDetailPage()),
-        GetPage(name: AppRoutes.adminScheduleValidation, page: () => const AdminScheduleValidationPage()),
-        GetPage(name: AppRoutes.adminScheduleValidationDetail, page: () => const AdminScheduleValidationDetailPage()),
-        GetPage(name: AppRoutes.scheduleChange, page: () => const ScheduleChangePage()),
+        GetPage(
+          name: AppRoutes.adminValidate,
+          page: () => const AdminValidatePage(),
+        ),
+        GetPage(
+          name: AppRoutes.adminAnalytics,
+          page: () => const AdminAnalyticsPage(),
+        ),
+        GetPage(
+          name: AppRoutes.adminConfig,
+          page: () => const AdminConfigPage(),
+        ),
+        GetPage(name: AppRoutes.adminSetup, page: () => const AdminSetupPage()),
+        GetPage(
+          name: AppRoutes.adminSetupSuccess,
+          page: () => const AdminSetupSuccessPage(),
+        ),
+        GetPage(
+          name: AppRoutes.adminNewMembers,
+          page: () => const AdminNewMembersPage(),
+        ),
+        GetPage(
+          name: AppRoutes.adminMemberRequest,
+          page: () => const AdminMemberRequestPage(),
+        ),
+        GetPage(
+          name: AppRoutes.adminMemberDetail,
+          page: () => const AdminMemberDetailPage(),
+        ),
+        GetPage(
+          name: AppRoutes.adminScheduleValidation,
+          page: () => const AdminScheduleValidationPage(),
+        ),
+        GetPage(
+          name: AppRoutes.adminScheduleValidationDetail,
+          page: () => const AdminScheduleValidationDetailPage(),
+        ),
+        GetPage(
+          name: AppRoutes.scheduleChange,
+          page: () => const ScheduleChangePage(),
+        ),
         GetPage(name: AppRoutes.pdfReport, page: () => const PdfReportPage()),
-        GetPage(name: AppRoutes.adminActivityLog, page: () => const AdminActivityLogPage()),
+        GetPage(
+          name: AppRoutes.adminActivityLog,
+          page: () => const AdminActivityLogPage(),
+        ),
       ],
     );
   }

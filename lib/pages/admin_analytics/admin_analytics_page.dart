@@ -20,7 +20,8 @@ class AdminAnalyticsPage extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: SafeArea(
+      backgroundColor: colors.surfaceContainerLow,
+      body: SafeArea(top: false,
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
@@ -35,9 +36,9 @@ class AdminAnalyticsPage extends StatelessWidget {
                     Text(
                       'Abril 2025',
                       style: TextStyle(
-                        color: colors.onSurfaceVariant,
+                        color: colors.onSurface,
                         fontSize: 13,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -49,7 +50,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     Text(
-                      'Resumen del mes — Practicantes',
+                      'Resumen del mes',
                       style: TextStyle(
                         color: colors.onSurface,
                         fontSize: 15,
@@ -60,7 +61,7 @@ class AdminAnalyticsPage extends StatelessWidget {
                     ...controller.members.map((m) => MemberRow(member: m)),
                     const SizedBox(height: 24),
                     Text(
-                      'Resumen del mes',
+                      'Métricas generales',
                       style: TextStyle(
                         color: colors.onSurface,
                         fontSize: 15,
@@ -86,3 +87,4 @@ class AdminAnalyticsPage extends StatelessWidget {
     );
   }
 }
+

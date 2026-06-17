@@ -3,8 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../configs/theme.dart';
-
 class AdminEditTextField extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -182,7 +180,7 @@ InputDecoration adminInputDecoration(BuildContext context, {String? hint}) {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(14),
-      borderSide: const BorderSide(color: AppColors.chart1, width: 1.4),
+      borderSide: BorderSide(color: colors.primary, width: 1.4),
     ),
   );
 }

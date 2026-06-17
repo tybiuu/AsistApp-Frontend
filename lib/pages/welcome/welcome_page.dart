@@ -16,7 +16,7 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage>
     with TickerProviderStateMixin {
-  final WelcomeController control = Get.put(WelcomeController());
+  late final WelcomeController control;
 
   late final AnimationController _entryController;
   late final AnimationController _floatingControllerOne;
@@ -29,6 +29,7 @@ class _WelcomePageState extends State<WelcomePage>
   @override
   void initState() {
     super.initState();
+    control = Get.put(WelcomeController());
 
     _entryController = AnimationController(
       vsync: this,
@@ -77,93 +78,108 @@ class _WelcomePageState extends State<WelcomePage>
     super.dispose();
   }
 
-  Widget _buildBody(BuildContext context) {
-    final Color backgroundColor = Theme.of(context).colorScheme.surface;
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: _Body(
+        fadeAnimation: _fadeAnimation,
+        slideAnimation: _slideAnimation,
+        floatingOne: _floatingControllerOne,
+        floatingTwo: _floatingControllerTwo,
+        floatingThree: _floatingControllerThree,
+        controller: control,
+      ),
+    );
+  }
+}
 
+class _Body extends StatelessWidget {
+  final Animation<double> fadeAnimation;
+  final Animation<Offset> slideAnimation;
+  final AnimationController floatingOne;
+  final AnimationController floatingTwo;
+  final AnimationController floatingThree;
+  final WelcomeController controller;
+
+  const _Body({
+    required this.fadeAnimation,
+    required this.slideAnimation,
+    required this.floatingOne,
+    required this.floatingTwo,
+    required this.floatingThree,
+    required this.controller,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     return SafeArea(
-      child: Container(
-        color: backgroundColor,
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
-                child: Center(
-                  child: FadeTransition(
-                    opacity: _fadeAnimation,
-                    child: SlideTransition(
-                      position: _slideAnimation,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 360),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _IllustrationMock(
-                              firstController: _floatingControllerOne,
-                              secondController: _floatingControllerTwo,
-                              thirdController: _floatingControllerThree,
-                            ),
-                            const SizedBox(height: 8),
-                            const _WelcomeText(),
-                            const SizedBox(height: 28),
-                            const _FeaturesSection(),
-                          ],
-                        ),
+      child: Column(
+        children: [
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+              child: Center(
+                child: FadeTransition(
+                  opacity: fadeAnimation,
+                  child: SlideTransition(
+                    position: slideAnimation,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 360),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _IllustrationMock(
+                            firstController: floatingOne,
+                            secondController: floatingTwo,
+                            thirdController: floatingThree,
+                          ),
+                          const SizedBox(height: 32),
+                          const _WelcomeText(),
+                          const SizedBox(height: 28),
+                          const _FeaturesSection(),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
-              child: FadeTransition(
-                opacity: _fadeAnimation,
-                child: SlideTransition(
-                  position: _slideAnimation,
-                  child: Obx(
-                    () => Column(
-                      children: [
-                        PrimaryButton(
-                          text: control.isLoading()
-                              ? 'Cargando...'
-                              : 'Crear cuenta',
-                          onPressed: control.isLoading()
-                              ? () {}
-                              : () {
-                                  control.goToRoleSelect(context);
-                                },
-                        ),
-                        const SizedBox(height: 12),
-                        PrimaryButton(
-                          text: 'Ya tengo cuenta',
-                          variant: PrimaryButtonVariant.secondary,
-                          onPressed: control.isLoading()
-                              ? () {}
-                              : () {
-                                  control.goToLogin(context);
-                                },
-                        ),
-                      ],
-                    ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 8, 24, 40),
+            child: FadeTransition(
+              opacity: fadeAnimation,
+              child: SlideTransition(
+                position: slideAnimation,
+                child: Obx(
+                  () => Column(
+                    children: [
+                      PrimaryButton(
+                        text: controller.isLoading()
+                            ? 'Cargando...'
+                            : 'Crear cuenta',
+                        onPressed: controller.isLoading()
+                            ? () {}
+                            : controller.goToRoleSelect,
+                      ),
+                      const SizedBox(height: 12),
+                      PrimaryButton(
+                        text: 'Ya tengo cuenta',
+                        variant: PrimaryButtonVariant.secondary,
+                        onPressed: controller.isLoading()
+                            ? () {}
+                            : controller.goToLogin,
+                      ),
+                    ],
                   ),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    control.context = context;
-
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      appBar: null,
-      body: _buildBody(context),
     );
   }
 }
@@ -226,7 +242,7 @@ class _IllustrationMock extends StatelessWidget {
             top: 18,
             right: 8,
             icon: Icons.check_circle,
-            iconColor: const Color(0xff22c55e),
+            iconColor: AppColors.success,
             text: 'Asistencia marcada',
             backgroundColor: Theme.of(context).colorScheme.surfaceContainerHigh,
             textColor:
@@ -368,20 +384,23 @@ class _WelcomeText extends StatelessWidget {
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Theme.of(context).colorScheme.onSurface,
-            fontSize: 26,
+            fontSize: 30,
             fontWeight: FontWeight.w900,
             height: 1.2,
           ),
         ),
         const SizedBox(height: 10),
-        Text(
-          'Gestiona tu asistencia de prácticas preprofesionales desde tu celular',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 14,
-            fontWeight: FontWeight.w400,
-            height: 1.45,
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            'Gestiona tu asistencia de prácticas preprofesionales desde tu celular',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 16,
+              fontWeight: FontWeight.w400,
+              height: 1.45,
+            ),
           ),
         ),
       ],

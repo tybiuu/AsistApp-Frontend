@@ -25,14 +25,12 @@ class ScheduleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final cardBg = isDark ? const Color(0xff1A1D27) : Colors.white;
-    final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-    final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
-    final onCard = isDark ? Colors.white : const Color(0xff1f2937);
+    final cardBg = Theme.of(context).colorScheme.surface;
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    final onCard = Theme.of(context).colorScheme.onSurface;
     final trackColor =
-        isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
+        Theme.of(context).colorScheme.outlineVariant;
 
     return Obx(() {
       final days = schedule.keys
@@ -56,10 +54,10 @@ class ScheduleCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.access_time_rounded,
                     size: 16,
-                    color: AppColors.chart1,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   const SizedBox(width: 8),
                   Expanded(
@@ -120,7 +118,6 @@ class ScheduleCard extends StatelessWidget {
                 sched: sched,
                 idx: idx,
                 isExpanded: expandedDay.value == idx,
-                isDark: isDark,
                 showDivider: idx < days.length - 1,
                 onTap: () => onToggleDay(idx),
               );
@@ -133,7 +130,7 @@ class ScheduleCard extends StatelessWidget {
                 child: Row(
                   children: [
                     _LegendItem(
-                      color: AppColors.chart1,
+                      color: Theme.of(context).colorScheme.primary,
                       label: 'Trabajo',
                       muted: muted,
                     ),
@@ -209,7 +206,6 @@ class _DayRow extends StatelessWidget {
   final DaySchedule sched;
   final int idx;
   final bool isExpanded;
-  final bool isDark;
   final bool showDivider;
   final VoidCallback onTap;
 
@@ -218,19 +214,17 @@ class _DayRow extends StatelessWidget {
     required this.sched,
     required this.idx,
     required this.isExpanded,
-    required this.isDark,
     required this.showDivider,
     required this.onTap,
   });
-
-  Color get _border => isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-  Color get _muted => isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
-  Color get _value => isDark ? Colors.white : const Color(0xff1f2937);
 
   String get _abbrev => dayKey.substring(0, 3).toUpperCase();
 
   @override
   Widget build(BuildContext context) {
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    final value = Theme.of(context).colorScheme.onSurface;
     final dayMins = dayWorkMins(sched);
 
     return Column(
@@ -247,13 +241,13 @@ class _DayRow extends StatelessWidget {
                   child: Text(
                     _abbrev,
                     style: TextStyle(
-                      color: sched.enabled ? _value : _muted,
+                      color: sched.enabled ? value : muted,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
-                Expanded(child: _ScheduleBar(sched: sched, isDark: isDark)),
+                Expanded(child: _ScheduleBar(sched: sched)),
                 const SizedBox(width: 8),
                 SizedBox(
                   width: 44,
@@ -261,7 +255,7 @@ class _DayRow extends StatelessWidget {
                     sched.enabled ? fmtMins(dayMins) : '—',
                     textAlign: TextAlign.right,
                     style: TextStyle(
-                      color: sched.enabled ? _value : _muted,
+                      color: sched.enabled ? value : muted,
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
                     ),
@@ -273,14 +267,14 @@ class _DayRow extends StatelessWidget {
                       ? Icons.keyboard_arrow_up_rounded
                       : Icons.keyboard_arrow_down_rounded,
                   size: 16,
-                  color: sched.enabled ? _muted : _border,
+                  color: sched.enabled ? muted : border,
                 ),
               ],
             ),
           ),
         ),
-                if (isExpanded && sched.enabled) _BlockDetail(dayKey: dayKey, sched: sched, isDark: isDark),
-        if (showDivider) Divider(height: 1, thickness: 1, color: _border),
+                if (isExpanded && sched.enabled) _BlockDetail(dayKey: dayKey, sched: sched),
+        if (showDivider) Divider(height: 1, thickness: 1, color: border),
       ],
     );
   }
@@ -290,9 +284,8 @@ class _DayRow extends StatelessWidget {
 
 class _ScheduleBar extends StatelessWidget {
   final DaySchedule sched;
-  final bool isDark;
 
-  const _ScheduleBar({required this.sched, required this.isDark});
+  const _ScheduleBar({required this.sched});
 
   // 6:00 AM → 9:00 PM
   static const _start = 360;
@@ -302,7 +295,7 @@ class _ScheduleBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final trackColor =
-        isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
+        Theme.of(context).colorScheme.outlineVariant;
 
     if (!sched.enabled || sched.blocks.isEmpty) {
       return Container(
@@ -332,7 +325,7 @@ class _ScheduleBar extends StatelessWidget {
               final left = ((s - _start) / _span) * totalWidth;
               final width = ((e - s) / _span) * totalWidth;
               final color = block.type == BlockType.work
-                  ? AppColors.chart1
+                  ? Theme.of(context).colorScheme.primary
                   : AppColors.chart1.withValues(alpha: 0.4);
               return Positioned(
                 left: left,
@@ -359,15 +352,14 @@ class _ScheduleBar extends StatelessWidget {
 class _BlockDetail extends StatelessWidget {
   final String dayKey;
   final DaySchedule sched;
-  final bool isDark;
 
-  const _BlockDetail({required this.dayKey, required this.sched, required this.isDark});
+  const _BlockDetail({required this.dayKey, required this.sched});
 
   @override
   Widget build(BuildContext context) {
-    final bg = isDark ? const Color(0xff0f1117) : const Color(0xfff9fafb);
-    final label = isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280);
-    final value = isDark ? Colors.white : const Color(0xff1f2937);
+    final bg = Theme.of(context).colorScheme.surfaceContainerLow;
+    final label = Theme.of(context).colorScheme.onSurfaceVariant;
+    final value = Theme.of(context).colorScheme.onSurface;
 
   final controller = Get.isRegistered<ScheduleChangeController>() ? Get.find<ScheduleChangeController>() : null;
 
@@ -393,7 +385,7 @@ class _BlockDetail extends StatelessWidget {
                     height: 8,
                     decoration: BoxDecoration(
                       color: isWork
-                          ? AppColors.chart1
+                          ? Theme.of(context).colorScheme.primary
                           : AppColors.chart1.withValues(alpha: 0.3),
                       shape: BoxShape.circle,
                     ),

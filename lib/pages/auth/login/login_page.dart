@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Column(
           children: [
             AppTopBar(

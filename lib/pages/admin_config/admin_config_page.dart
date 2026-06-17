@@ -15,7 +15,30 @@ import 'components/organization_code_card.dart';
 class AdminConfigPage extends StatelessWidget {
   const AdminConfigPage({super.key});
 
-  Widget _content(BuildContext context, AdminConfigController controller) {
+  @override
+  Widget build(BuildContext context) {
+    final AdminConfigController controller = Get.put(AdminConfigController());
+
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      body: SafeArea(top: false,
+        child: Column(
+          children: [
+            const AppTopBar(title: 'Configuración'),
+            Expanded(child: _Content(controller: controller)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Content extends StatelessWidget {
+  final AdminConfigController controller;
+  const _Content({required this.controller});
+
+  @override
+  Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Obx(() {
@@ -57,22 +80,5 @@ class AdminConfigPage extends StatelessWidget {
         ),
       );
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final AdminConfigController controller = Get.put(AdminConfigController());
-
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-      body: SafeArea(
-        child: Column(
-          children: [
-            const AppTopBar(title: 'Configuración'),
-            Expanded(child: _content(context, controller)),
-          ],
-        ),
-      ),
-    );
   }
 }

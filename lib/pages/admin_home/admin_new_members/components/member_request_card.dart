@@ -23,6 +23,12 @@ class MemberRequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color accentColor = isDark ? AppColors.chart6 : colors.primary;
+    final Color avatarBg = isDark
+        ? AppColors.chart6.withValues(alpha: 0.15)
+        : colors.primaryContainer;
+    final Color badgeColor = isDark ? AppColors.chart6 : colors.primary;
 
     return Material(
       color: colors.surface,
@@ -45,13 +51,13 @@ class MemberRequestCard extends StatelessWidget {
                       width: 46,
                       height: 46,
                       decoration: BoxDecoration(
-                        color: colors.primaryContainer,
+                        color: avatarBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
                         Icons.school_outlined,
                         size: 22,
-                        color: colors.primary,
+                        color: accentColor,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -63,7 +69,7 @@ class MemberRequestCard extends StatelessWidget {
                             member.fullName,
                             style: TextStyle(
                               color: colors.onSurface,
-                              fontSize: 15,
+                              fontSize: 17,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -74,13 +80,13 @@ class MemberRequestCard extends StatelessWidget {
                               vertical: 2,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.chart1.withValues(alpha: 0.12),
-                              borderRadius: BorderRadius.circular(6),
+                              color: badgeColor.withValues(alpha: 0.12),
+                              borderRadius: BorderRadius.circular(999),
                             ),
-                            child: const Text(
+                            child: Text(
                               'Practicante',
                               style: TextStyle(
-                                color: AppColors.chart1,
+                                color: badgeColor,
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -121,7 +127,7 @@ class MemberRequestCard extends StatelessWidget {
                     child: _ActionButton(
                       label: 'Rechazar',
                       icon: Icons.cancel_outlined,
-                      color: colors.error,
+                      color: AppColors.error,
                       onTap: onReject,
                       isLeft: true,
                     ),
@@ -131,7 +137,7 @@ class MemberRequestCard extends StatelessWidget {
                     child: _ActionButton(
                       label: 'Aceptar',
                       icon: Icons.check_circle_outline_rounded,
-                      color: const Color(0xff16a34a),
+                      color: isDark ? const Color(0xff04df72) : AppColors.success,
                       onTap: onAccept,
                       isLeft: false,
                     ),
@@ -180,8 +186,8 @@ class _ActionButton extends StatelessWidget {
               label,
               style: TextStyle(
                 color: color,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
+                fontSize: 15,
+                fontWeight: FontWeight.w900,
               ),
             ),
             if (!isLeft) ...[

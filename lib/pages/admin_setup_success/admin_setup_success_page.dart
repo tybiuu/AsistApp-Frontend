@@ -8,12 +8,101 @@ import '../../configs/theme.dart';
 import 'admin_setup_success_controller.dart';
 
 class AdminSetupSuccessPage extends StatelessWidget {
-  final AdminSetupSuccessController control =
-      Get.put(AdminSetupSuccessController());
+  const AdminSetupSuccessPage({super.key});
 
-  AdminSetupSuccessPage({super.key});
+  @override
+  Widget build(BuildContext context) {
+    Get.put(AdminSetupSuccessController());
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      body: const _Body(),
+    );
+  }
+}
 
-  Widget _successIcon(BuildContext context) {
+class _Body extends StatelessWidget {
+  const _Body();
+
+  @override
+  Widget build(BuildContext context) {
+    final AdminSetupSuccessController control = Get.find();
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
+    return SafeArea(
+      child: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(24, 84, 24, 28),
+              child: Column(
+                children: [
+                  const _SuccessIcon(),
+                  const SizedBox(height: 24),
+                  Text(
+                    '¡Tu organización está\nlista!',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontSize: 24,
+                      fontWeight: FontWeight.w900,
+                      height: 1.18,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    control.organizationName,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: AppColors.chart1,
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  const _CodeCard(),
+                  const SizedBox(height: 18),
+                  Text(
+                    'Comparte este código con tus practicantes y validadores para que puedan unirse.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: colors.onSurfaceVariant,
+                      fontSize: 14,
+                      height: 1.45,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  PrimaryButton(
+                    text: 'Ir al inicio',
+                    onPressed: control.goHome,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            height: 18,
+            color: colors.surfaceContainerLow,
+            alignment: Alignment.center,
+            child: Container(
+              width: 98,
+              height: 4,
+              decoration: BoxDecoration(
+                color: colors.outline,
+                borderRadius: BorderRadius.circular(99),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SuccessIcon extends StatelessWidget {
+  const _SuccessIcon();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: 86,
       height: 86,
@@ -28,8 +117,14 @@ class AdminSetupSuccessPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _codeCard(BuildContext context) {
+class _CodeCard extends StatelessWidget {
+  const _CodeCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final AdminSetupSuccessController control = Get.find();
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Container(
@@ -96,86 +191,6 @@ class AdminSetupSuccessPage extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildBody(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
-
-    return SafeArea(
-      child: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(24, 84, 24, 28),
-              child: Column(
-                children: [
-                  _successIcon(context),
-                  const SizedBox(height: 24),
-                  Text(
-                    '¡Tu organización está\nlista!',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: colors.onSurface,
-                      fontSize: 24,
-                      fontWeight: FontWeight.w900,
-                      height: 1.18,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    control.organizationName,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: AppColors.chart1,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  _codeCard(context),
-                  const SizedBox(height: 18),
-                  Text(
-                    'Comparte este código con tus practicantes y validadores para que puedan unirse.',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: colors.onSurfaceVariant,
-                      fontSize: 14,
-                      height: 1.45,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  PrimaryButton(
-                    text: 'Ir al inicio',
-                    onPressed: control.goHome,
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(
-            height: 18,
-            color: colors.surfaceContainerLow,
-            alignment: Alignment.center,
-            child: Container(
-              width: 98,
-              height: 4,
-              decoration: BoxDecoration(
-                color: colors.outline,
-                borderRadius: BorderRadius.circular(99),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-      body: _buildBody(context),
     );
   }
 }

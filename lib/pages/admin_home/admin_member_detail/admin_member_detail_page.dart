@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../components/app_top_bar.dart';
+import '../../../components/info_row.dart';
 import '../../../components/member_metric_card.dart';
 import '../../../components/primary_button.dart';
 import '../../../components/schedule_card.dart';
@@ -22,7 +23,7 @@ class AdminMemberDetailPage extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: colors.surfaceContainerLow,
-      body: SafeArea(
+      body: SafeArea(top: false,
         child: Column(
           children: [
             const AppTopBar(title: 'Miembro', showBack: true),
@@ -49,14 +50,14 @@ class AdminMemberDetailPage extends StatelessWidget {
                                 width: 56,
                                 height: 56,
                                 decoration: BoxDecoration(
-                                  color: const Color(0xffe15d27),
+                                  color: colors.primary,
                                   borderRadius: BorderRadius.circular(14),
                                 ),
                                 alignment: Alignment.center,
                                 child: Text(
                                   member.initials,
-                                  style: const TextStyle(
-                                    color: Colors.white,
+                                  style: TextStyle(
+                                    color: colors.onPrimary,
                                     fontSize: 18,
                                     fontWeight: FontWeight.w800,
                                   ),
@@ -100,18 +101,16 @@ class AdminMemberDetailPage extends StatelessWidget {
                           const SizedBox(height: 14),
                           Divider(color: colors.outlineVariant, height: 1),
                           const SizedBox(height: 14),
-                          _InfoRow(
+                          InfoRow(
                             label: 'Correo',
                             value: member.institutionalEmail,
-                            colors: colors,
                           ),
                           const SizedBox(height: 8),
-                          _InfoRow(
+                          InfoRow(
                             label: 'Celular',
                             value: member.phoneNumber.isNotEmpty
                                 ? member.phoneNumber
                                 : '—',
-                            colors: colors,
                           ),
                         ],
                       ),
@@ -135,6 +134,7 @@ class AdminMemberDetailPage extends StatelessWidget {
                       mainAxisSpacing: 10,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
                       childAspectRatio: 1.35,
                       children: controller.metrics
                           .map(
@@ -182,40 +182,4 @@ class AdminMemberDetailPage extends StatelessWidget {
   }
 }
 
-class _InfoRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final ColorScheme colors;
-
-  const _InfoRow({
-    required this.label,
-    required this.value,
-    required this.colors,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 60,
-          child: Text(
-            label,
-            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-          ),
-        ),
-        Expanded(
-          child: Text(
-            value,
-            style: TextStyle(
-              color: colors.onSurface,
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
 

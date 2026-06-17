@@ -2,8 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../configs/theme.dart';
-
 class NavTab {
   final String label;
   final IconData icon;
@@ -19,6 +17,7 @@ class CustomBottomNav extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
   final List<int> disabledIndices;
+  final Color? backgroundColor;
 
   const CustomBottomNav({
     super.key,
@@ -26,6 +25,7 @@ class CustomBottomNav extends StatelessWidget {
     required this.currentIndex,
     required this.onTap,
     this.disabledIndices = const [],
+    this.backgroundColor,
   });
 
   static const practitionerTabs = [
@@ -44,16 +44,18 @@ class CustomBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final tabs = isAdmin ? adminTabs : practitionerTabs;
+    final colors = Theme.of(context).colorScheme;
+    final bg = backgroundColor ?? colors.surfaceContainerHigh;
+    final muted = colors.onSurfaceVariant;
 
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xff1A1D27) : Colors.white,
+        color: bg,
         border: Border(
           top: BorderSide(
-            color: isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6),
-            width: 1,
+            color: Theme.of(context).colorScheme.outlineVariant,
+            width: 0.5,
           ),
         ),
       ),
@@ -84,7 +86,7 @@ class CustomBottomNav extends StatelessWidget {
                         padding: const EdgeInsets.all(6),
                         decoration: BoxDecoration(
                           color: (isActive && !isDisabled)
-                              ? AppColors.chart1
+                              ? colors.primary
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(8),
                         ),
@@ -93,9 +95,7 @@ class CustomBottomNav extends StatelessWidget {
                           size: 20,
                           color: (isActive && !isDisabled)
                               ? Colors.white
-                              : (isDark
-                                  ? const Color(0xff6b7280)
-                                  : const Color(0xff9ca3af)),
+                              : muted,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -105,10 +105,8 @@ class CustomBottomNav extends StatelessWidget {
                           fontSize: 10,
                           fontWeight: FontWeight.w500,
                           color: (isActive && !isDisabled)
-                              ? AppColors.chart1
-                              : (isDark
-                                  ? const Color(0xff6b7280)
-                                  : const Color(0xff9ca3af)),
+                              ? colors.primary
+                              : muted,
                         ),
                       ),
                     ],

@@ -29,7 +29,7 @@ class PrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final colors = Theme.of(context).colorScheme;
 
     if (variant == PrimaryButtonVariant.success) {
       return SizedBox(
@@ -40,7 +40,7 @@ class PrimaryButton extends StatelessWidget {
           style: ElevatedButton.styleFrom(
             elevation: 0,
             shadowColor: Colors.transparent,
-            backgroundColor: const Color(0xff16a34a),
+            backgroundColor: AppColors.success,
             foregroundColor: Colors.white,
             surfaceTintColor: Colors.transparent,
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
@@ -48,7 +48,7 @@ class PrimaryButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             textStyle: const TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.w700,
               height: 1.5,
             ),
@@ -72,7 +72,7 @@ class PrimaryButton extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             textStyle: const TextStyle(
-              fontSize: 16,
+              fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -84,26 +84,20 @@ class PrimaryButton extends StatelessWidget {
     final bool isPrimary = variant == PrimaryButtonVariant.primary;
 
     final Color backgroundColor = onPressed == null
-        ? (isDark ? const Color(0xff1a1d27) : AppColors.muted)
+        ? colors.surfaceContainerHigh
         : isPrimary
-            ? AppColors.chart1
-            : isDark
-                ? const Color(0xff1a1d27)
-                : AppColors.card;
+            ? colors.primary
+            : colors.surface;
 
     final Color foregroundColor = onPressed == null
-        ? (isDark ? const Color(0xff717182) : AppColors.mutedForeground)
+        ? colors.onSurfaceVariant
         : isPrimary
-            ? AppColors.primaryForeground
-            : isDark
-                ? const Color(0xfff9fafb)
-                : AppColors.foreground;
+            ? colors.onPrimary
+            : colors.primary;
 
     final Color borderColor = isPrimary
         ? Colors.transparent
-        : isDark
-            ? const Color(0xff333333)
-            : AppColors.border;
+        : colors.primary;
 
     return SizedBox(
       width: fullWidth ? double.infinity : null,
@@ -122,7 +116,7 @@ class PrimaryButton extends StatelessWidget {
             side: BorderSide(color: borderColor),
           ),
           textStyle: const TextStyle(
-            fontSize: 16,
+            fontSize: 18,
             fontWeight: FontWeight.w700,
             height: 1.5,
           ),

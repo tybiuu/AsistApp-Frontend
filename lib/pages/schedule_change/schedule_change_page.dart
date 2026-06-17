@@ -13,8 +13,8 @@ class ScheduleChangePage extends StatelessWidget {
     final c = Get.put(ScheduleChangeController());
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      body: SafeArea(top: false,
         child: Column(
           children: [
             const AppTopBar(

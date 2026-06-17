@@ -15,10 +15,10 @@ class ProfileHeaderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.find<ProfileController>();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final cardBg = isDark ? const Color(0xff1A1D27) : Colors.white;
-    final border = isDark ? const Color(0xff2D3042) : const Color(0xfff3f4f6);
-    final muted = isDark ? const Color(0xff6b7280) : const Color(0xff9ca3af);
-    final onCard = isDark ? Colors.white : const Color(0xff1f2937);
+    final cardBg = Theme.of(context).colorScheme.surface;
+    final border = Theme.of(context).colorScheme.outlineVariant;
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
+    final onCard = Theme.of(context).colorScheme.onSurface;
 
     return Obx(() {
       final u = c.user.value;
@@ -124,9 +124,7 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final muted = Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xff6b7280)
-        : const Color(0xff9ca3af);
+    final muted = Theme.of(context).colorScheme.onSurfaceVariant;
 
     return Expanded(
       child: Column(

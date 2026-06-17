@@ -12,24 +12,13 @@ import '../attendance/attendance_page.dart';
 import '../profile/profile_page.dart';
 import '../analytics/analytics_page.dart';
 
-class RootPage extends StatefulWidget {
+class RootPage extends StatelessWidget {
   const RootPage({super.key});
 
   @override
-  State<RootPage> createState() => _RootPageState();
-}
-
-class _RootPageState extends State<RootPage> {
-  late final RootController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = Get.put(RootController());
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final controller = Get.put(RootController());
+
     final practitionerViews = [
       const HomePage(),
       const AttendancePage(),
@@ -45,6 +34,7 @@ class _RootPageState extends State<RootPage> {
     ];
 
     return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Obx(() {
         final views = controller.isAdmin ? adminViews : practitionerViews;
         return IndexedStack(
@@ -57,6 +47,7 @@ class _RootPageState extends State<RootPage> {
           isAdmin: controller.isAdmin,
           currentIndex: controller.currentIndex.value,
           onTap: controller.changeTab,
+          backgroundColor: Theme.of(context).colorScheme.surface,
         ),
       ),
     );

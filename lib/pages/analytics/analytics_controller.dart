@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -101,8 +102,8 @@ class AnalyticsController extends GetxController {
   }
 
   static Color percentColor(double percent) {
-    if (percent >= 90) return const Color(0xff16a34a);
+    if (percent >= 90) return AppColors.success;
     if (percent >= 60) return const Color(0xffe15d27);
-    return const Color(0xffef4444);
+    return AppColors.error;
   }
 }

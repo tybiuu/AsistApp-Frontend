@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asist_app/configs/theme.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
@@ -22,13 +23,10 @@ class AdminScheduleValidationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final c = Get.put(AdminScheduleValidationController());
     final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark
-          ? const Color(0xff0f1117)
-          : const Color(0xffffffff),
-      body: SafeArea(
+      backgroundColor: theme.colorScheme.surfaceContainerLow,
+      body: SafeArea(top: false,
         child: Column(
           children: [
             const AppTopBar(title: 'Cambios de horario', showBack: true),
@@ -310,7 +308,7 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                       style: ElevatedButton.styleFrom(
                                         backgroundColor: Colors.transparent,
                                         side: const BorderSide(
-                                          color: Color(0xffef4444),
+                                          color: AppColors.error,
                                         ),
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
@@ -322,7 +320,7 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                       child: const Text(
                                         'Denegar',
                                         style: TextStyle(
-                                          color: Color(0xffef4444),
+                                          color: AppColors.error,
                                           fontWeight: FontWeight.bold,
                                           fontSize: 13,
                                         ),

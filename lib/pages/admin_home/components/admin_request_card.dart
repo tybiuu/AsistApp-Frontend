@@ -22,27 +22,18 @@ class AdminRequestCard extends StatelessWidget {
     }
   }
 
-  Color _iconBackground(ColorScheme colors) {
+  Color get _iconColor {
     switch (request.type) {
       case 'schedule':
-        return AppColors.chart3.withValues(alpha: 0.14);
+        return AppColors.chart6;
       case 'attendance':
-        return AppColors.chart2.withValues(alpha: 0.14);
-      default:
-        return AppColors.chart1.withValues(alpha: 0.14);
-    }
-  }
-
-  Color _iconColor() {
-    switch (request.type) {
-      case 'schedule':
-        return AppColors.chart3;
-      case 'attendance':
-        return AppColors.chart2;
+        return AppColors.chart7;
       default:
         return AppColors.chart1;
     }
   }
+
+  Color get _iconBackground => _iconColor.withValues(alpha: 0.12);
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +46,7 @@ class AdminRequestCard extends StatelessWidget {
         onTap: onTap,
         borderRadius: BorderRadius.circular(14),
         child: Container(
-          height: 54,
+          height: 66,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
@@ -67,10 +58,10 @@ class AdminRequestCard extends StatelessWidget {
                 width: 34,
                 height: 34,
                 decoration: BoxDecoration(
-                  color: _iconBackground(colors),
+                  color: _iconBackground,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: Icon(_icon, size: 18, color: _iconColor()),
+                child: Icon(_icon, size: 18, color: _iconColor),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -78,7 +69,7 @@ class AdminRequestCard extends StatelessWidget {
                   request.title,
                   style: TextStyle(
                     color: colors.onSurface,
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -87,14 +78,14 @@ class AdminRequestCard extends StatelessWidget {
                 width: 22,
                 height: 22,
                 alignment: Alignment.center,
-                decoration: const BoxDecoration(
-                  color: AppColors.chart1,
+                decoration: BoxDecoration(
+                  color: colors.primary,
                   shape: BoxShape.circle,
                 ),
                 child: Text(
                   '${request.count}',
-                  style: const TextStyle(
-                    color: AppColors.primaryForeground,
+                  style: TextStyle(
+                    color: colors.onPrimary,
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
                   ),

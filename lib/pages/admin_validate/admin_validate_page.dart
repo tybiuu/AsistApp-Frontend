@@ -3,10 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../../components/app_top_bar.dart';
+import '../../configs/theme.dart';
+import '../../utils/date_utils.dart';
+import '../../utils/trainee_utils.dart';
+
 class AdminValidatePage extends StatelessWidget {
   const AdminValidatePage({super.key});
-
-  static const Color orange = Color(0xFFFF6A00);
 
   Future<_AdminValidateData> _loadData() async {
     final recordsString = await rootBundle.loadString(
@@ -26,54 +29,6 @@ class AdminValidatePage extends StatelessWidget {
     return _AdminValidateData(records: records, trainees: trainees);
   }
 
-  String _formatTime(dynamic value) {
-    if (value == null) return '-';
-
-    final text = value.toString();
-    if (text.length < 16) return '-';
-
-    return text.substring(11, 16);
-  }
-
-  String _initials(Map<String, dynamic>? trainee) {
-    if (trainee == null) return '--';
-
-    final first = trainee['first_name']?.toString() ?? '';
-    final last = trainee['last_name']?.toString() ?? '';
-
-    final f = first.isNotEmpty ? first[0] : '';
-    final l = last.isNotEmpty ? last[0] : '';
-
-    return '$f$l'.toUpperCase();
-  }
-
-  String _fullName(Map<String, dynamic>? trainee) {
-    if (trainee == null) return 'Practicante no encontrado';
-
-    final first = trainee['first_name']?.toString() ?? '';
-    final last = trainee['last_name']?.toString() ?? '';
-
-    return '$first $last'.trim();
-  }
-
-  String _careerText(Map<String, dynamic>? trainee) {
-    if (trainee == null) return 'Practicante';
-
-    final career = trainee['career']?.toString() ?? 'Sin carrera';
-    final cycle = trainee['cycle']?.toString() ?? '-';
-
-    return '$career · ${cycle}mo ciclo';
-  }
-
-  Map<String, dynamic>? _findTrainee(
-    List<Map<String, dynamic>> trainees,
-    String userId,
-  ) {
-    for (final trainee in trainees) {
-      if (trainee['id'] == userId) return trainee;
-    }
-    return null;
-  }
 
   String _statusText(Map<String, dynamic> record) {
     final status = record['status'];
@@ -96,8 +51,8 @@ class AdminValidatePage extends StatelessWidget {
   }
 
   Color _statusColor(String status) {
-    if (status == 'A tiempo') return const Color(0xFF22C55E);
-    if (status == 'Tardanza') return const Color(0xFFF59E0B);
+    if (status == 'A tiempo') return AppColors.success;
+    if (status == 'Tardanza') return AppColors.warning;
     if (status == 'Sin marcar') return const Color(0xFF3B82F6);
     return const Color(0xFF64748B);
   }
@@ -106,56 +61,95 @@ class AdminValidatePage extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
+    final now = DateTime.now();
+    final dateLabel = 'Hoy, ${now.day} ${monthAbbrev(now.month)}';
+
     return Scaffold(
-      backgroundColor: colors.surface,
+      backgroundColor: colors.surfaceContainerLow,
       body: SafeArea(
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: FutureBuilder<_AdminValidateData>(
-              future: _loadData(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(
-                    child: CircularProgressIndicator(color: colors.primary),
-                  );
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error al cargar datos',
-                      style: TextStyle(color: colors.onSurface),
+        top: false,
+        child: Column(
+          children: [
+            AppTopBar(
+              title: 'Validar asistencia',
+              actions: [
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: colors.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: Color.alphaBlend(
+                        Colors.black.withValues(alpha: 0.12),
+                        colors.surfaceContainerHighest,
+                      ),
                     ),
-                  );
-                }
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.calendar_today_rounded, color: colors.primary, size: 13),
+                      const SizedBox(width: 6),
+                      Text(
+                        dateLabel,
+                        style: TextStyle(
+                          color: colors.onSurface,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Expanded(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 420),
+                  child: FutureBuilder<_AdminValidateData>(
+                    future: _loadData(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(
+                          child: CircularProgressIndicator(color: colors.primary),
+                        );
+                      }
 
-                final data = snapshot.data!;
-                final records = data.records;
-                final trainees = data.trainees;
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text(
+                            'Error al cargar datos',
+                            style: TextStyle(color: colors.onSurface),
+                          ),
+                        );
+                      }
 
-                final pendingRecords = records
-                    .where((record) => record['status'] == 'pending')
-                    .toList();
+                      final data = snapshot.data!;
+                      final records = data.records;
+                      final trainees = data.trainees;
 
-                final confirmedRecords = records
-                    .where((record) => record['status'] == 'confirmed')
-                    .toList();
+                      final pendingRecords = records
+                          .where((record) => record['status'] == 'pending')
+                          .toList();
 
-                final validationRecords = [
-                  ...pendingRecords,
-                  ...confirmedRecords,
-                ];
+                      final confirmedRecords = records
+                          .where((record) => record['status'] == 'confirmed')
+                          .toList();
 
-                final missingRecords = records
-                    .where((record) => record['status'] == 'absence')
-                    .toList();
+                      final validationRecords = [
+                        ...pendingRecords,
+                        ...confirmedRecords,
+                      ];
 
-                return ListView(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                  children: [
-                    const _Header(),
-                    const SizedBox(height: 18),
+                      final missingRecords = records
+                          .where((record) => record['status'] == 'absence')
+                          .toList();
+
+                      return ListView(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                        children: [
+                          const SizedBox(height: 4),
 
                     _SectionTitle(
                       title: 'Esperando validación',
@@ -165,7 +159,7 @@ class AdminValidatePage extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     ...validationRecords.map((record) {
-                      final trainee = _findTrainee(
+                      final trainee = findTrainee(
                         trainees,
                         record['user_id'].toString(),
                       );
@@ -175,15 +169,15 @@ class AdminValidatePage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _ValidateCard(
-                          initials: _initials(trainee),
-                          name: _fullName(trainee),
-                          career: _careerText(trainee),
+                          initials: traineeInitials(trainee),
+                          name: traineeFullName(trainee),
+                          career: traineeCareerText(trainee),
                           status: status,
                           statusColor: _statusColor(status),
-                          inTime: _formatTime(record['check_in']),
-                          snackStart: _formatTime(record['lunch_start']),
-                          snackEnd: _formatTime(record['lunch_end']),
-                          outTime: _formatTime(record['check_out']),
+                          inTime: formatTimeShort(record['check_in']),
+                          snackStart: formatTimeShort(record['lunch_start']),
+                          snackEnd: formatTimeShort(record['lunch_end']),
+                          outTime: formatTimeShort(record['check_out']),
                         ),
                       );
                     }),
@@ -198,7 +192,7 @@ class AdminValidatePage extends StatelessWidget {
                     const SizedBox(height: 12),
 
                     ...missingRecords.map((record) {
-                      final trainee = _findTrainee(
+                      final trainee = findTrainee(
                         trainees,
                         record['user_id'].toString(),
                       );
@@ -206,19 +200,22 @@ class AdminValidatePage extends StatelessWidget {
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 12),
                         child: _MissingCard(
-                          initials: _initials(trainee),
-                          name: _fullName(trainee),
-                          career: _careerText(trainee),
+                          initials: traineeInitials(trainee),
+                          name: traineeFullName(trainee),
+                          career: traineeCareerText(trainee),
                           inTime: 'Sin registro',
                           outTime: 'Sin registro',
                         ),
                       );
                     }),
-                  ],
-                );
-              },
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -233,54 +230,6 @@ class _AdminValidateData {
     required this.records,
     required this.trainees,
   });
-}
-
-class _Header extends StatelessWidget {
-  const _Header();
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Validar asistencia',
-          style: TextStyle(
-            color: colors.onSurface,
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: colors.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: colors.outlineVariant),
-          ),
-          child: Row(
-            children: [
-              const Icon(
-                Icons.calendar_today_rounded,
-                color: AdminValidatePage.orange,
-                size: 16,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                'Hoy',
-                style: TextStyle(
-                  color: colors.onSurface,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
 }
 
 class _SectionTitle extends StatelessWidget {
@@ -310,8 +259,8 @@ class _SectionTitle extends StatelessWidget {
         const Spacer(),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: const BoxDecoration(
-            color: AdminValidatePage.orange,
+          decoration: BoxDecoration(
+            color: colors.primary,
             shape: BoxShape.circle,
           ),
           child: Text(
@@ -357,7 +306,7 @@ class _ValidateCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: colors.outlineVariant),
       ),
@@ -386,7 +335,7 @@ class _ValidateCard extends StatelessWidget {
                     time: inTime,
                     color: status == 'Tardanza'
                         ? const Color(0xFFF97316)
-                        : const Color(0xFF22C55E),
+                        : AppColors.success,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -422,7 +371,7 @@ class _ValidateCard extends StatelessWidget {
             child: ElevatedButton(
               onPressed: () {},
               style: ElevatedButton.styleFrom(
-                backgroundColor: AdminValidatePage.orange,
+                backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
                 elevation: 0,
                 shape: const RoundedRectangleBorder(
@@ -465,7 +414,7 @@ class _MissingCard extends StatelessWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: colors.surfaceContainerLow,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(color: const Color(0xFF2563EB)),
       ),
@@ -508,7 +457,7 @@ class _Avatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      backgroundColor: AdminValidatePage.orange,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       radius: 22,
       child: Text(
         initials,

@@ -1,4 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
+import 'package:asist_app/components/donut_chart_legend.dart';
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 
 import '../analytics_controller.dart';
@@ -13,29 +15,29 @@ class DistributionChart extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     final sections = [
-      _DonutSection(
+      DonutSection(
         label: 'Confirmado',
         value: data.daysAttended.toDouble(),
         unit: 'd',
-        color: const Color(0xff16a34a),
+        color: AppColors.success,
       ),
-      _DonutSection(
+      DonutSection(
         label: 'Tardanza',
         value: data.daysLate.toDouble(),
         unit: 'd',
-        color: const Color(0xffe15d27),
+        color: AppColors.chart1,
       ),
-      _DonutSection(
+      DonutSection(
         label: 'Inasistencia',
         value: data.daysMissed.toDouble(),
         unit: 'd',
-        color: const Color(0xffef4444),
+        color: AppColors.error,
       ),
-      _DonutSection(
+      DonutSection(
         label: 'Pendiente',
         value: data.pendingDays.toDouble(),
         unit: 'd',
-        color: const Color(0xff1d4ed8),
+        color: AppColors.info,
       ),
     ];
 
@@ -82,7 +84,7 @@ class DistributionChart extends StatelessWidget {
               Wrap(
                 spacing: 16,
                 runSpacing: 8,
-                children: sections.map((s) => _LegendItem(section: s)).toList(),
+                children: sections.map((s) => DonutLegendItem(section: s)).toList(),
               ),
             ],
           ),
@@ -92,58 +94,3 @@ class DistributionChart extends StatelessWidget {
   }
 }
 
-class _DonutSection {
-  final String label;
-  final double value;
-  final String unit;
-  final Color color;
-
-  const _DonutSection({
-    required this.label,
-    required this.value,
-    required this.unit,
-    required this.color,
-  });
-}
-
-class _LegendItem extends StatelessWidget {
-  final _DonutSection section;
-
-  const _LegendItem({required this.section});
-
-  @override
-  Widget build(BuildContext context) {
-    final ColorScheme colors = Theme.of(context).colorScheme;
-
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(
-            color: section.color,
-            shape: BoxShape.circle,
-          ),
-        ),
-        const SizedBox(width: 6),
-        Text(
-          '${section.label}: ',
-          style: TextStyle(
-            color: colors.onSurfaceVariant,
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        Text(
-          '${section.value.toInt()}${section.unit}',
-          style: TextStyle(
-            color: section.color,
-            fontSize: 12,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-      ],
-    );
-  }
-}

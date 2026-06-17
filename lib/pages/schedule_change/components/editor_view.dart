@@ -81,7 +81,7 @@ class EditorView extends StatelessWidget {
                           ),
                           borderRadius: BorderRadius.circular(12),
                           color: isSelected
-                              ? brandColor.withOpacity(0.05)
+                              ? brandColor.withValues(alpha: 0.05)
                               : cs.surfaceContainerLowest,
                         ),
                         child: Column(
@@ -143,14 +143,14 @@ class EditorView extends StatelessWidget {
               final isComplete = c.isScheduleComplete;
               final missingHours = c.missingHours;
 
-              final successColor = const Color(0xff10b981); 
+              final successColor = AppColors.success; 
               
               final containerBg = isComplete 
-                  ? successColor.withOpacity(0.06) 
+                  ? successColor.withValues(alpha: 0.06) 
                   : cs.surfaceContainerHigh;
                   
               final containerBorder = isComplete 
-                  ? successColor.withOpacity(0.3) 
+                  ? successColor.withValues(alpha: 0.3) 
                   : cs.outlineVariant;
 
               return Container(
@@ -191,7 +191,7 @@ class EditorView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w800,
-                              color: cs.onSurfaceVariant.withOpacity(0.4),
+                              color: cs.onSurfaceVariant.withValues(alpha: 0.4),
                             ),
                             children: [
                               TextSpan(
@@ -212,7 +212,7 @@ class EditorView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                       child: LinearProgressIndicator(
                         value: (currentHours / targetHours).clamp(0.0, 1.0),
-                        backgroundColor: isComplete ? successColor.withOpacity(0.1) : cs.outlineVariant.withOpacity(0.5),
+                        backgroundColor: isComplete ? successColor.withValues(alpha: 0.1) : cs.outlineVariant.withOpacity(0.5),
                         color: isComplete ? successColor : brandColor,
                         minHeight: 8,
                       ),
@@ -245,7 +245,7 @@ class EditorView extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: cs.surfaceContainerLowest,
                                 borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: cs.outlineVariant.withOpacity(0.8)),
+                                border: Border.all(color: cs.outlineVariant.withValues(alpha: 0.8)),
                               ),
                               child: Column(
                                 mainAxisSize: MainAxisSize.min,
@@ -255,7 +255,7 @@ class EditorView extends StatelessWidget {
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.w700,
-                                      color: cs.onSurfaceVariant.withOpacity(0.5),
+                                      color: cs.onSurfaceVariant.withValues(alpha: 0.5),
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -392,7 +392,7 @@ class EditorView extends StatelessWidget {
                                       
                                       Icon(
                                         Icons.arrow_forward_rounded,
-                                        color: cs.onSurfaceVariant.withOpacity(0.4),
+                                        color: cs.onSurfaceVariant.withValues(alpha: 0.4),
                                         size: 16,
                                       ),
                                       
@@ -413,7 +413,7 @@ class EditorView extends StatelessWidget {
                                       
                                       IconButton(
                                         icon: const Icon(Icons.delete_outline_rounded, size: 20),
-                                        color: cs.error.withOpacity(0.8),
+                                        color: cs.error.withValues(alpha: 0.8),
                                         onPressed: () => c.removeBlock(dayKey, blockIndex),
                                         padding: EdgeInsets.zero,
                                         constraints: const BoxConstraints(),
@@ -445,7 +445,7 @@ class EditorView extends StatelessWidget {
                         'Día libre',
                         style: TextStyle(
                           fontSize: 12,
-                          color: cs.onSurfaceVariant.withOpacity(0.6),
+                          color: cs.onSurfaceVariant.withValues(alpha: 0.6),
                           fontWeight: FontWeight.w500,
                         ),
                       ),

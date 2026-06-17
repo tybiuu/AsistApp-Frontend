@@ -28,8 +28,8 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: theme.brightness == Brightness.dark ? const Color(0xff0f1117) : const Color(0xffffffff),
-      body: SafeArea(
+      backgroundColor: theme.colorScheme.surfaceContainerLow,
+      body: SafeArea(top: false,
         child: Column(
           children: [
             AppTopBar(
@@ -170,9 +170,9 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.1),
+                          color: Colors.orange.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.orange.withOpacity(0.2)),
+                          border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
                         ),
                         padding: const EdgeInsets.all(12),
                         child: Column(
@@ -228,7 +228,7 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                         ),
                       )
                     else
-                      ...req.proposedSchedule.keys.map((day) => _buildCompareDayTile(context, day, req)),
+                      ...req.proposedSchedule.keys.map((day) => _CompareDayTile(dayName: day, req: req)),
 
                     const SizedBox(height: 24),
 
@@ -265,7 +265,16 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
     }
   }
 
-  Widget _buildCompareDayTile(BuildContext context, String dayName, ScheduleRequestModel req) {
+}
+
+class _CompareDayTile extends StatelessWidget {
+  final String dayName;
+  final ScheduleRequestModel req;
+
+  const _CompareDayTile({required this.dayName, required this.req});
+
+  @override
+  Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final actualBlocks = req.currentSchedule[dayName] ?? [];
     final proposedBlocks = req.proposedSchedule[dayName] ?? [];
@@ -287,9 +296,12 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
               Text(dayName, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14)),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: Colors.orange.withOpacity(0.1), borderRadius: BorderRadius.circular(4)),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(4),
+                ),
                 child: const Text('Modificado', style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.bold)),
-              )
+              ),
             ],
           ),
           const SizedBox(height: 12),
@@ -302,7 +314,10 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                   children: [
                     const Text('ACTUAL', style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    ...actualBlocks.map((b) => _buildSegmentLine(b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withOpacity(0.4), '${b.start} - ${b.end}')),
+                    ...actualBlocks.map((b) => _SegmentLine(
+                          dotColor: b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                          segment: '${b.start} - ${b.end}',
+                        )),
                   ],
                 ),
               ),
@@ -315,18 +330,29 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                   children: [
                     const Text('PROPUESTO', style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
-                    ...proposedBlocks.map((b) => _buildSegmentLine(b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withOpacity(0.4), '${b.start} - ${b.end}')),
+                    ...proposedBlocks.map((b) => _SegmentLine(
+                          dotColor: b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                          segment: '${b.start} - ${b.end}',
+                        )),
                   ],
                 ),
               ),
             ],
-          )
+          ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildSegmentLine(Color dotColor, String segment) {
+class _SegmentLine extends StatelessWidget {
+  final Color dotColor;
+  final String segment;
+
+  const _SegmentLine({required this.dotColor, required this.segment});
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

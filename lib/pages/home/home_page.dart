@@ -1,11 +1,15 @@
 // lib/pages/home/home_page.dart
-import '../report/report_page.dart';
+import '../historial/historial_page.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../configs/theme.dart';
+import '../../services/session_service.dart';
+import '../../utils/date_utils.dart';
+import '../root/root_controller.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -33,55 +37,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  String _formatTime(dynamic value) {
-    if (value == null) return '--:--';
-
-    final text = value.toString();
-
-    if (text.contains('T') && text.length >= 16) {
-      final hour = int.tryParse(text.substring(11, 13)) ?? 0;
-      final minute = text.substring(14, 16);
-      return _to12Hour(hour, minute);
-    }
-
-    final parts = text.split(':');
-    if (parts.length >= 2) {
-      final hour = int.tryParse(parts[0]) ?? 0;
-      final minute = parts[1];
-      return _to12Hour(hour, minute);
-    }
-
-    return text;
-  }
-
-  String _to12Hour(int hour, String minute) {
-    final suffix = hour >= 12 ? 'PM' : 'AM';
-    final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-    return '${hour12.toString().padLeft(2, '0')}:$minute $suffix';
-  }
-
-  String _formatDate(String date) {
-    final parts = date.split('-');
-    if (parts.length != 3) return date;
-
-    const months = {
-      '01': 'enero',
-      '02': 'febrero',
-      '03': 'marzo',
-      '04': 'abril',
-      '05': 'mayo',
-      '06': 'junio',
-      '07': 'julio',
-      '08': 'agosto',
-      '09': 'septiembre',
-      '10': 'octubre',
-      '11': 'noviembre',
-      '12': 'diciembre',
-    };
-
-    return '${parts[2]} de ${months[parts[1]] ?? parts[1]}';
-  }
-
   String _dayName(String day) {
     switch (day) {
       case 'monday':
@@ -103,31 +58,6 @@ class HomePage extends StatelessWidget {
     }
   }
 
-  String _statusText(Map<String, dynamic> record) {
-    if (record['status'] == 'absence') return 'Inasistencia';
-    if (record['status'] == 'pending') return 'Pendiente';
-
-    final lateMinutes = record['late_minutes'];
-    if (lateMinutes != null && lateMinutes > 0) return 'Tardanza';
-
-    return 'Puntual';
-  }
-
-  Color _statusColor(String status) {
-    if (status == 'Puntual') return const Color(0xff22c55e);
-    if (status == 'Tardanza') return AppColors.chart1;
-    if (status == 'Inasistencia') return const Color(0xffef4444);
-    return const Color(0xff3b82f6);
-  }
-
-  String _hoursText(dynamic totalMinutes) {
-    if (totalMinutes == null) return '--';
-    final minutes = totalMinutes as int;
-    final h = minutes ~/ 60;
-    final m = minutes % 60;
-    return '${h}h ${m.toString().padLeft(2, '0')}min';
-  }
-
   int _completedMinutes(List<Map<String, dynamic>> records) {
     return records.fold<int>(0, (total, record) {
       final value = record['total_minutes'];
@@ -147,16 +77,14 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final ColorScheme colors = Theme.of(context).colorScheme;
 
-    final Color background =
-        isDark ? const Color(0xff0f1117) : const Color(0xfff7f8fa);
-    final Color cardColor = isDark ? const Color(0xff1A1D27) : Colors.white;
+    final Color cardColor = colors.surface;
     final Color textColor = isDark ? Colors.white : AppColors.foreground;
-    final Color mutedColor =
-        isDark ? const Color(0xff9ca3af) : AppColors.mutedForeground;
+    final Color mutedColor = colors.onSurfaceVariant;
 
     return Scaffold(
-      backgroundColor: background,
+      backgroundColor: colors.surfaceContainerLow,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -204,18 +132,21 @@ class HomePage extends StatelessWidget {
                     ? 0
                     : ((confirmedCount / records.length) * 100).round();
 
-                final checkIn = _formatTime(todaySchedule['check_in_time']);
-                final checkOut = _formatTime(todaySchedule['check_out_time']);
+                final checkIn = formatTime12h(todaySchedule['check_in_time']);
+                final checkOut = formatTime12h(todaySchedule['check_out_time']);
                 final todayLabel =
                     '${_dayName(todaySchedule['day'].toString())} 28 de abril';
 
-                final latestRecords = records.take(2).toList();
+                final latestRecords = records
+                    .where((r) => r['status'] != 'pending')
+                    .take(2)
+                    .toList();
 
                 return ListView(
                   padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
                   children: [
                     Text(
-                      'Buenos días, Juan 👋',
+                      'Buenos días, ${SessionService.to.currentUser.value?.firstName ?? 'Usuario'} 👋',
                       style: TextStyle(
                         color: textColor,
                         fontSize: 22,
@@ -236,11 +167,11 @@ class HomePage extends StatelessWidget {
                       width: double.infinity,
                       padding: const EdgeInsets.all(18),
                       decoration: BoxDecoration(
-                        color: AppColors.chart1,
+                        color: colors.primary,
                         borderRadius: BorderRadius.circular(22),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.chart1.withOpacity(0.25),
+                            color: colors.primary.withValues(alpha: 0.25),
                             blurRadius: 16,
                             offset: const Offset(0, 8),
                           ),
@@ -256,7 +187,7 @@ class HomePage extends StatelessWidget {
                                 'HOY',
                                 style: TextStyle(
                                   color: Colors.white70,
-                                  fontSize: 11,
+                                  fontSize: 13,
                                   fontWeight: FontWeight.w800,
                                   letterSpacing: 0.8,
                                 ),
@@ -268,12 +199,12 @@ class HomePage extends StatelessWidget {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 2),
                           Text(
                             todayLabel,
                             style: const TextStyle(
                               color: Colors.white,
-                              fontSize: 18,
+                              fontSize: 19,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -281,7 +212,7 @@ class HomePage extends StatelessWidget {
                           Container(
                             padding: const EdgeInsets.all(14),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.16),
+                              color: Colors.white.withValues(alpha: 0.16),
                               borderRadius: BorderRadius.circular(16),
                             ),
                             child: Row(
@@ -298,7 +229,7 @@ class HomePage extends StatelessWidget {
                                     style: const TextStyle(
                                       color: Colors.white,
                                       height: 1.35,
-                                      fontSize: 13,
+                                      fontSize: 15,
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -313,7 +244,7 @@ class HomePage extends StatelessWidget {
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
-                                foregroundColor: AppColors.chart1,
+                                foregroundColor: colors.primary,
                                 elevation: 0,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 13),
@@ -325,6 +256,7 @@ class HomePage extends StatelessWidget {
                                 'Ir a marcar  →',
                                 style: TextStyle(
                                   fontWeight: FontWeight.w800,
+                                  fontSize: 16,
                                 ),
                               ),
                             ),
@@ -344,12 +276,15 @@ class HomePage extends StatelessWidget {
                             fontWeight: FontWeight.w800,
                           ),
                         ),
-                        const Text(
-                          'Ver reporte',
-                          style: TextStyle(
-                            color: AppColors.chart1,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
+                        GestureDetector(
+                          onTap: () => Get.find<RootController>().changeTab(2),
+                          child: Text(
+                            'Ver reporte',
+                            style: TextStyle(
+                              color: colors.primary,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ],
@@ -378,8 +313,8 @@ class HomePage extends StatelessWidget {
                               children: [
                                 TextSpan(
                                   text: '${completedHours}h',
-                                  style: const TextStyle(
-                                    color: AppColors.chart1,
+                                  style: TextStyle(
+                                    color: colors.primary,
                                     fontSize: 28,
                                     fontWeight: FontWeight.w900,
                                   ),
@@ -401,9 +336,9 @@ class HomePage extends StatelessWidget {
                             child: LinearProgressIndicator(
                               value: progress,
                               minHeight: 8,
-                              backgroundColor: const Color(0xffffedd5),
-                              valueColor: const AlwaysStoppedAnimation<Color>(
-                                AppColors.chart1,
+                              backgroundColor: colors.primaryContainer,
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                colors.primary,
                               ),
                             ),
                           ),
@@ -418,7 +353,7 @@ class HomePage extends StatelessWidget {
                             title: '% Asistencia',
                             value: '$attendancePercent%',
                             subtitle: 'este mes',
-                            valueColor: const Color(0xff16a34a),
+                            valueColor: AppColors.success,
                             cardColor: cardColor,
                             mutedColor: mutedColor,
                           ),
@@ -429,7 +364,7 @@ class HomePage extends StatelessWidget {
                             title: 'Tardanzas',
                             value: lateCount.toString(),
                             subtitle: 'este mes',
-                            valueColor: AppColors.chart1,
+                            valueColor: colors.primary,
                             cardColor: cardColor,
                             mutedColor: mutedColor,
                           ),
@@ -455,7 +390,7 @@ class HomePage extends StatelessWidget {
                             title: 'Inasistencias',
                             value: absenceCount.toString(),
                             subtitle: 'este mes',
-                            valueColor: const Color(0xff16a34a),
+                            valueColor: AppColors.success,
                             cardColor: cardColor,
                             mutedColor: mutedColor,
                           ),
@@ -479,14 +414,14 @@ class HomePage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const ReportPage(),
+                                builder: (_) => const HistorialPage(),
                               ),
                             );
                           },
-                          child: const Text(
+                          child: Text(
                             'Ver todos',
                             style: TextStyle(
-                              color: AppColors.chart1,
+                              color: colors.primary,
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                             ),
@@ -496,8 +431,8 @@ class HomePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 12),
                     ...latestRecords.map((record) {
-                      final status = _statusText(record);
-                      final color = _statusColor(status);
+                      final status = attendanceStatusText(record);
+                      final color = attendanceStatusColor(context, status);
 
                       return Padding(
                         padding: const EdgeInsets.only(bottom: 10),
@@ -507,17 +442,17 @@ class HomePage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (_) => const ReportPage(),
+                                builder: (_) => const HistorialPage(),
                               ),
                             );
                           },
                           child: _AttendanceRecord(
-                          date: _formatDate(record['date'].toString()),
+                          date: '${dayAbbrevFromDate(record['date'].toString())} ${formatDateLong(record['date'].toString())}',
                           status: status,
                           statusColor: color,
                           time:
-                              '${_formatTime(record['check_in'])}  -  ${_formatTime(record['check_out'])}',
-                          hours: _hoursText(record['total_minutes']),
+                              '${formatTime12h(record['check_in'])}  -  ${formatTime12h(record['check_out'])}',
+                          hours: hoursText(record['total_minutes']),
                           cardColor: cardColor,
                           textColor: textColor,
                           mutedColor: mutedColor,
@@ -630,6 +565,8 @@ class _AttendanceRecord extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ColorScheme colors = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -652,7 +589,7 @@ class _AttendanceRecord extends StatelessWidget {
                   date,
                   style: TextStyle(
                     color: textColor,
-                    fontSize: 13,
+                    fontSize: 15,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -672,7 +609,7 @@ class _AttendanceRecord extends StatelessWidget {
                       status,
                       style: TextStyle(
                         color: statusColor,
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -688,16 +625,17 @@ class _AttendanceRecord extends StatelessWidget {
                 time,
                 style: TextStyle(
                   color: mutedColor,
-                  fontSize: 11,
+                  fontSize: 13,
                   fontWeight: FontWeight.w600,
+                  fontFamily: 'RobotoMono',
                 ),
               ),
               const SizedBox(height: 6),
               Text(
                 hours,
-                style: const TextStyle(
-                  color: AppColors.chart1,
-                  fontSize: 12,
+                style: TextStyle(
+                  color: colors.primary,
+                  fontSize: 13,
                   fontWeight: FontWeight.w800,
                 ),
               ),

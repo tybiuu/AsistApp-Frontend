@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:asist_app/configs/theme.dart';
 import '../admin_analytics_controller.dart';
 
 class AbsencesChart extends StatelessWidget {
@@ -25,7 +26,7 @@ class AbsencesChart extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         Container(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           decoration: BoxDecoration(
             color: colors.surface,
             borderRadius: BorderRadius.circular(18),
@@ -70,20 +71,21 @@ class _AbsenceRow extends StatelessWidget {
               member.shortName,
               style: TextStyle(
                 color: colors.onSurface,
-                fontSize: 12,
+                fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
             ),
           ),
+          const SizedBox(width: 12),
           Expanded(
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(4),
+              borderRadius: BorderRadius.circular(999),
               child: LinearProgressIndicator(
                 value: percent,
-                minHeight: 10,
+                minHeight: 13,
                 backgroundColor: colors.surfaceContainerHigh,
                 valueColor: const AlwaysStoppedAnimation<Color>(
-                  Color(0xffef4444),
+                  AppColors.error,
                 ),
               ),
             ),
@@ -95,9 +97,9 @@ class _AbsenceRow extends StatelessWidget {
               '${member.daysMissed}d',
               textAlign: TextAlign.right,
               style: const TextStyle(
-                color: Color(0xffef4444),
+                color: AppColors.error,
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w900,
               ),
             ),
           ),

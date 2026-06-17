@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:asist_app/configs/theme.dart';
 import 'package:get/get.dart';
 import '../../../../../components/primary_button.dart';
 import '../register_controller.dart';
@@ -9,8 +10,6 @@ class RegisterFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<RegisterController>();
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       children: [
         Obx(() => PrimaryButton(
@@ -24,7 +23,7 @@ class RegisterFooter extends StatelessWidget {
             Text(
               '¿Ya tienes cuenta? ',
               style: TextStyle(
-                color: isDark ? const Color(0xff9ca3af) : const Color(0xff6b7280),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 14,
               ),
             ),
@@ -33,7 +32,7 @@ class RegisterFooter extends StatelessWidget {
               child: const Text(
                 'Inicia sesión',
                 style: TextStyle(
-                  color: Color(0xfff97316),
+                  color: AppColors.chart1,
                   fontWeight: FontWeight.bold,
                   fontSize: 14,
                 ),

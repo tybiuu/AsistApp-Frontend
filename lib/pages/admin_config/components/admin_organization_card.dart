@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import '../../../components/info_card.dart';
 import '../../../components/number_stepper.dart';
 import '../../../components/primary_button.dart';
-import '../../../configs/theme.dart';
 import '../../../models/organization.dart';
 import '../admin_config_controller.dart';
 import 'admin_edit_fields.dart';
@@ -148,7 +147,7 @@ class _OrganizationPhotoEditor extends StatelessWidget {
                 width: 126,
                 height: 126,
                 decoration: BoxDecoration(
-                  color: AppColors.chart1,
+                  color: colors.primary,
                   borderRadius: BorderRadius.circular(30),
                 ),
                 clipBehavior: Clip.antiAlias,
@@ -172,20 +171,20 @@ class _OrganizationPhotoEditor extends StatelessWidget {
                     );
                   }
 
-                  return OrganizationInitialsAvatar(organization: organization);
+                  return OrganizationInitialsAvatar(organization: organization, fontSize: 38);
                 }),
               ),
               Container(
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: AppColors.chart1,
+                  color: colors.primary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: colors.surface, width: 2),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.photo_camera_outlined,
-                  color: AppColors.primaryForeground,
+                  color: colors.onPrimary,
                   size: 18,
                 ),
               ),

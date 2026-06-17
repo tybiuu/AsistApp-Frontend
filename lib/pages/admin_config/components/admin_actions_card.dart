@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 
-import '../../../configs/theme.dart';
 import '../admin_config_controller.dart';
 
 class AdminActionsCard extends StatelessWidget {
@@ -26,7 +25,7 @@ class AdminActionsCard extends StatelessWidget {
           _ActionTile(
             icon: Icons.monitor_heart_outlined,
             label: 'Registro de actividad',
-            color: AppColors.chart1,
+            color: colors.primary,
             showChevron: true,
             onTap: controller.openActivityLog,
           ),

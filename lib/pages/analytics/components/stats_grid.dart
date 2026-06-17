@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:asist_app/configs/theme.dart';
 import '../analytics_controller.dart';
 
 class StatsGrid extends StatelessWidget {
@@ -15,9 +16,10 @@ class StatsGrid extends StatelessWidget {
       crossAxisCount: 2,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
       crossAxisSpacing: 10,
       mainAxisSpacing: 10,
-      childAspectRatio: 1.4,
+      childAspectRatio: 1.75,
       children: [
         _StatCell(
           label: '% Asistencia',
@@ -34,13 +36,13 @@ class StatsGrid extends StatelessWidget {
         _StatCell(
           label: 'Tardanzas',
           value: '${data.daysLate}',
-          valueColor: const Color(0xffe15d27),
+          valueColor: AppColors.chart1,
           subtitle: 'este mes',
         ),
         _StatCell(
           label: 'Inasistencias',
           value: '${data.daysMissed}',
-          valueColor: const Color(0xffef4444),
+          valueColor: AppColors.error,
           subtitle: 'este mes',
         ),
       ],

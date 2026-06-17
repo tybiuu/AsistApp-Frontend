@@ -19,7 +19,8 @@ class AnalyticsPage extends StatelessWidget {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Scaffold(
-      body: SafeArea(
+      backgroundColor: colors.surfaceContainerLow,
+      body: SafeArea(top: false,
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
@@ -73,7 +74,7 @@ class AnalyticsPage extends StatelessWidget {
                 sliver: SliverList(
                   delegate: SliverChildListDelegate([
                     HoursCard(data: data),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 8),
                     StatsGrid(data: data),
                     const SizedBox(height: 16),
                     DistributionChart(data: data),

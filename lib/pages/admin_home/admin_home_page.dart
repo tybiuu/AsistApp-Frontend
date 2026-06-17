@@ -10,23 +10,25 @@ import 'components/active_members_section.dart';
 import 'components/admin_summary_card.dart';
 import 'components/pending_requests_section.dart';
 
-class AdminHomePage extends StatefulWidget {
+class AdminHomePage extends StatelessWidget {
   const AdminHomePage({super.key});
 
   @override
-  State<AdminHomePage> createState() => _AdminHomePageState();
+  Widget build(BuildContext context) {
+    final controller = Get.put(AdminHomeController());
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
+      body: SafeArea(top: false,child: _Content(controller: controller)),
+    );
+  }
 }
 
-class _AdminHomePageState extends State<AdminHomePage> {
-  late final AdminHomeController controller;
+class _Content extends StatelessWidget {
+  final AdminHomeController controller;
+  const _Content({required this.controller});
 
   @override
-  void initState() {
-    super.initState();
-    controller = Get.put(AdminHomeController());
-  }
-
-  Widget _content(BuildContext context) {
+  Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
 
     return Obx(() {
@@ -71,13 +73,5 @@ class _AdminHomePageState extends State<AdminHomePage> {
         ],
       );
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow,
-      body: SafeArea(child: _content(context)),
-    );
   }
 }

@@ -1,5 +1,6 @@
 // lib/pages/admin_analytics/admin_analytics_controller.dart
 
+import 'package:asist_app/configs/theme.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -76,7 +77,7 @@ class AdminAnalyticsController extends GetxController {
   List<MemberAnalytic> get latenessRanking {
     final sorted = [...members];
     sorted.sort((a, b) => b.minutesLateSum.compareTo(a.minutesLateSum));
-    return sorted; //add .take(5).toList() to show only the first 5
+    return sorted;
   }
 
   List<MemberAnalytic> get absencesRanking {
@@ -104,8 +105,8 @@ class AdminAnalyticsController extends GetxController {
   }
 
   static Color percentColor(int percent) {
-    if (percent >= 90) return const Color(0xff16a34a);
-    if (percent >= 60) return const Color(0xffe15d27);
-    return const Color(0xffef4444);
+    if (percent >= 90) return AppColors.success;
+    if (percent >= 60) return AppColors.chart1;
+    return AppColors.error;
   }
 }
