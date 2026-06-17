@@ -1,4 +1,5 @@
 // lib/pages/auth/register_controller.dart
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -102,7 +103,7 @@ class RegisterController extends GetxController {
       Get.snackbar(
         'Contraseñas no coinciden',
         'Por favor, asegúrate de que ambas contraseñas sean idénticas.',
-        backgroundColor: Colors.red.shade600,
+        backgroundColor: AppColors.error,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
@@ -138,7 +139,7 @@ class RegisterController extends GetxController {
     Get.snackbar(
       'Registro exitoso',
       'Cuenta creada como $roleName',
-      backgroundColor: Colors.green.shade600,
+      backgroundColor: AppColors.success,
       colorText: Colors.white,
       snackPosition: SnackPosition.BOTTOM,
       margin: const EdgeInsets.all(16),

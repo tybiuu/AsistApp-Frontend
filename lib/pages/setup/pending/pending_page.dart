@@ -141,7 +141,7 @@ class PendingPage extends StatelessWidget {
                             width: 8,
                             height: 8,
                             decoration: const BoxDecoration(
-                              color: Colors.blue,
+                              color: AppColors.info,
                               shape: BoxShape.circle,
                             ),
                           ),

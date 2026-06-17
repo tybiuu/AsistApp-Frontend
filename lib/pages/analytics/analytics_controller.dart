@@ -91,11 +91,8 @@ class AnalyticsController extends GetxController {
           .map((e) => PractitionerAnalytics.fromJson(e))
           .toList();
       selectedIndex.value = allMonths.length - 1;
-      print('Loaded ${allMonths.length} months');
-      print('Selected index: ${selectedIndex.value}');
-      print('Current: ${current?.month}');
     } catch (e) {
-      print('Analytics error: $e');
+      debugPrint('Analytics error: $e');
     } finally {
       isLoading.value = false;
     }

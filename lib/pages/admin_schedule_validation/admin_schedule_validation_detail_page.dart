@@ -1,3 +1,4 @@
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -49,7 +50,7 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                           width: 56,
                           height: 56,
                           decoration: BoxDecoration(
-                            color: Colors.orange,
+                            color: AppColors.warning,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Center(
@@ -113,13 +114,13 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                         Expanded(
                           child: Row(
                             children: [
-                              const Icon(Icons.schedule, size: 16, color: Colors.orange),
+                              Icon(Icons.schedule, size: 16, color: AppColors.warning),
                               const SizedBox(width: 6),
                               Text(
                                 '${req.targetHours}h/semana',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey,
+                                  color: theme.colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -129,13 +130,13 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                         Expanded(
                           child: Row(
                             children: [
-                              const Icon(Icons.calendar_today, size: 16, color: Colors.orange),
+                              Icon(Icons.calendar_today, size: 16, color: AppColors.warning),
                               const SizedBox(width: 6),
                               Text(
                                 '${req.changedDaysCount} días',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey,
+                                  color: theme.colorScheme.onSurfaceVariant,
                                   fontWeight: FontWeight.w600,
                                 ),
                               ),
@@ -145,14 +146,14 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                         Expanded(
                           child: Row(
                             children: [
-                              const Icon(Icons.access_time, size: 16, color: Colors.orange),
+                              Icon(Icons.access_time, size: 16, color: AppColors.warning),
                               const SizedBox(width: 6),
                               Expanded(
                                 child: Text(
                                   req.time,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontSize: 12,
-                                    color: Colors.grey,
+                                    color: theme.colorScheme.onSurfaceVariant,
                                     fontWeight: FontWeight.w600,
                                   ),
                                   overflow: TextOverflow.ellipsis,
@@ -170,9 +171,9 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                       padding: const EdgeInsets.all(12),
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.orange.withValues(alpha: 0.1),
+                          color: AppColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.orange.withValues(alpha: 0.2)),
+                          border: Border.all(color: AppColors.warning.withValues(alpha: 0.2)),
                         ),
                         padding: const EdgeInsets.all(12),
                         child: Column(
@@ -182,7 +183,7 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                               'MOTIVO DEL CAMBIO',
                               style: TextStyle(
                                 fontSize: 11,
-                                color: Colors.orange,
+                                color: AppColors.warning,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -192,7 +193,7 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                               style: const TextStyle(
                                 fontStyle: FontStyle.italic,
                                 fontSize: 13,
-                                color: Colors.orange,
+                                color: AppColors.warning,
                                 height: 1.4,
                                 fontWeight: FontWeight.w600,
                               ),
@@ -210,7 +211,7 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
                         'DÍAS CON CAMBIOS (${req.proposedSchedule.length})',
                         style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.orange,
+                          color: AppColors.warning,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -219,12 +220,12 @@ class AdminScheduleValidationDetailPage extends StatelessWidget {
 
                     // Comparativa de bloques por día
                     if (req.currentSchedule.isEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 20),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 20),
                         child: Text(
                           'Cargando mapa de comparación...',
                           textAlign: TextAlign.center,
-                          style: TextStyle(color: Colors.grey),
+                          style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                         ),
                       )
                     else
@@ -297,10 +298,10 @@ class _CompareDayTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withValues(alpha: 0.1),
+                  color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(4),
                 ),
-                child: const Text('Modificado', style: TextStyle(color: Colors.orange, fontSize: 10, fontWeight: FontWeight.bold)),
+                child: const Text('Modificado', style: TextStyle(color: AppColors.warning, fontSize: 10, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -312,26 +313,26 @@ class _CompareDayTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('ACTUAL', style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
+                    Text('ACTUAL', style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     ...actualBlocks.map((b) => _SegmentLine(
-                          dotColor: b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                          dotColor: b.type == BlockType.work ? AppColors.warning : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                           segment: '${b.start} - ${b.end}',
                         )),
                   ],
                 ),
               ),
               const SizedBox(width: 8),
-              const Icon(Icons.arrow_forward_rounded, color: Colors.grey, size: 18),
+              Icon(Icons.arrow_forward_rounded, color: theme.colorScheme.onSurfaceVariant, size: 18),
               const SizedBox(width: 8),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('PROPUESTO', style: TextStyle(fontSize: 10, color: Colors.grey, fontWeight: FontWeight.bold)),
+                    Text('PROPUESTO', style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurfaceVariant, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 8),
                     ...proposedBlocks.map((b) => _SegmentLine(
-                          dotColor: b.type == BlockType.work ? Colors.orange : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                          dotColor: b.type == BlockType.work ? AppColors.warning : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                           segment: '${b.start} - ${b.end}',
                         )),
                   ],

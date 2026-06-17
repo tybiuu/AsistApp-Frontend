@@ -1,4 +1,5 @@
 // lib/pages/auth/org_code_controller.dart
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -33,7 +34,7 @@ class OrgCodeController extends GetxController {
       Get.snackbar(
         'Código inválido',
         'No encontramos ninguna organización con ese código.',
-        backgroundColor: Colors.red.shade600,
+        backgroundColor: AppColors.error,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),

@@ -28,8 +28,6 @@ class InputField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -83,9 +81,7 @@ class InputField extends StatelessWidget {
                         child: Text(
                           prefixText!,
                           style: TextStyle(
-                            color: isDark
-                                ? const Color(0xff9ca3af)
-                                : const Color(0xff6b7280),
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                             fontWeight: FontWeight.w500,
                           ),
                         ),

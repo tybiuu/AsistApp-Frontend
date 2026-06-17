@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
@@ -110,7 +111,7 @@ class PdfReportController extends GetxController {
           .toList();
       selectedIndex.value = months.length - 1;
     } catch (e) {
-      print('PDF report error: $e');
+      debugPrint('PDF report error: $e');
     } finally {
       isLoading.value = false;
     }

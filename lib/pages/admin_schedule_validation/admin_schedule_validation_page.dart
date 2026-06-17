@@ -52,8 +52,8 @@ class AdminScheduleValidationPage extends StatelessWidget {
                         Obx(
                           () => Text(
                             '${c.requests.length} solicitudes cargadas desde los JSONs de assets',
-                            style: const TextStyle(
-                              color: Colors.grey,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurfaceVariant,
                               fontSize: 11,
                               fontWeight: FontWeight.w600,
                             ),
@@ -79,10 +79,10 @@ class AdminScheduleValidationPage extends StatelessWidget {
                 }
 
                 if (c.requests.isEmpty) {
-                  return const Center(
+                  return Center(
                     child: Text(
                       'No hay solicitudes disponibles',
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                     ),
                   );
                 }
@@ -119,7 +119,7 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                     width: 48,
                                     height: 48,
                                     decoration: BoxDecoration(
-                                      color: Colors.orange,
+                                      color: AppColors.warning,
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Center(
@@ -181,17 +181,17 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.schedule,
                                           size: 14,
-                                          color: Colors.grey,
+                                          color: theme.colorScheme.onSurfaceVariant,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
                                           '${req.targetHours}h / sem',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 11,
-                                            color: Colors.grey,
+                                            color: theme.colorScheme.onSurfaceVariant,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -201,17 +201,17 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.calendar_today,
                                           size: 14,
-                                          color: Colors.grey,
+                                          color: theme.colorScheme.onSurfaceVariant,
                                         ),
                                         const SizedBox(width: 4),
                                         Text(
                                           '${req.changedDaysCount} días',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             fontSize: 11,
-                                            color: Colors.grey,
+                                            color: theme.colorScheme.onSurfaceVariant,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
@@ -221,18 +221,18 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        const Icon(
+                                        Icon(
                                           Icons.access_time,
                                           size: 14,
-                                          color: Colors.grey,
+                                          color: theme.colorScheme.onSurfaceVariant,
                                         ),
                                         const SizedBox(width: 4),
                                         Expanded(
                                           child: Text(
                                             req.time,
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontSize: 11,
-                                              color: Colors.grey,
+                                              color: theme.colorScheme.onSurfaceVariant,
                                               fontWeight: FontWeight.w600,
                                             ),
                                             overflow: TextOverflow.ellipsis,
@@ -251,10 +251,10 @@ class AdminScheduleValidationPage extends StatelessWidget {
                               ),
                               child: Text(
                                 '"${req.reason}"',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontStyle: FontStyle.italic,
                                   fontSize: 12,
-                                  color: Colors.grey,
+                                  color: theme.colorScheme.onSurfaceVariant,
                                   height: 1.3,
                                 ),
                               ),
@@ -332,9 +332,7 @@ class AdminScheduleValidationPage extends StatelessWidget {
                                     child: ElevatedButton(
                                       onPressed: () => c.actionApprove(req.id),
                                       style: ElevatedButton.styleFrom(
-                                        backgroundColor: const Color(
-                                          0xff10b981,
-                                        ),
+                                        backgroundColor: AppColors.success,
                                         elevation: 0,
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(

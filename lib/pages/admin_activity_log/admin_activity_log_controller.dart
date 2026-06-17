@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
@@ -77,7 +78,7 @@ class AdminActivityLogController extends GetxController {
           .map((e) => ActivityEntry.fromJson(e))
           .toList();
     } catch (e) {
-      print('Activity log error: $e');
+      debugPrint('Activity log error: $e');
     } finally {
       isLoading.value = false;
     }

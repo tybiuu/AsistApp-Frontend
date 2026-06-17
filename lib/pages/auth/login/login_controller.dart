@@ -1,5 +1,6 @@
 // lib/pages/auth/login/login_controller.dart
 
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -47,7 +48,7 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Bienvenido',
         'Sesión iniciada como $roleName',
-        backgroundColor: Colors.green.shade600,
+        backgroundColor: AppColors.success,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
@@ -57,7 +58,7 @@ class LoginController extends GetxController {
       Get.snackbar(
         'Error',
         response.message,
-        backgroundColor: Colors.red.shade600,
+        backgroundColor: AppColors.error,
         colorText: Colors.white,
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
