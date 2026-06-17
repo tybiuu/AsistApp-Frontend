@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../../../configs/theme.dart';
-
 class LiveClock extends StatefulWidget {
   const LiveClock({super.key});
 
@@ -37,13 +35,13 @@ class _LiveClockState extends State<LiveClock> {
     return '${h.toString().padLeft(2, '0')}:$m:$s';
   }
 
-  String get _amPm => _now.hour < 12 ? 'AM' : 'PM';
+  String get _amPm => _now.hour < 12 ? 'a.m.' : 'p.m.';
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : AppColors.foreground;
-    final mutedColor = Theme.of(context).colorScheme.onSurfaceVariant;
+    final colors = Theme.of(context).colorScheme;
+    final textColor = colors.onSurface;
+    final mutedColor = colors.onSurfaceVariant;
 
     return Center(
       child: Row(

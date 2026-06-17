@@ -21,7 +21,6 @@ class PendingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final args = (Get.arguments as Map<String, dynamic>?) ?? {};
     final String organizationName = args['organizationName'] as String? ?? '';
 
@@ -53,9 +52,7 @@ class PendingPage extends StatelessWidget {
                       height: 96,
                       margin: const EdgeInsets.only(bottom: 24),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xff1e3a8a).withValues(alpha: 0.3)
-                            : const Color(0xffdbeafe),
+                        color: AppColors.info.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -69,9 +66,7 @@ class PendingPage extends StatelessWidget {
                         child: Icon(
                           Icons.access_time_filled,
                           size: 40,
-                          color: isDark
-                              ? const Color(0xff60a5fa)
-                              : AppColors.info,
+                          color: AppColors.info,
                         ),
                       ),
                     ),
@@ -124,13 +119,9 @@ class PendingPage extends StatelessWidget {
                           horizontal: 24, vertical: 12),
                       margin: const EdgeInsets.only(bottom: 24),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xff1e3a8a).withValues(alpha: 0.3)
-                            : const Color(0xffdbeafe),
+                        color: AppColors.info.withValues(alpha: 0.12),
                         border: Border.all(
-                          color: isDark
-                              ? AppColors.info
-                              : const Color(0xffbfdbfe),
+                          color: AppColors.info.withValues(alpha: 0.4),
                         ),
                         borderRadius: BorderRadius.circular(16),
                       ),
@@ -151,9 +142,7 @@ class PendingPage extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? const Color(0xff60a5fa)
-                                  : AppColors.info,
+                              color: AppColors.info,
                             ),
                           ),
                         ],

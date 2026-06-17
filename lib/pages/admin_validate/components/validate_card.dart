@@ -13,6 +13,7 @@ class ValidateCard extends StatelessWidget {
   final String? snackStart;
   final String? snackEnd;
   final String outTime;
+  final bool isLate;
 
   const ValidateCard({
     super.key,
@@ -25,11 +26,24 @@ class ValidateCard extends StatelessWidget {
     required this.snackStart,
     required this.snackEnd,
     required this.outTime,
+    required this.isLate,
   });
+
+  int get _activeIndex {
+    if (outTime != '-') return 3;
+    if ((snackEnd ?? '-') != '-') return 2;
+    if ((snackStart ?? '-') != '-') return 1;
+    if (inTime != '-') return 0;
+    return -1;
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final active = _activeIndex;
+
+    final labels = ['ING.', 'S.REF', 'R.REF', 'SAL.'];
+    final times  = [inTime, snackStart ?? '-', snackEnd ?? '-', outTime];
 
     return Container(
       decoration: BoxDecoration(
@@ -53,21 +67,26 @@ class ValidateCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 14),
             child: Row(
-              children: [
-                Expanded(
-                  child: _TimeBox(
-                    label: 'IN',
-                    time: inTime,
-                    color: status == 'Tardanza' ? const Color(0xFFF97316) : AppColors.success,
+              children: List.generate(4, (i) {
+                final _ChipType type;
+                if (i == active) {
+                  type = isLate ? _ChipType.activeLate : _ChipType.activeOk;
+                } else if (i < active) {
+                  type = _ChipType.done;
+                } else {
+                  type = _ChipType.pending;
+                }
+                return Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(right: i < 3 ? 6 : 0),
+                    child: _CheckpointChip(
+                      label: labels[i],
+                      time: times[i],
+                      type: type,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(child: _TimeBox(label: 'REF. IN',  time: snackStart ?? '-', color: const Color(0xFF64748B))),
-                const SizedBox(width: 8),
-                Expanded(child: _TimeBox(label: 'REF. OUT', time: snackEnd  ?? '-', color: const Color(0xFF64748B))),
-                const SizedBox(width: 8),
-                Expanded(child: _TimeBox(label: 'OUT',      time: outTime,           color: const Color(0xFF64748B))),
-              ],
+                );
+              }),
             ),
           ),
           const SizedBox(height: 12),
@@ -84,7 +103,10 @@ class ValidateCard extends StatelessWidget {
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: const Text('Validar →', style: TextStyle(fontWeight: FontWeight.w800)),
+              child: const Text(
+                'Validar →',
+                style: TextStyle(fontWeight: FontWeight.w800),
+              ),
             ),
           ),
         ],
@@ -93,26 +115,73 @@ class ValidateCard extends StatelessWidget {
   }
 }
 
-class _TimeBox extends StatelessWidget {
+// ── Chip ──────────────────────────────────────────────────────────────────────
+
+enum _ChipType { activeLate, activeOk, done, pending }
+
+class _CheckpointChip extends StatelessWidget {
   final String label;
   final String time;
-  final Color color;
+  final _ChipType type;
 
-  const _TimeBox({required this.label, required this.time, required this.color});
+  const _CheckpointChip({
+    required this.label,
+    required this.time,
+    required this.type,
+  });
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
+    final Color bg;
+    final Color textColor;
+    final Color labelColor;
+
+    switch (type) {
+      case _ChipType.activeLate:
+        bg         = AppColors.warning.withValues(alpha: 0.12);
+        textColor  = AppColors.warning;
+        labelColor = AppColors.warning.withValues(alpha: 0.8);
+      case _ChipType.activeOk:
+        bg         = colors.primary;
+        textColor  = Colors.white;
+        labelColor = Colors.white70;
+      case _ChipType.done:
+        bg         = AppColors.success.withValues(alpha: 0.12);
+        textColor  = AppColors.success;
+        labelColor = AppColors.success.withValues(alpha: 0.8);
+      case _ChipType.pending:
+        bg         = colors.surfaceContainerHighest;
+        textColor  = colors.onSurfaceVariant;
+        labelColor = colors.onSurfaceVariant;
+    }
+
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.12),
+        color: bg,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
         children: [
-          Text(label, style: TextStyle(color: color, fontSize: 9,  fontWeight: FontWeight.w800)),
+          Text(
+            label,
+            style: TextStyle(
+              color: labelColor,
+              fontSize: 9,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text(time,  style: TextStyle(color: color, fontSize: 12, fontWeight: FontWeight.w900)),
+          Text(
+            time,
+            style: TextStyle(
+              color: textColor,
+              fontSize: 12,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
         ],
       ),
     );

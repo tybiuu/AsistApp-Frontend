@@ -93,8 +93,6 @@ class _InfoBlock extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final valueColor = isDark ? Colors.white : colors.onSurface;
 
     return Column(
       crossAxisAlignment: align,
@@ -110,7 +108,7 @@ class _InfoBlock extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: TextStyle(color: valueColor, fontSize: 18, fontWeight: FontWeight.w800),
+          style: TextStyle(color: colors.onSurface, fontSize: 18, fontWeight: FontWeight.w800),
         ),
       ],
     );

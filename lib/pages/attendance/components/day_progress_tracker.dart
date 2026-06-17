@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../components/status_badge.dart';
-import '../../../configs/theme.dart';
 import 'attendance_step.dart';
 
 class DayProgressTracker extends StatelessWidget {
@@ -19,8 +18,7 @@ class DayProgressTracker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : AppColors.foreground;
+    final textColor = colors.onSurface;
     final mutedColor = colors.onSurfaceVariant;
 
     return Container(

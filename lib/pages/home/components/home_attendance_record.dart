@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../../../configs/theme.dart';
 
 /// Attendance record row used in the home page recent records list.
 /// Uses a left colored border instead of a full card — different from AttendanceRecordCard.
@@ -23,8 +22,7 @@ class HomeAttendanceRecord extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : AppColors.foreground;
+    final textColor = colors.onSurface;
 
     return Container(
       padding: const EdgeInsets.all(14),

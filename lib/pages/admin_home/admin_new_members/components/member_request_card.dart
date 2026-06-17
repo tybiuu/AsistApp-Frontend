@@ -23,12 +23,9 @@ class MemberRequestCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final Color accentColor = isDark ? AppColors.chart6 : colors.primary;
-    final Color avatarBg = isDark
-        ? AppColors.chart6.withValues(alpha: 0.15)
-        : colors.primaryContainer;
-    final Color badgeColor = isDark ? AppColors.chart6 : colors.primary;
+    final Color accentColor = colors.primary;
+    final Color avatarBg = colors.primaryContainer;
+    final Color badgeColor = colors.primary;
 
     return Material(
       color: colors.surface,
@@ -137,7 +134,7 @@ class MemberRequestCard extends StatelessWidget {
                     child: _ActionButton(
                       label: 'Aceptar',
                       icon: Icons.check_circle_outline_rounded,
-                      color: isDark ? const Color(0xff04df72) : AppColors.success,
+                      color: AppColors.success,
                       onTap: onAccept,
                       isLeft: false,
                     ),

@@ -15,8 +15,21 @@ import 'components/hours_progress_card.dart';
 import 'components/stat_card.dart';
 import 'components/today_card.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  late Future<_HomeMockData> _dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = _loadHomeData();
+  }
 
   Future<_HomeMockData> _loadHomeData() async {
     final recordsString = await rootBundle.loadString(
@@ -61,9 +74,8 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : AppColors.foreground;
     final colors = Theme.of(context).colorScheme;
+    final textColor = colors.onSurface;
 
     return Scaffold(
       backgroundColor: colors.surfaceContainerLow,
@@ -72,7 +84,7 @@ class HomePage extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: FutureBuilder<_HomeMockData>(
-              future: _loadHomeData(),
+              future: _dataFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return const Center(child: CircularProgressIndicator());
@@ -138,7 +150,7 @@ class HomePage extends StatelessWidget {
                       dateLabel: todayLabel,
                       checkIn: checkIn,
                       checkOut: checkOut,
-                      onMark: () {},
+                      onMark: () => Get.find<RootController>().changeTab(1),
                     ),
                     const SizedBox(height: 22),
                     Row(

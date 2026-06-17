@@ -229,7 +229,6 @@ class _EditForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
     padding: const EdgeInsets.all(16),
     child: Column(
@@ -241,7 +240,7 @@ class _EditForm extends StatelessWidget {
         const SizedBox(height: 12),
         _phoneField(context),
         const SizedBox(height: 12),
-        _CarreraDropdown(c: c, isDark: isDark),
+        _CarreraDropdown(c: c),
         const SizedBox(height: 12),
         Obx(
           () => NumberStepper(
@@ -341,8 +340,7 @@ class _EditForm extends StatelessWidget {
 
 class _CarreraDropdown extends StatelessWidget {
   final ProfileController c;
-  final bool isDark;
-  const _CarreraDropdown({required this.c, required this.isDark});
+  const _CarreraDropdown({required this.c});
 
   @override
   Widget build(BuildContext context) {
@@ -447,9 +445,7 @@ class _CarreraDropdown extends StatelessWidget {
                     onTap: () => c.selectCarrera(carrera),
                     child: Container(
                       color: isActive
-                          ? AppColors.chart1.withValues(
-                              alpha: isDark ? 0.15 : 0.08,
-                            )
+                          ? AppColors.chart1.withValues(alpha: 0.10)
                           : Colors.transparent,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
@@ -458,11 +454,7 @@ class _CarreraDropdown extends StatelessWidget {
                       child: Text(
                         carrera,
                         style: TextStyle(
-                          color: isActive
-                              ? (isDark
-                                    ? const Color(0xfffb923c)
-                                    : AppColors.chart1)
-                              : value,
+                          color: isActive ? AppColors.chart1 : value,
                           fontSize: 14,
                           fontWeight: isActive
                               ? FontWeight.w700

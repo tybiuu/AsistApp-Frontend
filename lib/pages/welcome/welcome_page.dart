@@ -197,8 +197,6 @@ class _IllustrationMock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     return SizedBox(
       height: 228,
       width: double.infinity,
@@ -210,9 +208,7 @@ class _IllustrationMock extends StatelessWidget {
             height: 192,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isDark
-                  ? AppColors.chart1.withValues(alpha: 0.20)
-                  : const Color(0xffffedd5),
+              color: AppColors.chart1.withValues(alpha: 0.15),
             ),
           ),
           Container(
@@ -224,7 +220,7 @@ class _IllustrationMock extends StatelessWidget {
               borderRadius: BorderRadius.circular(22),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.16),
+                  color: Colors.black.withValues(alpha: 0.20),
                   blurRadius: 22,
                   offset: const Offset(0, 10),
                 ),
@@ -452,17 +448,13 @@ class _FeatureItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Column(
       children: [
         Container(
           width: 42,
           height: 42,
           decoration: BoxDecoration(
-            color: isDark
-                ? AppColors.chart1.withValues(alpha: 0.28)
-                : const Color(0xffffedd5),
+            color: AppColors.chart1.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Icon(

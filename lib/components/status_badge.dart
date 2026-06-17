@@ -25,10 +25,8 @@ class StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
-    final (String label, Color fg) = _resolve(isDark);
-    final Color bg = fg.withValues(alpha: isDark ? 0.18 : 0.10);
+    final (String label, Color fg) = _resolve();
+    final Color bg = fg.withValues(alpha: 0.12);
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
@@ -47,7 +45,7 @@ class StatusBadge extends StatelessWidget {
     );
   }
 
-  (String, Color) _resolve(bool isDark) {
+  (String, Color) _resolve() {
     if (status == null) return (customLabel!, customColor!);
     switch (status!) {
       case BadgeStatus.confirmed:

@@ -2,9 +2,10 @@
 
 import 'package:asist_app/configs/theme.dart';
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
+import '../../models/user.dart';
 
 class MemberAnalytic {
   final String name;
@@ -39,6 +40,24 @@ class MemberAnalytic {
       attendancePercent: json['attendancePercent'],
       minutesLateSum:    json['minutesLateSum'],
       daysMissed:        json['daysMissed'],
+    );
+  }
+
+  User toUser() {
+    final parts = name.trim().split(' ');
+    final first = parts.isNotEmpty ? parts.first : name;
+    final last  = parts.length > 1 ? parts.sublist(1).join(' ') : '';
+    final now   = DateTime.now();
+    return User(
+      id:                 'analytic-${name.hashCode.abs()}',
+      firstName:          first,
+      lastName:           last,
+      institutionalEmail: '',
+      phoneNumber:        '',
+      role:               UserRole.trainee,
+      status:             UserStatus.active,
+      createdAt:          now,
+      updatedAt:          now,
     );
   }
 }

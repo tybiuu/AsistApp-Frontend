@@ -84,10 +84,11 @@ class ScheduleChangeController extends GetxController {
 
     final startTOD = await showTimePicker(context: ctx, initialTime: parse(block.start));
     if (startTOD == null) return;
+    if (!ctx.mounted) return;
     final endTOD = await showTimePicker(context: ctx, initialTime: parse(block.end));
     if (endTOD == null) return;
 
-    String fmt(TimeOfDay t) => t.hour.toString().padLeft(2, '0') + ':' + t.minute.toString().padLeft(2, '0');
+    String fmt(TimeOfDay t) => '${t.hour.toString().padLeft(2, '0')}:${t.minute.toString().padLeft(2, '0')}';
 
     final updatedBlocks = List<ScheduleBlock>.from(currentDay.blocks);
     updatedBlocks[blockIndex] = ScheduleBlock(type: block.type, start: fmt(startTOD), end: fmt(endTOD));
@@ -280,7 +281,7 @@ class ScheduleChangeController extends GetxController {
   void submitForApproval() {
     // Build a lightweight request object with full week snapshot
     final request = {
-      'id': 'scr-local-' + DateTime.now().millisecondsSinceEpoch.toString(),
+      'id': 'scr-local-${DateTime.now().millisecondsSinceEpoch}',
       'user_id': 'usr-trainee-001',
       'status': 'pending',
       'created_at': DateTime.now().toUtc().toIso8601String(),

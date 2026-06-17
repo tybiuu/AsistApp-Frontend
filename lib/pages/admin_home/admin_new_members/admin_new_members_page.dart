@@ -72,7 +72,7 @@ class AdminNewMembersPage extends StatelessWidget {
                       child: ListView.separated(
                         padding: const EdgeInsets.fromLTRB(22, 4, 22, 24),
                         itemCount: controller.pendingMembers.length,
-                        separatorBuilder: (_, __) => const SizedBox(height: 12),
+                        separatorBuilder: (_, _) => const SizedBox(height: 12),
                         itemBuilder: (context, index) {
                           final member = controller.pendingMembers[index];
                           return MemberRequestCard(

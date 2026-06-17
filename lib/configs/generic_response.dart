@@ -32,7 +32,7 @@ class GenericResponse<T> {
   Map<String, dynamic> toJson({Object? Function(T)? toJsonT}) {
     return {
       'success': success,
-      'data': toJsonT != null && data != null ? toJsonT(data!) : data,
+      'data': toJsonT != null && data != null ? toJsonT(data as T) : data,
       'message': message,
       'error': error,
     };

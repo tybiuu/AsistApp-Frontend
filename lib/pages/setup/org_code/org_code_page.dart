@@ -15,8 +15,6 @@ class OrgCodePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(OrgCodeController());
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(top: false,
@@ -38,9 +36,7 @@ class OrgCodePage extends StatelessWidget {
                       height: 96,
                       margin: const EdgeInsets.only(bottom: 24),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColors.chart1.withValues(alpha: 0.3)
-                            : const Color(0xfffff7ed),
+                        color: AppColors.chart1.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
@@ -114,20 +110,14 @@ class OrgCodePage extends StatelessWidget {
                         counterText: '',
                         hintText: 'XXXX-0000',
                         hintStyle: TextStyle(
-                          color: isDark
-                              ? AppColors.chart1.withValues(alpha: 0.3)
-                              : AppColors.chart1.withValues(alpha: 0.4),
+                          color: AppColors.chart1.withValues(alpha: 0.35),
                         ),
                         filled: true,
-                        fillColor: isDark
-                            ? AppColors.chart1.withValues(alpha: 0.1)
-                            : const Color(0xfffff7ed),
+                        fillColor: AppColors.chart1.withValues(alpha: 0.08),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(16),
                           borderSide: BorderSide(
-                            color: isDark
-                                ? AppColors.chart1.withValues(alpha: 0.6)
-                                : AppColors.chart1.withValues(alpha: 0.3),
+                            color: AppColors.chart1.withValues(alpha: 0.3),
                             width: 2,
                           ),
                         ),

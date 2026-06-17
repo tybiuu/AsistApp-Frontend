@@ -14,7 +14,6 @@ class ProfileHeaderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = Get.find<ProfileController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final cardBg = Theme.of(context).colorScheme.surface;
     final border = Theme.of(context).colorScheme.outlineVariant;
     final muted = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -35,12 +34,12 @@ class ProfileHeaderCard extends StatelessWidget {
           Container(
             width: 80,
             height: 80,
-            decoration: const BoxDecoration(
+            decoration: BoxDecoration(
               color: AppColors.chart1,
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Color(0x33e15d27),
+                  color: AppColors.chart1.withValues(alpha: 0.2),
                   blurRadius: 12,
                   offset: Offset(0, 4),
                 ),
@@ -77,13 +76,13 @@ class ProfileHeaderCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.chart1.withValues(alpha: isDark ? 0.18 : 0.12),
+                  color: AppColors.chart1.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   'Practicante',
                   style: TextStyle(
-                    color: isDark ? const Color(0xfffb923c) : AppColors.chart1,
+                    color: AppColors.chart1,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),

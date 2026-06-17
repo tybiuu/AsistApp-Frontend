@@ -415,7 +415,7 @@ class _BlockDetail extends StatelessWidget {
                   if (controller != null)
                     InkWell(
                       onTap: () => controller.removeBlock(dayKey, idx),
-                      child: Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                      child: Icon(Icons.delete_outline, size: 18, color: AppColors.error),
                     ),
                 ],
               ),

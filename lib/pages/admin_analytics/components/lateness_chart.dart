@@ -12,7 +12,6 @@ class LatenessChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final maxValue = ranking.first.minutesLateSum.toDouble();
 
     return Column(
@@ -45,9 +44,7 @@ class LatenessChart extends StatelessWidget {
                   drawVerticalLine: false,
                   horizontalInterval: 15,
                   getDrawingHorizontalLine: (_) => FlLine(
-                    color: isDark
-                        ? const Color(0xff2D3042)
-                        : const Color(0xfff3f4f6),
+                    color: colors.outlineVariant.withValues(alpha: 0.5),
                     strokeWidth: 1,
                   ),
                 ),

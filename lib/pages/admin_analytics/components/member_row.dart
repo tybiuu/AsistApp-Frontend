@@ -6,8 +6,9 @@ import '../admin_analytics_controller.dart';
 
 class MemberRow extends StatelessWidget {
   final MemberAnalytic member;
+  final VoidCallback? onTap;
 
-  const MemberRow({super.key, required this.member});
+  const MemberRow({super.key, required this.member, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -17,13 +18,19 @@ class MemberRow extends StatelessWidget {
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: colors.outlineVariant),
       ),
-      child: Row(
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+            child: Row(
         children: [
           // Avatar
           Container(
@@ -86,6 +93,9 @@ class MemberRow extends StatelessWidget {
             ),
           ),
         ],
+      ),
+          ),
+        ),
       ),
     );
   }

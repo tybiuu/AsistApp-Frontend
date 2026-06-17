@@ -100,7 +100,7 @@ class AnalyticsController extends GetxController {
 
   static Color percentColor(double percent) {
     if (percent >= 90) return AppColors.success;
-    if (percent >= 60) return const Color(0xffe15d27);
+    if (percent >= 60) return AppColors.chart1;
     return AppColors.error;
   }
 }

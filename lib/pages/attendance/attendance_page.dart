@@ -50,7 +50,7 @@ class _AttendancePageState extends State<AttendancePage> {
     final now = DateTime.now();
     final h = now.hour % 12 == 0 ? 12 : now.hour % 12;
     final m = now.minute.toString().padLeft(2, '0');
-    final suffix = now.hour < 12 ? 'AM' : 'PM';
+    final suffix = now.hour < 12 ? 'a.m.' : 'p.m.';
     final timeStr = '${h.toString().padLeft(2, '0')}:$m $suffix';
 
     setState(() {

@@ -9,8 +9,23 @@ import '../../configs/theme.dart';
 import '../../utils/date_utils.dart';
 import '../../utils/trainee_utils.dart';
 
-class AdminMissingAttendancePage extends StatelessWidget {
+class AdminMissingAttendancePage extends StatefulWidget {
   const AdminMissingAttendancePage({super.key});
+
+  @override
+  State<AdminMissingAttendancePage> createState() =>
+      _AdminMissingAttendancePageState();
+}
+
+class _AdminMissingAttendancePageState
+    extends State<AdminMissingAttendancePage> {
+  late Future<_MissingAttendanceData> _dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = _loadData();
+  }
 
   Future<_MissingAttendanceData> _loadData() async {
     final requestsString = await rootBundle.loadString(
@@ -49,7 +64,7 @@ class AdminMissingAttendancePage extends StatelessWidget {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
             child: FutureBuilder<_MissingAttendanceData>(
-              future: _loadData(),
+              future: _dataFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(

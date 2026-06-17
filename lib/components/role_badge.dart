@@ -17,14 +17,11 @@ class RoleBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool isDark = Theme.of(context).brightness == Brightness.dark;
     final bool isPractitioner = role == RoleOption.practitioner;
 
     final Color roleColor =
         isPractitioner ? AppColors.chart1 : Theme.of(context).colorScheme.onSurface;
-    final Color roleBg = isDark
-        ? roleColor.withValues(alpha: 0.2)
-        : Theme.of(context).colorScheme.primaryContainer;
+    final Color roleBg = roleColor.withValues(alpha: 0.12);
     final IconData roleIcon =
         isPractitioner ? Icons.school_rounded : Icons.shield_rounded;
     final String roleTitle = isPractitioner ? 'Practicante' : 'Administrador';

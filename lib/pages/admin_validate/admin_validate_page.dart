@@ -11,8 +11,21 @@ import 'components/missing_card.dart';
 import 'components/section_title.dart';
 import 'components/validate_card.dart';
 
-class AdminValidatePage extends StatelessWidget {
+class AdminValidatePage extends StatefulWidget {
   const AdminValidatePage({super.key});
+
+  @override
+  State<AdminValidatePage> createState() => _AdminValidatePageState();
+}
+
+class _AdminValidatePageState extends State<AdminValidatePage> {
+  late Future<_AdminValidateData> _dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = _loadData();
+  }
 
   Future<_AdminValidateData> _loadData() async {
     final recordsString = await rootBundle.loadString(
@@ -98,7 +111,7 @@ class AdminValidatePage extends StatelessWidget {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 420),
                   child: FutureBuilder<_AdminValidateData>(
-                    future: _loadData(),
+                    future: _dataFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator(color: colors.primary));
@@ -133,15 +146,16 @@ class AdminValidatePage extends StatelessWidget {
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: ValidateCard(
-                                initials:   traineeInitials(trainee),
-                                name:       traineeFullName(trainee),
-                                career:     traineeCareerText(trainee),
-                                status:     status,
+                                initials:    traineeInitials(trainee),
+                                name:        traineeFullName(trainee),
+                                career:      traineeCareerText(trainee),
+                                status:      status,
                                 statusColor: _statusColor(status),
-                                inTime:     formatTimeShort(record['check_in']),
-                                snackStart: formatTimeShort(record['lunch_start']),
-                                snackEnd:   formatTimeShort(record['lunch_end']),
-                                outTime:    formatTimeShort(record['check_out']),
+                                inTime:      formatTimeShort(record['check_in']),
+                                snackStart:  formatTimeShort(record['lunch_start']),
+                                snackEnd:    formatTimeShort(record['lunch_end']),
+                                outTime:     formatTimeShort(record['check_out']),
+                                isLate:      (record['late_minutes'] ?? 0) > 0,
                               ),
                             );
                           }),
@@ -159,8 +173,6 @@ class AdminValidatePage extends StatelessWidget {
                                 initials: traineeInitials(trainee),
                                 name:     traineeFullName(trainee),
                                 career:   traineeCareerText(trainee),
-                                inTime:   'Sin registro',
-                                outTime:  'Sin registro',
                               ),
                             );
                           }),

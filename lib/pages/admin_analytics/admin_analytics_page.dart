@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
+import '../../configs/routes.dart';
 import 'admin_analytics_controller.dart';
 import 'components/member_row.dart';
 import 'components/summary_grid.dart';
@@ -58,7 +59,15 @@ class AdminAnalyticsPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    ...controller.members.map((m) => MemberRow(member: m)),
+                    ...controller.members.map(
+                      (m) => MemberRow(
+                        member: m,
+                        onTap: () => Get.toNamed(
+                          AppRoutes.adminMemberDetail,
+                          arguments: m.toUser(),
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: 24),
                     Text(
                       'Métricas generales',

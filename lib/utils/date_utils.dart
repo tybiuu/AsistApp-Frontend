@@ -31,7 +31,7 @@ String formatTime12h(dynamic value) {
     minute = parts[1].length >= 2 ? parts[1].substring(0, 2) : parts[1];
   }
 
-  final suffix = hour >= 12 ? 'PM' : 'AM';
+  final suffix = hour >= 12 ? 'p.m.' : 'a.m.';
   final h12    = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
   return '${h12.toString().padLeft(2, '0')}:$minute $suffix';
 }
@@ -129,7 +129,7 @@ String formatRequestDate(DateTime date) {
   final DateTime now = DateTime.now();
   final int displayHour = date.hour % 12 == 0 ? 12 : date.hour % 12;
   final String minute = date.minute.toString().padLeft(2, '0');
-  final String period = date.hour < 12 ? 'AM' : 'PM';
+  final String period = date.hour < 12 ? 'a.m.' : 'p.m.';
 
   final bool isToday =
       date.year == now.year && date.month == now.month && date.day == now.day;

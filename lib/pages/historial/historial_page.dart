@@ -6,11 +6,23 @@ import 'package:flutter/services.dart';
 import '../../components/app_top_bar.dart';
 import '../../components/attendance_record_card.dart';
 import '../../components/month_nav_button.dart';
-import '../../configs/theme.dart';
 import '../../utils/date_utils.dart';
 
-class HistorialPage extends StatelessWidget {
+class HistorialPage extends StatefulWidget {
   const HistorialPage({super.key});
+
+  @override
+  State<HistorialPage> createState() => _HistorialPageState();
+}
+
+class _HistorialPageState extends State<HistorialPage> {
+  late Future<List<dynamic>> _dataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _dataFuture = _loadRecords();
+  }
 
   Future<List<dynamic>> _loadRecords() async {
     final jsonString =
@@ -21,15 +33,14 @@ class HistorialPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final textColor = isDark ? Colors.white : AppColors.foreground;
+    final textColor = colors.onSurface;
 
     return Scaffold(
       backgroundColor: colors.surfaceContainerLow,
       body: SafeArea(
         top: false,
         child: FutureBuilder<List<dynamic>>(
-          future: _loadRecords(),
+          future: _dataFuture,
           builder: (context, snapshot) {
             return CustomScrollView(
               slivers: [
