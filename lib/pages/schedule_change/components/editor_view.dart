@@ -98,14 +98,9 @@ class EditorView extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 24),
-            Theme(
-              data: theme.copyWith(
-                colorScheme: cs.copyWith(primary: brandColor),
-              ),
-              child: PrimaryButton(
-                text: 'Enviar para aprobación',
-                onPressed: () => c.submitForApproval(),
-              ),
+            PrimaryButton(
+              text: 'Enviar para aprobación',
+              onPressed: () => c.submitForApproval(),
             ),
             const SizedBox(height: 16),
           ],
