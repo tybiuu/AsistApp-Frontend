@@ -3,7 +3,10 @@
 import 'package:get/get.dart';
 
 import '../../configs/routes.dart';
+import '../../models/attendance_record.dart';
+import '../../models/attendance_request.dart';
 import '../../models/organization.dart';
+import '../../models/schedule_change_request.dart';
 import '../../models/user.dart';
 import '../../services/attendance_record_service.dart';
 import '../../services/attendance_request_service.dart';
@@ -103,15 +106,15 @@ class AdminHomeController extends GetxController {
   void _assignHomeState({
     required Organization organization,
     required List<User> trainees,
-    required List<Map<String, dynamic>> attendanceRecords,
-    required List<Map<String, dynamic>> scheduleChangeRequests,
-    required List<Map<String, dynamic>> attendanceRequests,
+    required List<AttendanceRecord> attendanceRecords,
+    required List<ScheduleChangeRequest> scheduleChangeRequests,
+    required List<AttendanceRequest> attendanceRequests,
   }) {
     final String summaryDate = _attendanceRecordService.latestDate(
       attendanceRecords,
     );
-    final List<Map<String, dynamic>> todayAttendanceRecords = attendanceRecords
-        .where((record) => record['date'] == summaryDate)
+    final List<AttendanceRecord> todayAttendanceRecords = attendanceRecords
+        .where((record) => record.date == summaryDate)
         .toList();
 
     this.organization.value = organization;

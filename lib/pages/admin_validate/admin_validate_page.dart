@@ -5,6 +5,8 @@ import 'package:flutter/services.dart';
 
 import '../../components/app_top_bar.dart';
 import '../../configs/theme.dart';
+import '../../models/attendance_record.dart';
+import '../../models/user.dart';
 import '../../utils/date_utils.dart';
 import '../../utils/trainee_utils.dart';
 import 'components/missing_card.dart';
@@ -35,29 +37,35 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
       'assets/jsons/mock_trainees.json',
     );
 
-    return _AdminValidateData(
-      records: (jsonDecode(recordsString) as List<dynamic>).cast<Map<String, dynamic>>(),
-      trainees: (jsonDecode(traineesString) as List<dynamic>).cast<Map<String, dynamic>>(),
-    );
+    final records = (jsonDecode(recordsString) as List<dynamic>)
+        .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
+        .toList();
+
+    final trainees = (jsonDecode(traineesString) as List<dynamic>)
+        .map((j) => User.fromJson(j as Map<String, dynamic>))
+        .toList();
+
+    return _AdminValidateData(records: records, trainees: trainees);
   }
 
-  String _statusText(Map<String, dynamic> record) {
-    final status = record['status'];
-    if (status == 'pending') {
-      final lateMinutes = record['late_minutes'];
-      return (lateMinutes != null && lateMinutes > 0) ? 'Tardanza' : 'Pendiente';
+  String _statusText(AttendanceRecord record) {
+    if (record.status == AttendanceStatus.pending) {
+      return (record.lateMinutes != null && record.lateMinutes! > 0)
+          ? 'Tardanza'
+          : 'Pendiente';
     }
-    if (status == 'confirmed') {
-      final lateMinutes = record['late_minutes'];
-      return (lateMinutes != null && lateMinutes > 0) ? 'Tardanza' : 'A tiempo';
+    if (record.status == AttendanceStatus.confirmed) {
+      return (record.lateMinutes != null && record.lateMinutes! > 0)
+          ? 'Tardanza'
+          : 'A tiempo';
     }
-    if (status == 'absence') return 'Sin marcar';
-    return status.toString();
+    if (record.status == AttendanceStatus.absence) return 'Sin marcar';
+    return record.status.name;
   }
 
   Color _statusColor(String status) {
-    if (status == 'A tiempo')  return AppColors.success;
-    if (status == 'Tardanza')  return AppColors.warning;
+    if (status == 'A tiempo') return AppColors.success;
+    if (status == 'Tardanza') return AppColors.warning;
     if (status == 'Sin marcar') return const Color(0xFF3B82F6);
     return const Color(0xFF64748B);
   }
@@ -65,7 +73,8 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final dateLabel = 'Hoy, ${DateTime.now().day} ${monthAbbrev(DateTime.now().month)}';
+    final dateLabel =
+        'Hoy, ${DateTime.now().day} ${monthAbbrev(DateTime.now().month)}';
 
     return Scaffold(
       backgroundColor: colors.surfaceContainerLow,
@@ -77,7 +86,8 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
               title: 'Validar asistencia',
               actions: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
                   decoration: BoxDecoration(
                     color: colors.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(999),
@@ -91,7 +101,8 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.calendar_today_rounded, color: colors.primary, size: 13),
+                      Icon(Icons.calendar_today_rounded,
+                          color: colors.primary, size: 13),
                       const SizedBox(width: 6),
                       Text(
                         dateLabel,
@@ -114,11 +125,14 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
                     future: _dataFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator(color: colors.primary));
+                        return Center(
+                            child: CircularProgressIndicator(
+                                color: colors.primary));
                       }
                       if (snapshot.hasError) {
                         return Center(
-                          child: Text('Error al cargar datos', style: TextStyle(color: colors.onSurface)),
+                          child: Text('Error al cargar datos',
+                              style: TextStyle(color: colors.onSurface)),
                         );
                       }
 
@@ -126,13 +140,26 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
                       final records = data.records;
                       final trainees = data.trainees;
 
-                      final pendingRecords   = records.where((r) => r['status'] == 'pending').toList();
-                      final confirmedRecords = records.where((r) => r['status'] == 'confirmed').toList();
-                      final validationRecords = [...pendingRecords, ...confirmedRecords];
-                      final missingRecords   = records.where((r) => r['status'] == 'absence').toList();
+                      final pendingRecords = records
+                          .where(
+                              (r) => r.status == AttendanceStatus.pending)
+                          .toList();
+                      final confirmedRecords = records
+                          .where(
+                              (r) => r.status == AttendanceStatus.confirmed)
+                          .toList();
+                      final validationRecords = [
+                        ...pendingRecords,
+                        ...confirmedRecords
+                      ];
+                      final missingRecords = records
+                          .where(
+                              (r) => r.status == AttendanceStatus.absence)
+                          .toList();
 
                       return ListView(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                        padding:
+                            const EdgeInsets.fromLTRB(16, 16, 16, 24),
                         children: [
                           const SizedBox(height: 4),
                           AdminSectionTitle(
@@ -141,21 +168,26 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
                           ),
                           const SizedBox(height: 12),
                           ...validationRecords.map((record) {
-                            final trainee = findTrainee(trainees, record['user_id'].toString());
+                            final trainee =
+                                findTrainee(trainees, record.userId);
                             final status = _statusText(record);
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: ValidateCard(
-                                initials:    traineeInitials(trainee),
-                                name:        traineeFullName(trainee),
-                                career:      traineeCareerText(trainee),
-                                status:      status,
+                                initials: traineeInitials(trainee),
+                                name: traineeFullName(trainee),
+                                career: traineeCareerText(trainee),
+                                status: status,
                                 statusColor: _statusColor(status),
-                                inTime:      formatTimeShort(record['check_in']),
-                                snackStart:  formatTimeShort(record['lunch_start']),
-                                snackEnd:    formatTimeShort(record['lunch_end']),
-                                outTime:     formatTimeShort(record['check_out']),
-                                isLate:      (record['late_minutes'] ?? 0) > 0,
+                                inTime: formatTimeShort(
+                                    record.checkIn?.toIso8601String()),
+                                snackStart: formatTimeShort(
+                                    record.lunchStart?.toIso8601String()),
+                                snackEnd: formatTimeShort(
+                                    record.lunchEnd?.toIso8601String()),
+                                outTime: formatTimeShort(
+                                    record.checkOut?.toIso8601String()),
+                                isLate: (record.lateMinutes ?? 0) > 0,
                               ),
                             );
                           }),
@@ -166,13 +198,14 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
                           ),
                           const SizedBox(height: 12),
                           ...missingRecords.map((record) {
-                            final trainee = findTrainee(trainees, record['user_id'].toString());
+                            final trainee =
+                                findTrainee(trainees, record.userId);
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 12),
                               child: MissingCard(
                                 initials: traineeInitials(trainee),
-                                name:     traineeFullName(trainee),
-                                career:   traineeCareerText(trainee),
+                                name: traineeFullName(trainee),
+                                career: traineeCareerText(trainee),
                               ),
                             );
                           }),
@@ -191,8 +224,8 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
 }
 
 class _AdminValidateData {
-  final List<Map<String, dynamic>> records;
-  final List<Map<String, dynamic>> trainees;
+  final List<AttendanceRecord> records;
+  final List<User> trainees;
 
   const _AdminValidateData({required this.records, required this.trainees});
 }

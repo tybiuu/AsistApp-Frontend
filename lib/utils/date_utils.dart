@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:asist_app/configs/theme.dart';
+import 'package:asist_app/models/attendance_record.dart';
 import 'package:asist_app/models/schedule.dart';
 
 // ─── Parsing ─────────────────────────────────────────────────────────────────
@@ -106,11 +107,10 @@ String dayAbbrevFromDate(String dateStr) {
 // ─── Attendance status ────────────────────────────────────────────────────────
 
 /// Returns display label for an attendance record status.
-String attendanceStatusText(Map<String, dynamic> record) {
-  if (record['status'] == 'absence') return 'Inasistencia';
-  if (record['status'] == 'pending') return 'Pendiente';
-  final lateMinutes = record['late_minutes'];
-  if (lateMinutes != null && lateMinutes > 0) return 'Tardanza';
+String attendanceStatusText(AttendanceRecord record) {
+  if (record.status == AttendanceStatus.absence) return 'Inasistencia';
+  if (record.status == AttendanceStatus.pending) return 'Pendiente';
+  if (record.lateMinutes != null && record.lateMinutes! > 0) return 'Tardanza';
   return 'Puntual';
 }
 

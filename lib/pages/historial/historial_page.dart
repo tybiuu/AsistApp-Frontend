@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import '../../components/app_top_bar.dart';
 import '../../components/attendance_record_card.dart';
 import '../../components/month_nav_button.dart';
+import '../../models/attendance_record.dart';
 import '../../utils/date_utils.dart';
 
 class HistorialPage extends StatefulWidget {
@@ -16,7 +17,7 @@ class HistorialPage extends StatefulWidget {
 }
 
 class _HistorialPageState extends State<HistorialPage> {
-  late Future<List<dynamic>> _dataFuture;
+  late Future<List<AttendanceRecord>> _dataFuture;
 
   @override
   void initState() {
@@ -24,10 +25,14 @@ class _HistorialPageState extends State<HistorialPage> {
     _dataFuture = _loadRecords();
   }
 
-  Future<List<dynamic>> _loadRecords() async {
-    final jsonString =
-        await rootBundle.loadString('assets/jsons/mock_attendance_records.json');
-    return jsonDecode(jsonString) as List<dynamic>;
+  Future<List<AttendanceRecord>> _loadRecords() async {
+    final jsonString = await rootBundle.loadString(
+      'assets/jsons/mock_attendance_records.json',
+    );
+    final list = jsonDecode(jsonString) as List<dynamic>;
+    return list
+        .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
+        .toList();
   }
 
   @override
@@ -39,7 +44,7 @@ class _HistorialPageState extends State<HistorialPage> {
       backgroundColor: colors.surfaceContainerLow,
       body: SafeArea(
         top: false,
-        child: FutureBuilder<List<dynamic>>(
+        child: FutureBuilder<List<AttendanceRecord>>(
           future: _dataFuture,
           builder: (context, snapshot) {
             return CustomScrollView(
@@ -82,21 +87,17 @@ class _HistorialPageState extends State<HistorialPage> {
                         ),
                         const SizedBox(height: 16),
                         ...(snapshot.data ?? [])
-                            .where((item) =>
-                                (item as Map<String, dynamic>)['status'] !=
-                                'pending')
-                            .map((item) {
-                          final record = item as Map<String, dynamic>;
-                          final rawDate = record['date'].toString();
+                            .where((r) => r.status != AttendanceStatus.pending)
+                            .map((record) {
                           final status = attendanceStatusText(record);
                           final color = attendanceStatusColor(context, status);
 
                           return AttendanceRecordCard(
-                            date: '${dayAbbrevFromDate(rawDate)} ${formatDateShort(rawDate)}',
+                            date: '${dayAbbrevFromDate(record.date)} ${formatDateShort(record.date)}',
                             status: status,
                             statusColor: color,
-                            time: 'Entrada: ${formatTime12h(record['check_in'])}  Salida: ${formatTime12h(record['check_out'])}',
-                            hours: hoursText(record['total_minutes']),
+                            time: 'Entrada: ${formatTime12h(record.checkIn?.toIso8601String())}  Salida: ${formatTime12h(record.checkOut?.toIso8601String())}',
+                            hours: hoursText(record.totalMinutes),
                           );
                         }),
                       ]),

@@ -1,23 +1,26 @@
 // lib/services/user_service.dart
 
 import 'dart:convert';
+import 'package:asist_app/configs/constants.dart';
 import 'package:flutter/services.dart';
 
 import '../configs/generic_response.dart';
 import '../models/user.dart';
+import 'package:http/http.dart' as http;
 
 class UserService {
-  /// Simulates a login request by fetching local mock users and verifying credentials.
   Future<GenericResponse<User>> login(String email, String password) async {
     try {
-      // Load mock users JSON from app assets
+      final String baseURL = Constants.baseUrl;
+      final url = Uri.parse('$baseURL/apis/v1/users/login');
+      
       final String response = await rootBundle.loadString('assets/jsons/mock_users.json');
       final List<dynamic> data = jsonDecode(response);
       
       Map<String, dynamic>? foundUserMap;
 
       for (var item in data) {
-        if (item['institutional_email'] == email && item['password'] == password) {
+        if (item['institutionalEmail'] == email && item['password'] == password) {
           foundUserMap = item;
           break;
         }

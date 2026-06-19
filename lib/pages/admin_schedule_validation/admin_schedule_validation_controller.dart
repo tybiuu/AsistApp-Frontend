@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../configs/routes.dart';
+import '../../models/attendance_request.dart';
 import '../../models/schedule.dart';
+import '../../models/schedule_change_request.dart';
 import '../../models/user.dart';
 import '../../services/schedule_change_request_service.dart';
 import '../../services/trainee_service.dart';
@@ -71,7 +73,7 @@ class AdminScheduleValidationController extends GetxController {
       final Map<String, Map<String, dynamic>> scheduleByUser = {};
 
       for (final rawSchedule in scheduleRows) {
-        final String userId = rawSchedule['user_id'] as String? ?? '';
+        final String userId = rawSchedule['userId'] as String? ?? '';
         final Map<String, dynamic> dayIndex = {};
 
         for (final rawDay in rawSchedule['days'] as List<dynamic>) {
@@ -80,7 +82,7 @@ class AdminScheduleValidationController extends GetxController {
         }
 
         scheduleByUser[userId] = {
-          'weekly_hours': rawSchedule['weekly_hours'] as int? ?? 30,
+          'weeklyHours': rawSchedule['weeklyHours'] as int? ?? 30,
           'days': dayIndex,
         };
       }
@@ -93,42 +95,37 @@ class AdminScheduleValidationController extends GetxController {
 
         final List<ScheduleRequestModel> loadedRequests = [];
 
-        for (final rawRequest in scheduleChangeRequestsResponse.data ?? []) {
-          final String status = rawRequest['status'] as String? ?? 'pending';
-          if (status.trim().toLowerCase() != 'pending') continue;
+        for (final request in scheduleChangeRequestsResponse.data ?? []) {
+          if (request.status != RequestStatus.pending) continue;
 
-          final String userId = rawRequest['user_id'] as String? ?? '';
-          final User? trainee = traineesById[userId];
-          final Map<String, dynamic>? userSchedule = scheduleByUser[userId];
+          final User? trainee = traineesById[request.userId];
+          final Map<String, dynamic>? userSchedule = scheduleByUser[request.userId];
 
-          final String dayId = rawRequest['schedule_day_id'] as String? ?? '';
           final Map<String, dynamic>? dayRecord =
-              (userSchedule?['days'] as Map<String, dynamic>?)?[dayId];
+              (userSchedule?['days'] as Map<String, dynamic>?)?[request.scheduleDayId];
 
           final String dayKey = _dayLabel(
-            dayRecord?['day'] as String? ?? _dayLabelFromId(dayId),
+            dayRecord?['day'] as String? ?? _dayLabelFromId(request.scheduleDayId),
           );
           final List<ScheduleBlock> currentBlocks = dayRecord != null
               ? _scheduleBlocksFromDay(dayRecord)
               : _fallbackScheduleBlocks();
           final List<ScheduleBlock> proposedBlocks =
-              _scheduleBlocksFromChangeRequest(rawRequest);
+              _scheduleBlocksFromChangeRequest(request);
 
           loadedRequests.add(
             ScheduleRequestModel(
-              id: rawRequest['id'] as String? ?? '',
+              id: request.id,
               name: trainee?.fullName ?? 'Practicante sin nombre',
               initials: trainee?.initials ?? 'PS',
               career: trainee?.career ?? 'Sin carrera',
               ciclo: trainee?.cycle ?? 5,
               type: 'Cambio',
-              targetHours: userSchedule?['weekly_hours'] as int? ?? 30,
+              targetHours: userSchedule?['weeklyHours'] as int? ?? 30,
               changedDaysCount: proposedBlocks.isEmpty ? 0 : 1,
-              time: _formatRequestTime(rawRequest['created_at'] as String?),
-              reason:
-                  rawRequest['reason'] as String? ??
-                  'Solicitud de ajuste de horario',
-              status: status,
+              time: _formatRequestTime(request.createdAt.toIso8601String()),
+              reason: request.reason,
+              status: request.status.name,
               currentSchedule: {dayKey: currentBlocks},
               proposedSchedule: {dayKey: proposedBlocks},
             ),
@@ -195,10 +192,10 @@ class AdminScheduleValidationController extends GetxController {
   }
 
   List<ScheduleBlock> _scheduleBlocksFromDay(Map<String, dynamic> dayRecord) {
-    final String checkIn = _normalizeTime(dayRecord['check_in_time']);
-    final String lunchStart = _normalizeTime(dayRecord['lunch_start_time']);
-    final String lunchEnd = _normalizeTime(dayRecord['lunch_end_time']);
-    final String checkOut = _normalizeTime(dayRecord['check_out_time']);
+    final String checkIn = _normalizeTime(dayRecord['checkInTime']);
+    final String lunchStart = _normalizeTime(dayRecord['lunchStartTime']);
+    final String lunchEnd = _normalizeTime(dayRecord['lunchEndTime']);
+    final String checkOut = _normalizeTime(dayRecord['checkOutTime']);
 
     final List<ScheduleBlock> blocks = [];
 
@@ -226,14 +223,12 @@ class AdminScheduleValidationController extends GetxController {
   }
 
   List<ScheduleBlock> _scheduleBlocksFromChangeRequest(
-    Map<String, dynamic> rawRequest,
+    ScheduleChangeRequest request,
   ) {
-    final String checkIn = _normalizeTime(rawRequest['new_check_in_time']);
-    final String lunchStart = _normalizeTime(
-      rawRequest['new_lunch_start_time'],
-    );
-    final String lunchEnd = _normalizeTime(rawRequest['new_lunch_end_time']);
-    final String checkOut = _normalizeTime(rawRequest['new_check_out_time']);
+    final String checkIn = _normalizeTime(request.newCheckInTime);
+    final String lunchStart = _normalizeTime(request.newLunchStartTime);
+    final String lunchEnd = _normalizeTime(request.newLunchEndTime);
+    final String checkOut = _normalizeTime(request.newCheckOutTime);
 
     final List<ScheduleBlock> blocks = [];
 

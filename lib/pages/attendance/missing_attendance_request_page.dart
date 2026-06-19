@@ -85,10 +85,10 @@ class _MissingAttendanceRequestPageState
       orElse: () => days.first,
     ) as Map<String, dynamic>;
 
-    final checkIn = day['check_in_time'] as String;
-    final checkOut = day['check_out_time'] as String;
-    final lunchStart = day['lunch_start_time'] as String?;
-    final lunchEnd = day['lunch_end_time'] as String?;
+    final checkIn = day['checkInTime'] as String;
+    final checkOut = day['checkOutTime'] as String;
+    final lunchStart = day['lunchStartTime'] as String?;
+    final lunchEnd = day['lunchEndTime'] as String?;
 
     final blocks = <_WorkBlock>[];
     if (lunchStart != null && lunchEnd != null) {

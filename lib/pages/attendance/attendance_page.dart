@@ -88,10 +88,10 @@ class _AttendancePageState extends State<AttendancePage> {
             final days = schedule['days'] as List<dynamic>;
             final today = days.first as Map<String, dynamic>;
 
-            final checkIn    = formatTime12h(today['check_in_time']);
-            final lunchStart = formatTime12h(today['lunch_start_time']);
-            final lunchEnd   = formatTime12h(today['lunch_end_time']);
-            final checkOut   = formatTime12h(today['check_out_time']);
+            final checkIn    = formatTime12h(today['checkInTime']);
+            final lunchStart = formatTime12h(today['lunchStartTime']);
+            final lunchEnd   = formatTime12h(today['lunchEndTime']);
+            final checkOut   = formatTime12h(today['checkOutTime']);
 
             final steps = [
               AttendanceStep(label: 'Ingreso',         action: 'MARCAR INGRESO',              color: colors.primary,  icon: Icons.login_rounded,          scheduled: checkIn),
@@ -112,7 +112,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       ScheduleInfoCard(
-                        organizationId: schedule['organization_id'].toString(),
+                        organizationId: schedule['organizationId'].toString(),
                         checkIn: checkIn,
                         checkOut: checkOut,
                         lunchStart: lunchStart,

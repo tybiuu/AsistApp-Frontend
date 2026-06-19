@@ -15,7 +15,7 @@ class ScheduleService {
       if (data.isEmpty) return Schedule.emptyDays();
 
       final json = data.firstWhere(
-        (s) => s['user_id'] == userId,
+        (s) => s['userId'] == userId,
         orElse: () => data.first,
       ) as Map<String, dynamic>;
 

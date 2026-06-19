@@ -1,34 +1,25 @@
-// Shared helpers for extracting display data from trainee JSON maps.
+import '../models/user.dart';
 
-Map<String, dynamic>? findTrainee(
-  List<Map<String, dynamic>> trainees,
-  String userId,
-) {
+User? findTrainee(List<User> trainees, String userId) {
   for (final trainee in trainees) {
-    if (trainee['id'] == userId) return trainee;
+    if (trainee.id == userId) return trainee;
   }
   return null;
 }
 
-String traineeInitials(Map<String, dynamic>? trainee) {
+String traineeInitials(User? trainee) {
   if (trainee == null) return '--';
-  final first = trainee['first_name']?.toString() ?? '';
-  final last = trainee['last_name']?.toString() ?? '';
-  final f = first.isNotEmpty ? first[0] : '';
-  final l = last.isNotEmpty ? last[0] : '';
-  return '$f$l'.toUpperCase();
+  return trainee.initials;
 }
 
-String traineeFullName(Map<String, dynamic>? trainee) {
+String traineeFullName(User? trainee) {
   if (trainee == null) return 'Practicante no encontrado';
-  final first = trainee['first_name']?.toString() ?? '';
-  final last = trainee['last_name']?.toString() ?? '';
-  return '$first $last'.trim();
+  return trainee.fullName;
 }
 
-String traineeCareerText(Map<String, dynamic>? trainee) {
+String traineeCareerText(User? trainee) {
   if (trainee == null) return 'Practicante';
-  final career = trainee['career']?.toString() ?? 'Sin carrera';
-  final cycle = trainee['cycle']?.toString() ?? '-';
+  final career = trainee.career ?? 'Sin carrera';
+  final cycle = trainee.cycle?.toString() ?? '-';
   return '$career · ${cycle}mo ciclo';
 }

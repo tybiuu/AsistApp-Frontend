@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../configs/theme.dart';
+import '../../models/attendance_record.dart';
 import '../../services/session_service.dart';
 import '../../utils/date_utils.dart';
 import '../root/root_controller.dart';
@@ -39,14 +40,18 @@ class _HomePageState extends State<HomePage> {
       'assets/jsons/mock_schedules.json',
     );
 
-    final records = jsonDecode(recordsString) as List<dynamic>;
+    final rawRecords = jsonDecode(recordsString) as List<dynamic>;
+    final records = rawRecords
+        .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
+        .toList();
+
     final schedules = jsonDecode(schedulesString) as List<dynamic>;
     final schedule = schedules.first as Map<String, dynamic>;
     final days = schedule['days'] as List<dynamic>;
     final monday = days.first as Map<String, dynamic>;
 
     return _HomeMockData(
-      records: records.cast<Map<String, dynamic>>(),
+      records: records,
       schedule: schedule,
       todaySchedule: monday,
     );
@@ -61,14 +66,14 @@ class _HomePageState extends State<HomePage> {
     return names[day] ?? 'Lunes';
   }
 
-  int _completedMinutes(List<Map<String, dynamic>> records) =>
+  int _completedMinutes(List<AttendanceRecord> records) =>
       records.fold<int>(0, (total, record) {
-        final value = record['total_minutes'];
-        return value is int ? total + value : total;
+        final value = record.totalMinutes;
+        return value != null ? total + value : total;
       });
 
   int _requiredMonthlyHours(Map<String, dynamic> schedule) {
-    final weeklyHours = schedule['weekly_hours'];
+    final weeklyHours = schedule['weeklyHours'];
     return weeklyHours is int ? weeklyHours * 4 : 120;
   }
 
@@ -110,20 +115,19 @@ class _HomePageState extends State<HomePage> {
                     ? 0.0
                     : (completedHours / requiredHours).clamp(0.0, 1.0);
 
-                final confirmedCount = records.where((r) => r['status'] == 'confirmed').length;
-                final absenceCount = records.where((r) => r['status'] == 'absence').length;
+                final confirmedCount = records.where((r) => r.status == AttendanceStatus.confirmed).length;
+                final absenceCount = records.where((r) => r.status == AttendanceStatus.absence).length;
                 final lateCount = records.where((r) {
-                  final lateMinutes = r['late_minutes'];
-                  return lateMinutes != null && lateMinutes > 0;
+                  return r.lateMinutes != null && r.lateMinutes! > 0;
                 }).length;
                 final attendancePercent = records.isEmpty
                     ? 0
                     : ((confirmedCount / records.length) * 100).round();
 
-                final checkIn = formatTime12h(todaySchedule['check_in_time']);
-                final checkOut = formatTime12h(todaySchedule['check_out_time']);
+                final checkIn = formatTime12h(todaySchedule['checkInTime']);
+                final checkOut = formatTime12h(todaySchedule['checkOutTime']);
                 final todayLabel = '${_dayName(todaySchedule['day'].toString())} 28 de abril';
-                final latestRecords = records.where((r) => r['status'] != 'pending').take(2).toList();
+                final latestRecords = records.where((r) => r.status != AttendanceStatus.pending).take(2).toList();
 
                 return ListView(
                   padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
@@ -269,11 +273,11 @@ class _HomePageState extends State<HomePage> {
                             MaterialPageRoute(builder: (_) => const HistorialPage()),
                           ),
                           child: HomeAttendanceRecord(
-                            date: '${dayAbbrevFromDate(record['date'].toString())} ${formatDateLong(record['date'].toString())}',
+                            date: '${dayAbbrevFromDate(record.date)} ${formatDateLong(record.date)}',
                             status: status,
                             statusColor: color,
-                            time: '${formatTime12h(record['check_in'])}  -  ${formatTime12h(record['check_out'])}',
-                            hours: hoursText(record['total_minutes']),
+                            time: '${formatTime12h(record.checkIn?.toIso8601String())}  -  ${formatTime12h(record.checkOut?.toIso8601String())}',
+                            hours: hoursText(record.totalMinutes),
                           ),
                         ),
                       );
@@ -290,7 +294,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 class _HomeMockData {
-  final List<Map<String, dynamic>> records;
+  final List<AttendanceRecord> records;
   final Map<String, dynamic> schedule;
   final Map<String, dynamic> todaySchedule;
 

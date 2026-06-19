@@ -1,20 +1,19 @@
-// lib/services/attendance_request_service.dart
-
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
 import '../configs/generic_response.dart';
+import '../models/attendance_request.dart';
 
 class AttendanceRequestService {
-  Future<GenericResponse<List<Map<String, dynamic>>>> fetchAll() async {
+  Future<GenericResponse<List<AttendanceRequest>>> fetchAll() async {
     try {
       final String jsonString = await rootBundle.loadString(
         'assets/jsons/mock_attendance_requests.json',
       );
       final List<dynamic> jsonList = json.decode(jsonString);
-      final List<Map<String, dynamic>> requests = jsonList
-          .map((json) => json as Map<String, dynamic>)
+      final requests = jsonList
+          .map((j) => AttendanceRequest.fromJson(j as Map<String, dynamic>))
           .toList();
 
       return GenericResponse(
@@ -33,7 +32,6 @@ class AttendanceRequestService {
     }
   }
 
-  int countByStatus(List<Map<String, dynamic>> requests, String status) {
-    return requests.where((request) => request['status'] == status).length;
-  }
+  int countByStatus(List<AttendanceRequest> requests, String status) =>
+      requests.where((r) => r.status.name == status).length;
 }

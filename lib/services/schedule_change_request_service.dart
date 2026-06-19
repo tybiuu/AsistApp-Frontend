@@ -1,30 +1,32 @@
-// lib/services/schedule_change_request_service.dart
-
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../configs/generic_response.dart';
+import '../models/schedule_change_request.dart';
 
 class ScheduleChangeRequestService {
-  Future<GenericResponse<List<Map<String, dynamic>>>> fetchAll() async {
+  Future<GenericResponse<List<ScheduleChangeRequest>>> fetchAll() async {
     try {
       final String jsonString = await rootBundle.loadString(
         'assets/jsons/mock_schedule_change_requests.json',
       );
       final List<dynamic> jsonList = json.decode(jsonString);
-      final List<Map<String, dynamic>> requests = jsonList
-          .map((json) => json as Map<String, dynamic>)
+      final requests = jsonList
+          .map((j) => ScheduleChangeRequest.fromJson(j as Map<String, dynamic>))
           .toList();
 
-      // Merge locally created requests stored in SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       final localRaw = prefs.getString('local_schedule_change_requests');
       if (localRaw != null) {
         try {
           final List<dynamic> localList = json.decode(localRaw);
-          requests.addAll(localList.map((e) => e as Map<String, dynamic>));
+          requests.addAll(
+            localList.map(
+              (e) => ScheduleChangeRequest.fromJson(e as Map<String, dynamic>),
+            ),
+          );
         } catch (_) {}
       }
 
@@ -44,7 +46,6 @@ class ScheduleChangeRequestService {
     }
   }
 
-  int countByStatus(List<Map<String, dynamic>> requests, String status) {
-    return requests.where((request) => request['status'] == status).length;
-  }
+  int countByStatus(List<ScheduleChangeRequest> requests, String status) =>
+      requests.where((r) => r.status.name == status).length;
 }

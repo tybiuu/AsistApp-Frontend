@@ -6,6 +6,8 @@ import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
 import '../../configs/theme.dart';
+import '../../models/attendance_request.dart';
+import '../../models/user.dart';
 import '../../utils/date_utils.dart';
 import '../../utils/trainee_utils.dart';
 
@@ -31,25 +33,22 @@ class _AdminMissingAttendancePageState
     final requestsString = await rootBundle.loadString(
       'assets/jsons/mock_attendance_requests.json',
     );
-
     final traineesString = await rootBundle.loadString(
       'assets/jsons/mock_trainees.json',
     );
 
-    final requests = (jsonDecode(requestsString) as List<dynamic>)
-        .cast<Map<String, dynamic>>();
-
-    final trainees = (jsonDecode(traineesString) as List<dynamic>)
-        .cast<Map<String, dynamic>>();
-
-    final pendingRequests = requests
-        .where((request) => request['status'] == 'pending')
+    final allRequests = (jsonDecode(requestsString) as List<dynamic>)
+        .map((j) => AttendanceRequest.fromJson(j as Map<String, dynamic>))
         .toList();
 
-    return _MissingAttendanceData(
-      requests: pendingRequests,
-      trainees: trainees,
-    );
+    final trainees = (jsonDecode(traineesString) as List<dynamic>)
+        .map((j) => User.fromJson(j as Map<String, dynamic>))
+        .toList();
+
+    final pendingRequests =
+        allRequests.where((r) => r.status == RequestStatus.pending).toList();
+
+    return _MissingAttendanceData(requests: pendingRequests, trainees: trainees);
   }
 
   @override
@@ -71,7 +70,6 @@ class _AdminMissingAttendancePageState
                     child: CircularProgressIndicator(color: colors.primary),
                   );
                 }
-
                 if (snapshot.hasError) {
                   return Center(
                     child: Text(
@@ -105,28 +103,20 @@ class _AdminMissingAttendancePageState
                             ),
                           ),
                           const SizedBox(height: 16),
-
                           ...requests.map((request) {
-                            final trainee = findTrainee(
-                              trainees,
-                              request['user_id'].toString(),
-                            );
-
+                            final trainee =
+                                findTrainee(trainees, request.userId);
                             return Padding(
                               padding: const EdgeInsets.only(bottom: 16),
                               child: _MissingRequestCard(
                                 initials: traineeInitials(trainee),
                                 name: traineeFullName(trainee),
                                 requestedAt: formatTime12h(
-                                  request['created_at'].toString(),
-                                ),
-                                date: formatDateShort(
-                                  request['requested_date'].toString(),
-                                ),
+                                    request.createdAt.toIso8601String()),
+                                date: formatDateShort(request.requestedDate),
                                 arrivedAt: formatTime12h(
-                                  request['created_at'].toString(),
-                                ),
-                                reason: request['reason'].toString(),
+                                    request.createdAt.toIso8601String()),
+                                reason: request.reason,
                               ),
                             );
                           }),
@@ -145,8 +135,8 @@ class _AdminMissingAttendancePageState
 }
 
 class _MissingAttendanceData {
-  final List<Map<String, dynamic>> requests;
-  final List<Map<String, dynamic>> trainees;
+  final List<AttendanceRequest> requests;
+  final List<User> trainees;
 
   const _MissingAttendanceData({
     required this.requests,
@@ -235,9 +225,7 @@ class _MissingRequestCard extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 16),
-
                 Row(
                   children: [
                     Expanded(
@@ -263,9 +251,7 @@ class _MissingRequestCard extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 14),
-
                 Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
@@ -281,9 +267,7 @@ class _MissingRequestCard extends StatelessWidget {
               ],
             ),
           ),
-
           Divider(height: 1, color: colors.outlineVariant),
-
           Row(
             children: [
               Expanded(
@@ -294,11 +278,8 @@ class _MissingRequestCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.cancel_outlined,
-                          color: AppColors.error,
-                          size: 20,
-                        ),
+                        Icon(Icons.cancel_outlined,
+                            color: AppColors.error, size: 20),
                         const SizedBox(width: 8),
                         Text(
                           'Denegar',
@@ -322,11 +303,8 @@ class _MissingRequestCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.check_circle_outline_rounded,
-                          color: AppColors.success,
-                          size: 20,
-                        ),
+                        Icon(Icons.check_circle_outline_rounded,
+                            color: AppColors.success, size: 20),
                         const SizedBox(width: 8),
                         Flexible(
                           child: Text(

@@ -1,20 +1,19 @@
-// lib/services/attendance_record_service.dart
-
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
 
 import '../configs/generic_response.dart';
+import '../models/attendance_record.dart';
 
 class AttendanceRecordService {
-  Future<GenericResponse<List<Map<String, dynamic>>>> fetchAll() async {
+  Future<GenericResponse<List<AttendanceRecord>>> fetchAll() async {
     try {
       final String jsonString = await rootBundle.loadString(
         'assets/jsons/mock_attendance_records.json',
       );
       final List<dynamic> jsonList = json.decode(jsonString);
-      final List<Map<String, dynamic>> records = jsonList
-          .map((json) => json as Map<String, dynamic>)
+      final records = jsonList
+          .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
           .toList();
 
       return GenericResponse(
@@ -33,18 +32,15 @@ class AttendanceRecordService {
     }
   }
 
-  String latestDate(List<Map<String, dynamic>> records) {
-    final List<String> dates =
-        records
-            .map((record) => record['date'] as String? ?? '')
-            .where((date) => date.isNotEmpty)
-            .toList()
-          ..sort();
-
+  String latestDate(List<AttendanceRecord> records) {
+    final dates = records
+        .map((r) => r.date)
+        .where((d) => d.isNotEmpty)
+        .toList()
+      ..sort();
     return dates.isEmpty ? '' : dates.last;
   }
 
-  int countByStatus(List<Map<String, dynamic>> records, String status) {
-    return records.where((record) => record['status'] == status).length;
-  }
+  int countByStatus(List<AttendanceRecord> records, String status) =>
+      records.where((r) => r.status.name == status).length;
 }

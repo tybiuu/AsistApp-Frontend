@@ -32,14 +32,14 @@ class ScheduleChangeController extends GetxController {
       final defaultSchedule = _defaultSchedule();
       final userSchedule = data.isNotEmpty
           ? data.firstWhere(
-              (schedule) => schedule['user_id'] == 'usr-trainee-001',
+              (schedule) => schedule['userId'] == 'usr-trainee-001',
               orElse: () => data.first,
             )
           : null;
 
       if (userSchedule != null) {
         selectedTargetHours.value = _normalizeTargetHours(
-          userSchedule['weekly_hours'] as int? ?? 30,
+          userSchedule['weeklyHours'] as int? ?? 30,
         );
 
         final scheduleMap = Map<String, DaySchedule>.from(defaultSchedule);
@@ -141,10 +141,10 @@ class ScheduleChangeController extends GetxController {
   }
 
   List<ScheduleBlock> _buildBlocksFromDay(Map<String, dynamic> dayRecord) {
-    final String checkIn = _normalizeTime(dayRecord['check_in_time']);
-    final String lunchStart = _normalizeTime(dayRecord['lunch_start_time']);
-    final String lunchEnd = _normalizeTime(dayRecord['lunch_end_time']);
-    final String checkOut = _normalizeTime(dayRecord['check_out_time']);
+    final String checkIn = _normalizeTime(dayRecord['checkInTime']);
+    final String lunchStart = _normalizeTime(dayRecord['lunchStartTime']);
+    final String lunchEnd = _normalizeTime(dayRecord['lunchEndTime']);
+    final String checkOut = _normalizeTime(dayRecord['checkOutTime']);
 
     final List<ScheduleBlock> blocks = [];
 
@@ -282,9 +282,9 @@ class ScheduleChangeController extends GetxController {
     // Build a lightweight request object with full week snapshot
     final request = {
       'id': 'scr-local-${DateTime.now().millisecondsSinceEpoch}',
-      'user_id': 'usr-trainee-001',
+      'userId': 'usr-trainee-001',
       'status': 'pending',
-      'created_at': DateTime.now().toUtc().toIso8601String(),
+      'createdAt': DateTime.now().toUtc().toIso8601String(),
       'payload': weeklySchedule.map((k, v) => MapEntry(k, {
             'enabled': v.enabled,
             'blocks': v.blocks

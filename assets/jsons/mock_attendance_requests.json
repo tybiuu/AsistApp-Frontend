@@ -1,35 +1,35 @@
 [
   {
     "id": "atr-001",
-    "user_id": "usr-trainee-004",
-    "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
-    "requested_date": "2026-05-24",
+    "userId": "usr-trainee-004",
+    "organizationId": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+    "requestedDate": "2026-05-24",
     "reason": "Olvide registrar mi salida al terminar el turno",
     "status": "pending",
-    "reviewed_by": null,
-    "created_at": "2026-05-25T08:30:00.000Z",
-    "updated_at": "2026-05-25T08:30:00.000Z"
+    "reviewedById": null,
+    "createdAt": "2026-05-25T08:30:00.000Z",
+    "updatedAt": "2026-05-25T08:30:00.000Z"
   },
   {
     "id": "atr-002",
-    "user_id": "usr-trainee-005",
-    "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
-    "requested_date": "2026-05-26",
+    "userId": "usr-trainee-005",
+    "organizationId": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+    "requestedDate": "2026-05-26",
     "reason": "La app no permitio registrar la entrada",
     "status": "pending",
-    "reviewed_by": null,
-    "created_at": "2026-05-26T09:20:00.000Z",
-    "updated_at": "2026-05-26T09:20:00.000Z"
+    "reviewedById": null,
+    "createdAt": "2026-05-26T09:20:00.000Z",
+    "updatedAt": "2026-05-26T09:20:00.000Z"
   },
   {
     "id": "atr-003",
-    "user_id": "usr-trainee-006",
-    "organization_id": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
-    "requested_date": "2026-05-21",
+    "userId": "usr-trainee-006",
+    "organizationId": "4a22c8cb-0b3c-4b49-9197-441a26bca001",
+    "requestedDate": "2026-05-21",
     "reason": "Registro de asistencia corregido por administracion",
     "status": "approved",
-    "reviewed_by": "usr-admin-001",
-    "created_at": "2026-05-22T10:10:00.000Z",
-    "updated_at": "2026-05-22T15:00:00.000Z"
+    "reviewedById": "usr-admin-001",
+    "createdAt": "2026-05-22T10:10:00.000Z",
+    "updatedAt": "2026-05-22T15:00:00.000Z"
   }
 ]
