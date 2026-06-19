@@ -29,11 +29,11 @@ class Organization {
       id: map['id'] as String? ?? '',
       name: map['name'] as String? ?? '',
       code: map['code'] as String? ?? '',
-      photoUrl: map['photo_url'] as String?,
+      photoUrl: map['photoUrl'] as String?,
       description: map['description'] as String?,
-      lateTimeLimit: map['late_time_limit'] as int? ?? 0,
-      createdAt: dateFromJson(map['created_at'] as String?),
-      updatedAt: dateFromJson(map['updated_at'] as String?),
+      lateTimeLimit: map['lateTimeLimit'] as int? ?? 0,
+      createdAt: dateFromJson(map['createdAt'] as String?),
+      updatedAt: dateFromJson(map['updatedAt'] as String?),
     );
   }
 
@@ -42,11 +42,11 @@ class Organization {
       'id': id,
       'name': name,
       'code': code,
-      'photo_url': photoUrl,
+      'photoUrl': photoUrl,
       'description': description,
-      'late_time_limit': lateTimeLimit,
-      'created_at': createdAt.toIso8601String(),
-      'updated_at': updatedAt.toIso8601String(),
+      'lateTimeLimit': lateTimeLimit,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
     };
   }
 

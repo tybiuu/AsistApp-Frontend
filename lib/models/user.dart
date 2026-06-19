@@ -49,35 +49,35 @@ class User {
     final Map<String, dynamic> map = json as Map<String, dynamic>;
     return User(
       id: map['id'] as String? ?? '',
-      firstName: map['first_name'] as String? ?? '',
-      lastName: map['last_name'] as String? ?? '',
-      institutionalEmail: map['institutional_email'] as String? ?? '',
-      phoneNumber: map['phone_number'] as String? ?? '',
+      firstName: map['firstName'] as String? ?? '',
+      lastName: map['lastName'] as String? ?? '',
+      institutionalEmail: map['institutionalEmail'] as String? ?? '',
+      phoneNumber: map['phoneNumber'] as String? ?? '',
       career: map['career'] as String?,
       cycle: map['cycle'] as int?,
-      organizationId: map['organization_id'] as String?,
+      organizationId: map['organizationId'] as String?,
       role: _roleFromJson(map['role'] as String?),
       status: _statusFromJson(map['status'] as String?),
-      deviceToken: map['device_token'] as String?,
-      createdAt: dateFromJson(map['created_at'] as String?),
-      updatedAt: dateFromJson(map['updated_at'] as String?),
+      deviceToken: map['deviceToken'] as String?,
+      createdAt: dateFromJson(map['createdAt'] as String?),
+      updatedAt: dateFromJson(map['updatedAt'] as String?),
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'first_name': firstName,
-    'last_name': lastName,
-    'institutional_email': institutionalEmail,
-    'phone_number': phoneNumber,
+    'firstName': firstName,
+    'lastName': lastName,
+    'institutionalEmail': institutionalEmail,
+    'phoneNumber': phoneNumber,
     'career': career,
     'cycle': cycle,
-    'organization_id': organizationId,
+    'organizationId': organizationId,
     'role': role.name,
     'status': status.name,
-    'device_token': deviceToken,
-    'created_at': createdAt.toIso8601String(),
-    'updated_at': updatedAt.toIso8601String(),
+    'deviceToken': deviceToken,
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
   };
 
   String get fullName => '$firstName $lastName'.trim();

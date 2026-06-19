@@ -32,10 +32,10 @@ class DaySchedule {
   });
 
   factory DaySchedule.fromJson(Map<String, dynamic> json) {
-    String? checkIn = _trim(json['check_in_time'] as String?);
-    String? lunchStart = _trim(json['lunch_start_time'] as String?);
-    String? lunchEnd = _trim(json['lunch_end_time'] as String?);
-    String? checkOut = _trim(json['check_out_time'] as String?);
+    String? checkIn = _trim(json['checkInTime'] as String?);
+    String? lunchStart = _trim(json['lunchStartTime'] as String?);
+    String? lunchEnd = _trim(json['lunchEndTime'] as String?);
+    String? checkOut = _trim(json['checkOutTime'] as String?);
 
     if (checkIn == null || checkOut == null) {
       return const DaySchedule(enabled: false, blocks: []);
@@ -115,24 +115,24 @@ class Schedule {
     }
     return Schedule(
       id: json['id'] as String? ?? '',
-      userId: json['user_id'] as String? ?? '',
-      organizationId: json['organization_id'] as String?,
-      weeklyHours: json['weekly_hours'] as int? ?? 0,
+      userId: json['userId'] as String? ?? '',
+      organizationId: json['organizationId'] as String?,
+      weeklyHours: json['weeklyHours'] as int? ?? 0,
       status: json['status'] as String? ?? 'pending',
-      createdAt: dateFromJson(json['created_at'] as String?),
-      updatedAt: dateFromJson(json['updated_at'] as String?),
+      createdAt: dateFromJson(json['createdAt'] as String?),
+      updatedAt: dateFromJson(json['updatedAt'] as String?),
       days: days,
     );
   }
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'user_id': userId,
-    'organization_id': organizationId,
-    'weekly_hours': weeklyHours,
+    'userId': userId,
+    'organizationId': organizationId,
+    'weeklyHours': weeklyHours,
     'status': status,
-    'created_at': createdAt.toIso8601String(),
-    'updated_at': updatedAt.toIso8601String(),
+    'createdAt': createdAt.toIso8601String(),
+    'updatedAt': updatedAt.toIso8601String(),
     'days': days.map((k, v) => MapEntry(k, v.toJson())),
   };
 }
