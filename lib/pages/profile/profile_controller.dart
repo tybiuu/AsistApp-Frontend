@@ -1,5 +1,6 @@
 // lib/pages/profile/profile_controller.dart
 
+import 'package:asist_app/configs/theme.dart';
 import 'package:asist_app/utils/date_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,11 +11,13 @@ import '../../models/user.dart';
 import '../../services/organization_service.dart';
 import '../../services/schedule_service.dart';
 import '../../services/session_service.dart';
+import '../../services/user_service.dart';
 
 
 class ProfileController extends GetxController {
   final OrganizationService _organizationService = Get.find();
   final ScheduleService _scheduleService = Get.find();
+  final UserService _userService = Get.find();
 
   // ── Current user — direct reference to SessionService ────────────────────
   Rx<User?> get user => SessionService.to.currentUser;
@@ -113,25 +116,38 @@ class ProfileController extends GetxController {
     final current = user.value;
     if (current == null) return;
 
-    final updated = User(
-      id: current.id,
-      firstName: cFirstName.text.trim(),
-      lastName: cLastName.text.trim(),
-      institutionalEmail: current.institutionalEmail,
-      phoneNumber: cPhone.text.trim(),
-      career: dCarrera.value,
-      cycle: dCiclo.value,
-      organizationId: current.organizationId,
-      role: current.role,
-      status: current.status,
-      deviceToken: current.deviceToken,
-      createdAt: current.createdAt,
-      updatedAt: DateTime.now(),
-    );
+    final Map<String, dynamic> updateData = {
+      'firstName': cFirstName.text.trim(),
+      'lastName': cLastName.text.trim(),
+      'phoneNumber': cPhone.text.trim(),
+      'career': dCarrera.value,
+      'cycle': dCiclo.value,
+    };
 
-    await SessionService.to.updateUser(updated);
-    editing.value = false;
-    carreraOpen.value = false;
+    final response = await _userService.updateUser(current.id, updateData);
+
+    if (response.success && response.data != null) {
+      await SessionService.to.updateUser(response.data!);
+      editing.value = false;
+      carreraOpen.value = false;
+      Get.snackbar(
+        'Éxito',
+        response.message,
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    } else {
+      Get.snackbar(
+        'Error',
+        response.message,
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
   Future<void> logout() async {

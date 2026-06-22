@@ -1,5 +1,6 @@
 // lib/pages/admin_config/admin_config_controller.dart
 
+import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -10,9 +11,11 @@ import '../../models/organization.dart';
 import '../../models/user.dart';
 import '../../services/organization_service.dart';
 import '../../services/session_service.dart';
+import '../../services/user_service.dart';
 
 class AdminConfigController extends GetxController {
   final OrganizationService _organizationService = Get.find();
+  final UserService _userService = Get.find();
   final ImagePicker _imagePicker = ImagePicker();
 
   final RxBool isLoading = false.obs;
@@ -156,24 +159,35 @@ class AdminConfigController extends GetxController {
     final User? current = admin;
     if (current == null) return;
 
-    final User updated = User(
-      id: current.id,
-      firstName: firstNameController.text.trim(),
-      lastName: lastNameController.text.trim(),
-      institutionalEmail: current.institutionalEmail,
-      phoneNumber: phoneController.text.trim(),
-      career: current.career,
-      cycle: current.cycle,
-      organizationId: current.organizationId,
-      role: current.role,
-      status: current.status,
-      deviceToken: current.deviceToken,
-      createdAt: current.createdAt,
-      updatedAt: DateTime.now(),
-    );
+    final Map<String, dynamic> updateData = {
+      'firstName': firstNameController.text.trim(),
+      'lastName': lastNameController.text.trim(),
+      'phoneNumber': phoneController.text.trim(),
+    };
 
-    await SessionService.to.updateUser(updated);
-    editingProfile.value = false;
+    final response = await _userService.updateUser(current.id, updateData);
+
+    if (response.success && response.data != null) {
+      await SessionService.to.updateUser(response.data!);
+      editingProfile.value = false;
+      Get.snackbar(
+        'Éxito',
+        response.message,
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    } else {
+      Get.snackbar(
+        'Error',
+        response.message,
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
   void openActivityLog() => Get.toNamed(AppRoutes.adminActivityLog);

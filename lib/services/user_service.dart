@@ -109,4 +109,46 @@ class UserService {
       );
     }
   }
+
+  Future<GenericResponse<User>> updateUser(String id, Map<String, dynamic> data) async {
+    try {
+      final String baseURL = Constants.baseUrl;
+      final url = Uri.parse('${baseURL}users/$id');
+      final String? token = await _prefs.getToken();
+
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode(data),
+      );
+
+      final Map<String, dynamic> body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final updatedUser = User.fromJson(body);
+        return GenericResponse<User>(
+          success: true,
+          data: updatedUser,
+          message: 'Usuario actualizado exitosamente',
+        );
+      } else {
+        final String errorMessage = body['error'] as String? ?? 'Error al actualizar el usuario.';
+        return GenericResponse<User>(
+          success: false,
+          data: null,
+          message: errorMessage,
+        );
+      }
+    } catch (e, stackTrace) {
+      return GenericResponse<User>(
+        success: false,
+        data: null,
+        message: 'No se pudo conectar con el servidor.',
+        error: stackTrace.toString(),
+      );
+    }
+  }
 }

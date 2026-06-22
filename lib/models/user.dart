@@ -80,6 +80,38 @@ class User {
     'updatedAt': updatedAt.toIso8601String(),
   };
 
+  User copyWith({
+    String? id,
+    String? firstName,
+    String? lastName,
+    String? institutionalEmail,
+    String? phoneNumber,
+    String? career,
+    int? cycle,
+    String? organizationId,
+    UserRole? role,
+    UserStatus? status,
+    String? deviceToken,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return User(
+      id: id ?? this.id,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      institutionalEmail: institutionalEmail ?? this.institutionalEmail,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      career: career ?? this.career,
+      cycle: cycle ?? this.cycle,
+      organizationId: organizationId ?? this.organizationId,
+      role: role ?? this.role,
+      status: status ?? this.status,
+      deviceToken: deviceToken ?? this.deviceToken,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   String get fullName => '$firstName $lastName'.trim();
 
   String get initials {
