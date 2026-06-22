@@ -6,9 +6,12 @@ import 'package:get/get.dart';
 import '../../../configs/routes.dart';
 import '../../../models/user.dart';
 import '../../../services/session_service.dart';
+import '../../../services/user_service.dart';
 import '../../setup/role_select/role_select_controller.dart';
 
 class RegisterController extends GetxController {
+  final UserService _userService = Get.find();
+  
   final formKey = GlobalKey<FormState>();
 
   final RxBool showPass = false.obs;
@@ -114,12 +117,10 @@ class RegisterController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    await Future.delayed(const Duration(seconds: 1));
-
     final now = DateTime.now();
     final isAdmin = role == RoleOption.admin;
     final user = User(
-      id: now.millisecondsSinceEpoch.toString(),
+      id: '',
       firstName: nombres().trim(),
       lastName: apellidos().trim(),
       institutionalEmail: correo().trim(),
@@ -131,24 +132,39 @@ class RegisterController extends GetxController {
       createdAt: now,
       updatedAt: now,
     );
-    await SessionService.to.saveUser(user);
+
+    final response = await _userService.register(user, password());
 
     isLoading.value = false;
 
-    final String roleName = isAdmin ? 'Administrador' : 'Practicante';
-    Get.snackbar(
-      'Registro exitoso',
-      'Cuenta creada como $roleName',
-      backgroundColor: AppColors.success,
-      colorText: Colors.white,
-      snackPosition: SnackPosition.BOTTOM,
-      margin: const EdgeInsets.all(16),
-    );
+    if (response.success && response.data != null) {
+      final registeredUser = response.data!;
+      await SessionService.to.saveUser(registeredUser);
 
-    if (isAdmin) {
-      Get.toNamed(AppRoutes.adminSetup);
+      final String roleName = isAdmin ? 'Administrador' : 'Practicante';
+      Get.snackbar(
+        'Registro exitoso',
+        'Cuenta creada como $roleName',
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+
+      if (isAdmin) {
+        Get.toNamed(AppRoutes.adminSetup);
+      } else {
+        Get.toNamed(AppRoutes.orgCode);
+      }
     } else {
-      Get.toNamed(AppRoutes.orgCode);
+      Get.snackbar(
+        'Error de registro',
+        response.message,
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
     }
   }
 

@@ -61,6 +61,7 @@ class SessionService extends GetxService {
   Future<void> logout() async {
     currentUser.value = null;
     await _prefs.clearUser();
+    await _prefs.clearToken();
     debugPrint('[SessionService] Session cleared.');
   }
 }

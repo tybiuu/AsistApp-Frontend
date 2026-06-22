@@ -2,49 +2,109 @@
 
 import 'dart:convert';
 import 'package:asist_app/configs/constants.dart';
-import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 import '../configs/generic_response.dart';
 import '../models/user.dart';
-import 'package:http/http.dart' as http;
+import 'preferences_service.dart';
 
 class UserService {
+  final PreferencesService _prefs = PreferencesService();
+
   Future<GenericResponse<User>> login(String email, String password) async {
     try {
       final String baseURL = Constants.baseUrl;
-      final url = Uri.parse('$baseURL/apis/v1/users/login');
-      
-      final String response = await rootBundle.loadString('assets/jsons/mock_users.json');
-      final List<dynamic> data = jsonDecode(response);
-      
-      Map<String, dynamic>? foundUserMap;
+      final url = Uri.parse('${baseURL}users/login');
 
-      for (var item in data) {
-        if (item['institutionalEmail'] == email && item['password'] == password) {
-          foundUserMap = item;
-          break;
-        }
-      }
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({
+          'email': email.trim(),
+          'password': password,
+        }),
+      );
 
-      if (foundUserMap != null) {
-        final user = User.fromJson(foundUserMap);
+      final Map<String, dynamic> body = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final String token = body['token'] as String;
+        final dynamic userData = body['user'];
+
+        // Guardar token en SharedPreferences
+        await _prefs.saveToken(token);
+
+        final user = User.fromJson(userData);
         return GenericResponse<User>(
           success: true,
           data: user,
           message: 'Login exitoso',
         );
       } else {
+        final String errorMessage = body['error'] as String? ?? 'Credenciales incorrectas.';
         return GenericResponse<User>(
           success: false,
           data: null,
-          message: 'Credenciales incorrectas. Intenta con admin@ulima.edu.pe o practicante@ulima.edu.pe',
+          message: errorMessage,
         );
       }
     } catch (e, stackTrace) {
       return GenericResponse<User>(
         success: false,
         data: null,
-        message: 'Ocurrió un error al cargar los datos de prueba.',
+        message: 'No se pudo conectar con el servidor.',
+        error: stackTrace.toString(),
+      );
+    }
+  }
+
+  Future<GenericResponse<User>> register(User user, String password) async {
+    try {
+      final String baseURL = Constants.baseUrl;
+      final url = Uri.parse('${baseURL}users/register');
+
+      final payload = {
+        'firstName': user.firstName,
+        'lastName': user.lastName,
+        'institutionalEmail': user.institutionalEmail,
+        'phoneNumber': user.phoneNumber,
+        'career': user.career,
+        'cycle': user.cycle,
+        'organizationId': user.organizationId,
+        'role': user.role.name,
+        'status': user.status.name,
+        'deviceToken': user.deviceToken,
+        'password': password,
+      };
+
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(payload),
+      );
+
+      final Map<String, dynamic> body = jsonDecode(response.body);
+
+      if (response.statusCode == 201) {
+        final createdUser = User.fromJson(body);
+        return GenericResponse<User>(
+          success: true,
+          data: createdUser,
+          message: 'Usuario registrado exitosamente',
+        );
+      } else {
+        final String errorMessage = body['error'] as String? ?? 'Error al registrar el usuario.';
+        return GenericResponse<User>(
+          success: false,
+          data: null,
+          message: errorMessage,
+        );
+      }
+    } catch (e, stackTrace) {
+      return GenericResponse<User>(
+        success: false,
+        data: null,
+        message: 'No se pudo conectar con el servidor.',
         error: stackTrace.toString(),
       );
     }

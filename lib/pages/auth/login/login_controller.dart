@@ -27,15 +27,12 @@ class LoginController extends GetxController {
     if (isLoading.value) return;
     isLoading.value = true;
 
-    // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
-
-    isLoading.value = false;
-
     final mail = email.value.trim();
     final pass = password.value;
 
     final response = await _userService.login(mail, pass);
+
+    isLoading.value = false;
 
     if (response.success && response.data != null) {
       final user = response.data!;

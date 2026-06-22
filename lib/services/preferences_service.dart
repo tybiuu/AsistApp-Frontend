@@ -8,24 +8,8 @@ import '../models/user.dart';
 
 class PreferencesService {
   // ── Keys ──────────────────────────────────────────────────────────────────
-  static const String _onboardingSeenKey = 'onboarding_seen';
   static const String _userKey = 'session_user';
-
-  // ── Onboarding ────────────────────────────────────────────────────────────
-  Future<bool> hasSeenOnboarding() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_onboardingSeenKey) ?? false;
-  }
-
-  Future<void> setOnboardingSeen() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_onboardingSeenKey, true);
-  }
-
-  Future<void> clearOnboardingSeen() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_onboardingSeenKey);
-  }
+  static const String _tokenKey = 'session_token';
 
   // ── Session user ──────────────────────────────────────────────────────────
 
@@ -53,5 +37,25 @@ class PreferencesService {
   Future<void> clearUser() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_userKey);
+  }
+
+  // ── Session token ─────────────────────────────────────────────────────────
+
+  /// Persists the JWT token in SharedPreferences.
+  Future<void> saveToken(String token) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_tokenKey, token);
+  }
+
+  /// Returns the stored JWT token, or null if it doesn't exist.
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString(_tokenKey);
+  }
+
+  /// Removes the stored JWT token.
+  Future<void> clearToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tokenKey);
   }
 }
