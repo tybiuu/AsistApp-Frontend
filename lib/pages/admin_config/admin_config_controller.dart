@@ -46,7 +46,8 @@ class AdminConfigController extends GetxController {
   Future<void> loadConfig() async {
     isLoading.value = true;
 
-    final response = await _organizationService.fetchCurrent();
+    final String? orgId = admin?.organizationId;
+    final response = await _organizationService.fetchCurrent(organizationId: orgId);
     if (response.success && response.data != null) {
       organization.value = response.data;
       _syncOrganizationFields(response.data!);
@@ -120,23 +121,41 @@ class AdminConfigController extends GetxController {
     }
   }
 
-  void saveOrganization() {
+  Future<void> saveOrganization() async {
     final Organization? current = organization.value;
     if (current == null) return;
 
-    savedOrganizationPhotoBytes.value =
-        organizationPhotoBytes.value ?? savedOrganizationPhotoBytes.value;
-    organization.value = Organization(
-      id: current.id,
-      name: organizationNameController.text.trim(),
-      code: current.code,
-      photoUrl: current.photoUrl,
-      description: organizationDescriptionController.text.trim(),
-      lateTimeLimit: tardinessLimit.value,
-      createdAt: current.createdAt,
-      updatedAt: DateTime.now(),
-    );
-    editingOrganization.value = false;
+    final Map<String, dynamic> updateData = {
+      'name': organizationNameController.text.trim(),
+      'description': organizationDescriptionController.text.trim(),
+      'lateTimeLimit': tardinessLimit.value,
+    };
+
+    final response = await _organizationService.updateOrganization(current.id, updateData);
+
+    if (response.success && response.data != null) {
+      savedOrganizationPhotoBytes.value =
+          organizationPhotoBytes.value ?? savedOrganizationPhotoBytes.value;
+      organization.value = response.data;
+      editingOrganization.value = false;
+      Get.snackbar(
+        'Éxito',
+        response.message,
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    } else {
+      Get.snackbar(
+        'Error',
+        response.message,
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
   void editProfile() {
