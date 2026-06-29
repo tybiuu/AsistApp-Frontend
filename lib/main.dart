@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import './configs/routes.dart';
 import './configs/theme.dart';
+import './services/api_service.dart';
 import './services/attendance_record_service.dart';
 import './services/attendance_request_service.dart';
 import './services/organization_service.dart';
@@ -70,6 +71,7 @@ class MyApp extends StatelessWidget {
       defaultTransition: Transition.noTransition,
       transitionDuration: Duration.zero,
       initialBinding: BindingsBuilder(() {
+        Get.lazyPut(() => ApiService(), fenix: true);
         Get.lazyPut(() => UserService(), fenix: true);
         Get.lazyPut(() => OrganizationService(), fenix: true);
         Get.lazyPut(() => TraineeService(), fenix: true);

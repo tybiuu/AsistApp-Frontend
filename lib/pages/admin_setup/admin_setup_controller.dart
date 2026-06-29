@@ -8,8 +8,11 @@ import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../configs/routes.dart';
+import '../../services/organization_service.dart';
 
 class AdminSetupController extends GetxController {
+  final OrganizationService _organizationService = Get.find();
+
   final TextEditingController nameController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
 
@@ -69,18 +72,35 @@ class AdminSetupController extends GetxController {
 
     final String organizationName = nameController.text.trim().toUpperCase();
     final String organizationCode = _buildOrganizationCode(organizationName);
+    final String? description = descriptionController.text.trim().isEmpty
+        ? null
+        : descriptionController.text.trim();
 
     isLoading.value = true;
-    await Future.delayed(const Duration(milliseconds: 700));
-    isLoading.value = false;
-
-    Get.offNamed(
-      AppRoutes.adminSetupSuccess,
-      arguments: {
-        'organizationName': organizationName,
-        'organizationCode': organizationCode,
-      },
-    );
+    try {
+      await _organizationService.createOrganization(
+        name: organizationName,
+        code: organizationCode,
+        lateTimeLimit: tardinessLimit.value,
+        description: description,
+      );
+      Get.offNamed(
+        AppRoutes.adminSetupSuccess,
+        arguments: {
+          'organizationName': organizationName,
+          'organizationCode': organizationCode,
+        },
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        e.toString().replaceFirst('Exception: ', ''),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   String _buildOrganizationCode(String organizationName) {

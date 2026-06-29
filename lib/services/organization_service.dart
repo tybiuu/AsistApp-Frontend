@@ -3,14 +3,17 @@
 import 'dart:convert';
 import 'package:asist_app/configs/constants.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../configs/generic_response.dart';
 import '../models/organization.dart';
+import 'api_service.dart';
 import 'preferences_service.dart';
 
 class OrganizationService {
   final PreferencesService _prefs = PreferencesService();
+  ApiService get _api => Get.find<ApiService>();
 
   Future<GenericResponse<Organization>> fetchCurrent({String? organizationId}) async {
     if (organizationId == null || organizationId.isEmpty) {
@@ -77,6 +80,22 @@ class OrganizationService {
         error: stackTrace.toString(),
       );
     }
+  }
+
+  Future<Organization> createOrganization({
+    required String name,
+    required String code,
+    required int lateTimeLimit,
+    String? description,
+  }) async {
+    final Map<String, dynamic> body = {
+      'name': name,
+      'code': code,
+      'lateTimeLimit': lateTimeLimit,
+      if (description != null && description.isNotEmpty) 'description': description,
+    };
+    final Map<String, dynamic> data = await _api.post('organizations', body);
+    return Organization.fromJson(data);
   }
 
   Future<GenericResponse<Organization>> updateOrganization(String id, Map<String, dynamic> data) async {
