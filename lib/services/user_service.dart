@@ -2,14 +2,22 @@
 
 import 'dart:convert';
 import 'package:asist_app/configs/constants.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
 import '../configs/generic_response.dart';
 import '../models/user.dart';
+import 'api_service.dart';
 import 'preferences_service.dart';
 
 class UserService {
   final PreferencesService _prefs = PreferencesService();
+  ApiService get _api => Get.find<ApiService>();
+
+  Future<User> fetchById(String id) async {
+    final Map<String, dynamic> data = await _api.get('users/$id');
+    return User.fromJson(data);
+  }
 
   Future<GenericResponse<User>> login(String email, String password) async {
     try {
@@ -86,7 +94,10 @@ class UserService {
       final Map<String, dynamic> body = jsonDecode(response.body);
 
       if (response.statusCode == 201) {
-        final createdUser = User.fromJson(body);
+        final String token = body['token'] as String;
+        final dynamic userData = body['user'];
+        await _prefs.saveToken(token);
+        final createdUser = User.fromJson(userData);
         return GenericResponse<User>(
           success: true,
           data: createdUser,

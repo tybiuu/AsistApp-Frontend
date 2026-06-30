@@ -4,12 +4,14 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../models/organization.dart';
 import '../models/user.dart';
 
 class PreferencesService {
   // ── Keys ──────────────────────────────────────────────────────────────────
   static const String _userKey = 'session_user';
   static const String _tokenKey = 'session_token';
+  static const String _organizationKey = 'session_organization';
 
   // ── Session user ──────────────────────────────────────────────────────────
 
@@ -57,5 +59,29 @@ class PreferencesService {
   Future<void> clearToken() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tokenKey);
+  }
+
+  // ── Session organization ──────────────────────────────────────────────────
+
+  Future<void> saveOrganization(Organization organization) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_organizationKey, jsonEncode(organization.toJson()));
+  }
+
+  Future<Organization?> getOrganization() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_organizationKey);
+    if (raw == null) return null;
+    try {
+      return Organization.fromJson(jsonDecode(raw));
+    } catch (_) {
+      await prefs.remove(_organizationKey);
+      return null;
+    }
+  }
+
+  Future<void> clearOrganization() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_organizationKey);
   }
 }

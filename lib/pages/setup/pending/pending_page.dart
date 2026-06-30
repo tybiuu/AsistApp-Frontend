@@ -8,6 +8,7 @@ import '../../../configs/routes.dart';
 import '../../../configs/theme.dart';
 import '../../../services/session_service.dart';
 import '../role_select/role_select_controller.dart';
+import 'pending_controller.dart';
 
 class PendingPage extends StatelessWidget {
   const PendingPage({super.key});
@@ -21,8 +22,8 @@ class PendingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final args = (Get.arguments as Map<String, dynamic>?) ?? {};
-    final String organizationName = args['organizationName'] as String? ?? '';
+    final controller = Get.put(PendingController());
+    final String organizationName = controller.organizationName;
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,

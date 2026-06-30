@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 
 import '../../../configs/routes.dart';
 import '../../../models/user.dart';
+import '../../../services/organization_service.dart';
 import '../../../services/session_service.dart';
 import '../../../services/user_service.dart';
 
@@ -38,10 +39,14 @@ class LoginController extends GetxController {
       final user = response.data!;
       await SessionService.to.saveUser(user);
 
-      String roleName = user.role == UserRole.admin
-          ? 'Administrador'
-          : 'Practicante';
+      if (user.organizationId != null && user.organizationId!.isNotEmpty) {
+        try {
+          final org = await Get.find<OrganizationService>().fetchById(user.organizationId!);
+          await SessionService.to.saveOrganization(org);
+        } catch (_) {}
+      }
 
+      final String roleName = user.role == UserRole.admin ? 'Administrador' : 'Practicante';
       Get.snackbar(
         'Bienvenido',
         'Sesión iniciada como $roleName',
@@ -50,7 +55,8 @@ class LoginController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
         margin: const EdgeInsets.all(16),
       );
-      Get.offAllNamed(AppRoutes.root);
+
+      _navigateAfterLogin(user);
     } else {
       Get.snackbar(
         'Error',
@@ -63,9 +69,33 @@ class LoginController extends GetxController {
     }
   }
 
+  void _navigateAfterLogin(User user) {
+    if (user.role == UserRole.admin) {
+      if (user.organizationId != null && user.organizationId!.isNotEmpty) {
+        Get.offAllNamed(AppRoutes.root);
+      } else {
+        Get.offAllNamed(AppRoutes.adminSetup);
+      }
+      return;
+    }
+
+    // Trainee
+    if (user.status == UserStatus.active) {
+      Get.offAllNamed(AppRoutes.root);
+    } else if (user.organizationId != null && user.organizationId!.isNotEmpty) {
+      Get.offAllNamed(
+        AppRoutes.pending,
+        arguments: {
+          'organizationName': SessionService.to.currentOrganization.value?.name ?? '',
+        },
+      );
+    } else {
+      Get.offAllNamed(AppRoutes.orgCode);
+    }
+  }
+
   void goToRegister() {
-    if (Get.previousRoute == AppRoutes.roleSelect ||
-        Get.previousRoute == AppRoutes.register) {
+    if (Get.previousRoute == AppRoutes.login) {
       Get.back();
     } else {
       Get.toNamed(AppRoutes.roleSelect);

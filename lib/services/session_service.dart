@@ -3,6 +3,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
+import '../models/organization.dart';
 import '../models/user.dart';
 import 'preferences_service.dart';
 
@@ -23,6 +24,9 @@ class SessionService extends GetxService {
   /// The currently authenticated user. Null = not logged in.
   final currentUser = Rx<User?>(null);
 
+  /// The organization linked to the current session.
+  final currentOrganization = Rx<Organization?>(null);
+
   bool get isLoggedIn => currentUser.value != null;
   bool get isTrainee  => currentUser.value?.role == UserRole.trainee;
   bool get isAdmin    => currentUser.value?.role == UserRole.admin;
@@ -38,6 +42,11 @@ class SessionService extends GetxService {
       debugPrint('[SessionService] Restored session → ${saved.fullName} (${saved.role.name})');
     } else {
       debugPrint('[SessionService] No saved session found.');
+    }
+    final savedOrg = await _prefs.getOrganization();
+    if (savedOrg != null) {
+      currentOrganization.value = savedOrg;
+      debugPrint('[SessionService] Restored organization → ${savedOrg.name}');
     }
     return this;
   }
@@ -57,11 +66,30 @@ class SessionService extends GetxService {
     debugPrint('[SessionService] Session updated → ${user.fullName}');
   }
 
+  Future<void> saveOrganization(Organization organization) async {
+    currentOrganization.value = organization;
+    await _prefs.saveOrganization(organization);
+    debugPrint('[SessionService] Organization saved → ${organization.name}');
+  }
+
+  Future<void> updateOrganization(Organization organization) async {
+    await saveOrganization(organization);
+    debugPrint('[SessionService] Organization updated → ${organization.name}');
+  }
+
+  Future<void> clearOrganization() async {
+    currentOrganization.value = null;
+    await _prefs.clearOrganization();
+    debugPrint('[SessionService] Organization cleared.');
+  }
+
   /// Clears memory + SharedPreferences.
   Future<void> logout() async {
     currentUser.value = null;
+    currentOrganization.value = null;
     await _prefs.clearUser();
     await _prefs.clearToken();
+    await _prefs.clearOrganization();
     debugPrint('[SessionService] Session cleared.');
   }
 }

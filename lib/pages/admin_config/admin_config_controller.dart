@@ -11,6 +11,7 @@ import '../../models/organization.dart';
 import '../../models/user.dart';
 import '../../services/organization_service.dart';
 import '../../services/session_service.dart';
+
 import '../../services/user_service.dart';
 
 class AdminConfigController extends GetxController {
@@ -137,6 +138,7 @@ class AdminConfigController extends GetxController {
       savedOrganizationPhotoBytes.value =
           organizationPhotoBytes.value ?? savedOrganizationPhotoBytes.value;
       organization.value = response.data;
+      await SessionService.to.updateOrganization(response.data!);
       editingOrganization.value = false;
       Get.snackbar(
         'Éxito',

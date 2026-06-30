@@ -95,8 +95,7 @@ class OrgCodePage extends StatelessWidget {
                     ),
                     const SizedBox(height: 8),
                     TextField(
-                      onChanged: controller.setCode,
-                      maxLength: 14,
+                      controller: controller.textController,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 24,
@@ -105,7 +104,6 @@ class OrgCodePage extends StatelessWidget {
                         color: AppColors.chart1,
                         fontFamily: 'monospace',
                       ),
-                      textCapitalization: TextCapitalization.characters,
                       decoration: InputDecoration(
                         counterText: '',
                         hintText: 'XXXX-0000',
@@ -136,7 +134,7 @@ class OrgCodePage extends StatelessWidget {
                     Obx(() => PrimaryButton(
                           fullWidth: true,
                           text: 'Enviar solicitud',
-                          onPressed: controller.code().length >= 8
+                          onPressed: controller.code().length >= 9
                               ? controller.submitCode
                               : null,
                         )),

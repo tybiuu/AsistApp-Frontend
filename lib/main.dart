@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 
 import './configs/routes.dart';
 import './configs/theme.dart';
+import './models/user.dart';
 import './services/api_service.dart';
 import './services/attendance_record_service.dart';
 import './services/attendance_request_service.dart';
@@ -50,6 +51,21 @@ Future<void> main() async {
   runApp(const MyApp());
 }
 
+String _resolveInitialRoute() {
+  final user = SessionService.to.currentUser.value;
+  if (user == null) return AppRoutes.welcome;
+
+  if (user.role == UserRole.admin) {
+    return user.organizationId != null && user.organizationId!.isNotEmpty
+        ? AppRoutes.root
+        : AppRoutes.adminSetup;
+  }
+
+  if (user.status == UserStatus.active) return AppRoutes.root;
+  if (user.organizationId != null && user.organizationId!.isNotEmpty) return AppRoutes.pending;
+  return AppRoutes.orgCode;
+}
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -58,9 +74,7 @@ class MyApp extends StatelessWidget {
     final TextTheme baseTextTheme = Typography.material2021().englishLike;
     final MaterialTheme materialTheme = MaterialTheme(baseTextTheme);
 
-    final String initialRoute = SessionService.to.isLoggedIn
-        ? AppRoutes.root
-        : AppRoutes.welcome;
+    final String initialRoute = _resolveInitialRoute();
 
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,

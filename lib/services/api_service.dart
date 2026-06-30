@@ -1,6 +1,7 @@
 // lib/services/api_service.dart
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../configs/constants.dart';
@@ -21,7 +22,9 @@ class ApiService {
     return headers;
   }
 
-  Map<String, dynamic> _parse(http.Response response) {
+  Map<String, dynamic> _parse(http.Response response, String method, Uri uri) {
+    debugPrint('[$method] ${uri.toString()} → ${response.statusCode}');
+    debugPrint('  body: ${response.body}');
     final dynamic decoded = response.body.isNotEmpty ? jsonDecode(response.body) : {};
     final Map<String, dynamic> body = decoded is Map<String, dynamic> ? decoded : {};
     if (response.statusCode >= 200 && response.statusCode < 300) return body;
@@ -31,11 +34,24 @@ class ApiService {
   }
 
   Future<Map<String, dynamic>> get(String path, {bool auth = true}) async {
-    final response = await http.get(
-      _uri(path),
-      headers: await _headers(auth: auth),
-    );
-    return _parse(response);
+    final uri = _uri(path);
+    debugPrint('[GET] → $uri');
+    final response = await http.get(uri, headers: await _headers(auth: auth));
+    return _parse(response, 'GET', uri);
+  }
+
+  Future<List<dynamic>> getList(String path, {bool auth = true}) async {
+    final uri = _uri(path);
+    debugPrint('[GET] → $uri');
+    final response = await http.get(uri, headers: await _headers(auth: auth));
+    debugPrint('[GET] $uri → ${response.statusCode}');
+    debugPrint('  body: ${response.body}');
+    final dynamic decoded = response.body.isNotEmpty ? jsonDecode(response.body) : [];
+    if (response.statusCode >= 200 && response.statusCode < 300) {
+      return decoded is List ? decoded : [];
+    }
+    final Map<String, dynamic> body = decoded is Map<String, dynamic> ? decoded : {};
+    throw Exception(body['error'] ?? 'Error del servidor (${response.statusCode})');
   }
 
   Future<Map<String, dynamic>> post(
@@ -43,12 +59,14 @@ class ApiService {
     Map<String, dynamic> body, {
     bool auth = false,
   }) async {
+    final uri = _uri(path);
+    debugPrint('[POST] → $uri | body: ${jsonEncode(body)}');
     final response = await http.post(
-      _uri(path),
+      uri,
       headers: await _headers(auth: auth),
       body: jsonEncode(body),
     );
-    return _parse(response);
+    return _parse(response, 'POST', uri);
   }
 
   Future<Map<String, dynamic>> put(
@@ -56,21 +74,24 @@ class ApiService {
     Map<String, dynamic> body, {
     bool auth = true,
   }) async {
+    final uri = _uri(path);
+    debugPrint('[PUT] → $uri | body: ${jsonEncode(body)}');
     final response = await http.put(
-      _uri(path),
+      uri,
       headers: await _headers(auth: auth),
       body: jsonEncode(body),
     );
-    return _parse(response);
+    return _parse(response, 'PUT', uri);
   }
 
   Future<void> delete(String path, {bool auth = true}) async {
-    final response = await http.delete(
-      _uri(path),
-      headers: await _headers(auth: auth),
-    );
+    final uri = _uri(path);
+    debugPrint('[DELETE] → $uri');
+    final response = await http.delete(uri, headers: await _headers(auth: auth));
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      _parse(response);
+      _parse(response, 'DELETE', uri);
+    } else {
+      debugPrint('[DELETE] $uri → ${response.statusCode}');
     }
   }
 }

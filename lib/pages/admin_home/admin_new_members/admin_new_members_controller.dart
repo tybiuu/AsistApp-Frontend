@@ -1,12 +1,16 @@
 // lib/pages/admin_home/admin_new_members/admin_new_members_controller.dart
 
+import 'package:asist_app/configs/theme.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../models/user.dart';
 import '../../../services/trainee_service.dart';
+import '../../../services/user_service.dart';
 
 class AdminNewMembersController extends GetxController {
   final TraineeService _traineeService = Get.find();
+  final UserService _userService = Get.find();
 
   final RxBool isLoading = false.obs;
   final RxString message = ''.obs;
@@ -39,23 +43,61 @@ class AdminNewMembersController extends GetxController {
     Get.toNamed('/admin-member-request', arguments: member);
   }
 
-  void acceptMember(User member) {
-    pendingMembers.remove(member);
-    Get.snackbar(
-      'Solicitud aceptada',
-      '${member.fullName} ha sido aceptado como miembro.',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 3),
+  Future<void> acceptMember(User member) async {
+    final response = await _userService.updateUser(
+      member.id,
+      {'status': 'active'},
     );
+
+    if (response.success) {
+      pendingMembers.remove(member);
+      Get.snackbar(
+        'Solicitud aceptada',
+        '${member.fullName} ha sido aceptado como miembro.',
+        backgroundColor: AppColors.success,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+      );
+    } else {
+      Get.snackbar(
+        'Error',
+        'No se pudo aceptar la solicitud.',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 
-  void rejectMember(User member) {
-    pendingMembers.remove(member);
-    Get.snackbar(
-      'Solicitud rechazada',
-      'La solicitud de ${member.fullName} fue rechazada.',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 3),
+  Future<void> rejectMember(User member) async {
+    final response = await _userService.updateUser(
+      member.id,
+      {'status': 'rejected', 'organizationId': null},
     );
+
+    if (response.success) {
+      pendingMembers.remove(member);
+      Get.snackbar(
+        'Solicitud rechazada',
+        'La solicitud de ${member.fullName} fue rechazada.',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+        margin: const EdgeInsets.all(16),
+      );
+    } else {
+      Get.snackbar(
+        'Error',
+        'No se pudo rechazar la solicitud.',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
   }
 }

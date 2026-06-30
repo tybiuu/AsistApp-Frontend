@@ -1,7 +1,6 @@
 // lib/pages/admin_setup/admin_setup_controller.dart
 
 import 'dart:typed_data';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../configs/routes.dart';
 import '../../services/organization_service.dart';
+import '../../services/session_service.dart';
 
 class AdminSetupController extends GetxController {
   final OrganizationService _organizationService = Get.find();
@@ -71,24 +71,23 @@ class AdminSetupController extends GetxController {
     if (!canCreate) return;
 
     final String organizationName = nameController.text.trim().toUpperCase();
-    final String organizationCode = _buildOrganizationCode(organizationName);
     final String? description = descriptionController.text.trim().isEmpty
         ? null
         : descriptionController.text.trim();
 
     isLoading.value = true;
     try {
-      await _organizationService.createOrganization(
+      final org = await _organizationService.createOrganization(
         name: organizationName,
-        code: organizationCode,
         lateTimeLimit: tardinessLimit.value,
         description: description,
       );
+      await SessionService.to.saveOrganization(org);
       Get.offNamed(
         AppRoutes.adminSetupSuccess,
         arguments: {
-          'organizationName': organizationName,
-          'organizationCode': organizationCode,
+          'organizationName': org.name,
+          'organizationCode': org.code,
         },
       );
     } catch (e) {
@@ -101,17 +100,6 @@ class AdminSetupController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  String _buildOrganizationCode(String organizationName) {
-    final String normalizedName = organizationName
-        .replaceAll(RegExp(r'[^A-Z0-9]'), '')
-        .padRight(1, 'X');
-    final String prefix =
-        normalizedName.substring(0, min(6, normalizedName.length));
-    final int numericCode = 1000 + Random().nextInt(9000);
-
-    return '$prefix-$numericCode';
   }
 
   void goBack() {

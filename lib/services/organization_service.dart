@@ -82,19 +82,29 @@ class OrganizationService {
     }
   }
 
+  Future<Organization> fetchById(String id) async {
+    final Map<String, dynamic> data = await _api.get('organizations/$id');
+    return Organization.fromJson(data);
+  }
+
   Future<Organization> createOrganization({
     required String name,
-    required String code,
     required int lateTimeLimit,
     String? description,
   }) async {
     final Map<String, dynamic> body = {
       'name': name,
-      'code': code,
       'lateTimeLimit': lateTimeLimit,
       if (description != null && description.isNotEmpty) 'description': description,
     };
     final Map<String, dynamic> data = await _api.post('organizations', body);
+    return Organization.fromJson(data);
+  }
+
+  Future<Organization> fetchByCode(String code) async {
+    final Map<String, dynamic> data = await _api.get(
+      'organizations?code=${Uri.encodeComponent(code)}',
+    );
     return Organization.fromJson(data);
   }
 

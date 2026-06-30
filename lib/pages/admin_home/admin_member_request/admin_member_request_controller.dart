@@ -14,16 +14,16 @@ class AdminMemberRequestController extends GetxController {
     member = Get.arguments as User;
   }
 
-  void acceptMember() {
+  Future<void> acceptMember() async {
     if (Get.isRegistered<AdminNewMembersController>()) {
-      Get.find<AdminNewMembersController>().acceptMember(member);
+      await Get.find<AdminNewMembersController>().acceptMember(member);
     }
     Get.back();
   }
 
-  void rejectMember() {
+  Future<void> rejectMember() async {
     if (Get.isRegistered<AdminNewMembersController>()) {
-      Get.find<AdminNewMembersController>().rejectMember(member);
+      await Get.find<AdminNewMembersController>().rejectMember(member);
     }
     Get.back();
   }
