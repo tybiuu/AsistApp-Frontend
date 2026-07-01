@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import '../../../models/user.dart';
 import '../../../services/trainee_service.dart';
 import '../../../services/user_service.dart';
+import '../admin_home_controller.dart';
 
 class AdminNewMembersController extends GetxController {
   final TraineeService _traineeService = Get.find();
@@ -29,7 +30,9 @@ class AdminNewMembersController extends GetxController {
 
     if (response.success && response.data != null) {
       pendingMembers.assignAll(
-        response.data!.where((user) => user.status == UserStatus.pending),
+        response.data!.where(
+          (user) => user.status == UserStatus.pending && user.role == UserRole.trainee,
+        ),
       );
       message.value = '';
     } else {
@@ -51,6 +54,9 @@ class AdminNewMembersController extends GetxController {
 
     if (response.success) {
       pendingMembers.remove(member);
+      if (Get.isRegistered<AdminHomeController>()) {
+        Get.find<AdminHomeController>().loadAdminHome();
+      }
       Get.snackbar(
         'Solicitud aceptada',
         '${member.fullName} ha sido aceptado como miembro.',
@@ -80,6 +86,9 @@ class AdminNewMembersController extends GetxController {
 
     if (response.success) {
       pendingMembers.remove(member);
+      if (Get.isRegistered<AdminHomeController>()) {
+        Get.find<AdminHomeController>().loadAdminHome();
+      }
       Get.snackbar(
         'Solicitud rechazada',
         'La solicitud de ${member.fullName} fue rechazada.',

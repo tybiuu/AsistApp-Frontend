@@ -1,18 +1,27 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../configs/theme.dart';
 import '../../models/schedule.dart';
+import '../../services/schedule_change_request_service.dart';
+import '../../services/schedule_service.dart';
 
 class ScheduleChangeController extends GetxController {
+  final ScheduleService _scheduleService = Get.find();
+  final ScheduleChangeRequestService _scheduleChangeRequestService = Get.find();
+
   final isSubmitted = false.obs;
   final isLoading = true.obs;
+  final isSubmitting = false.obs;
   final selectedTargetHours = 30.obs;
   final List<int> hourOptions = [20, 25, 30];
   final expandedDay = RxnInt();
   final weeklySchedule = <String, DaySchedule>{}.obs;
+  final reasonController = TextEditingController();
+
+  final hasExistingSchedule = false.obs;
+  String? _unapprovedScheduleId;
+  Map<String, DaySchedule> _originalSchedule = {};
 
   @override
   void onInit() {
@@ -20,46 +29,37 @@ class ScheduleChangeController extends GetxController {
     _loadInitialSchedule();
   }
 
+  @override
+  void onClose() {
+    reasonController.dispose();
+    super.onClose();
+  }
+
   Future<void> _loadInitialSchedule() async {
     isLoading.value = true;
 
     try {
-      final String response = await rootBundle.loadString(
-        'assets/jsons/mock_schedules.json',
-      );
-      final List<dynamic> data = jsonDecode(response);
+      final response = await _scheduleService.fetchCurrent();
+      final Schedule? schedule = response.data;
 
-      final defaultSchedule = _defaultSchedule();
-      final userSchedule = data.isNotEmpty
-          ? data.firstWhere(
-              (schedule) => schedule['userId'] == 'usr-trainee-001',
-              orElse: () => data.first,
-            )
-          : null;
+      hasExistingSchedule.value = schedule != null && schedule.status == 'approved';
+      _unapprovedScheduleId = hasExistingSchedule.value ? null : schedule?.id;
 
-      if (userSchedule != null) {
-        selectedTargetHours.value = _normalizeTargetHours(
-          userSchedule['weeklyHours'] as int? ?? 30,
-        );
-
-        final scheduleMap = Map<String, DaySchedule>.from(defaultSchedule);
-
-        for (final dayRecord in userSchedule['days'] as List<dynamic>) {
-          final String dayLabel = _dayLabel(dayRecord['day']);
-          final List<ScheduleBlock> blocks = _buildBlocksFromDay(dayRecord);
-
-          scheduleMap[dayLabel] = DaySchedule(
-            enabled: blocks.isNotEmpty,
-            blocks: blocks,
-          );
-        }
-
+      if (schedule != null) {
+        selectedTargetHours.value = _normalizeTargetHours(schedule.weeklyHours);
+        final scheduleMap = Map<String, DaySchedule>.from(Schedule.emptyDays());
+        scheduleMap.addAll(schedule.days);
         weeklySchedule.assignAll(scheduleMap);
+        _originalSchedule = Map<String, DaySchedule>.from(scheduleMap);
       } else {
-        weeklySchedule.assignAll(defaultSchedule);
+        weeklySchedule.assignAll(Schedule.emptyDays());
+        _originalSchedule = {};
       }
     } catch (_) {
-      weeklySchedule.assignAll(_defaultSchedule());
+      hasExistingSchedule.value = false;
+      _unapprovedScheduleId = null;
+      _originalSchedule = {};
+      weeklySchedule.assignAll(Schedule.emptyDays());
     } finally {
       isLoading.value = false;
     }
@@ -94,87 +94,6 @@ class ScheduleChangeController extends GetxController {
     updatedBlocks[blockIndex] = ScheduleBlock(type: block.type, start: fmt(startTOD), end: fmt(endTOD));
 
     weeklySchedule[dayKey] = DaySchedule(enabled: currentDay.enabled, blocks: updatedBlocks);
-  }
-
-  Map<String, DaySchedule> _defaultSchedule() {
-    return {
-      'Lunes': const DaySchedule(
-        enabled: true,
-        blocks: [
-          ScheduleBlock(type: BlockType.work, start: '09:30', end: '14:30'),
-          ScheduleBlock(type: BlockType.breakTime, start: '12:00', end: '19:15'),
-          ScheduleBlock(type: BlockType.work, start: '07:00', end: '20:15'),
-        ],
-      ),
-      'Martes': const DaySchedule(
-        enabled: true,
-        blocks: [
-          ScheduleBlock(type: BlockType.work, start: '11:30', end: '13:30'),
-        ],
-      ),
-      'Miércoles': const DaySchedule(enabled: true, blocks: []),
-      'Jueves': const DaySchedule(enabled: true, blocks: []),
-      'Viernes': const DaySchedule(enabled: true, blocks: []),
-      'Sábado': const DaySchedule(enabled: false, blocks: []),
-    };
-  }
-
-  String _dayLabel(dynamic dayValue) {
-    switch (dayValue.toString().toLowerCase()) {
-      case 'monday':
-        return 'Lunes';
-      case 'tuesday':
-        return 'Martes';
-      case 'wednesday':
-        return 'Miércoles';
-      case 'thursday':
-        return 'Jueves';
-      case 'friday':
-        return 'Viernes';
-      case 'saturday':
-        return 'Sábado';
-      case 'sunday':
-        return 'Domingo';
-      default:
-        return dayValue.toString();
-    }
-  }
-
-  List<ScheduleBlock> _buildBlocksFromDay(Map<String, dynamic> dayRecord) {
-    final String checkIn = _normalizeTime(dayRecord['checkInTime']);
-    final String lunchStart = _normalizeTime(dayRecord['lunchStartTime']);
-    final String lunchEnd = _normalizeTime(dayRecord['lunchEndTime']);
-    final String checkOut = _normalizeTime(dayRecord['checkOutTime']);
-
-    final List<ScheduleBlock> blocks = [];
-
-    if (lunchStart.isNotEmpty && lunchEnd.isNotEmpty) {
-      blocks.add(
-        ScheduleBlock(type: BlockType.work, start: checkIn, end: lunchStart),
-      );
-      blocks.add(
-        ScheduleBlock(type: BlockType.breakTime, start: lunchStart, end: lunchEnd),
-      );
-      blocks.add(
-        ScheduleBlock(type: BlockType.work, start: lunchEnd, end: checkOut),
-      );
-      return blocks;
-    }
-
-    blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
-    return blocks;
-  }
-
-  String _normalizeTime(dynamic value) {
-    if (value == null) return '';
-    final String rawValue = value.toString();
-    return rawValue.length > 5 ? rawValue.substring(0, 5) : rawValue;
-  }
-
-  int _normalizeTargetHours(int value) {
-    if (value < 20) return 20;
-    if (value > 30) return 30;
-    return value;
   }
 
   int dayWorkMins(DaySchedule day) {
@@ -278,28 +197,124 @@ class ScheduleChangeController extends GetxController {
     }
   }
 
-  void submitForApproval() {
-    // Build a lightweight request object with full week snapshot
-    final request = {
-      'id': 'scr-local-${DateTime.now().millisecondsSinceEpoch}',
-      'userId': 'usr-trainee-001',
-      'status': 'pending',
-      'createdAt': DateTime.now().toUtc().toIso8601String(),
-      'payload': weeklySchedule.map((k, v) => MapEntry(k, {
-            'enabled': v.enabled,
-            'blocks': v.blocks
-                .map((b) => {'type': b.type.toString().split('.').last, 'start': b.start, 'end': b.end})
-                .toList()
-          })),
-    };
+  bool _dayChanged(DaySchedule original, DaySchedule edited) {
+    if (original.enabled != edited.enabled) return true;
+    if (original.blocks.length != edited.blocks.length) return true;
+    for (int i = 0; i < original.blocks.length; i++) {
+      final a = original.blocks[i];
+      final b = edited.blocks[i];
+      if (a.type != b.type || a.start != b.start || a.end != b.end) return true;
+    }
+    return false;
+  }
 
-    // Persist locally in SharedPreferences (merged with mock file when listing)
-    SharedPreferences.getInstance().then((prefs) {
-      final raw = prefs.getString('local_schedule_change_requests');
-      final List<dynamic> existing = raw == null ? [] : jsonDecode(raw) as List<dynamic>;
-      existing.add(request);
-      prefs.setString('local_schedule_change_requests', jsonEncode(existing));
+  Future<void> _submitChangeRequests() async {
+    final reason = reasonController.text.trim();
+    if (reason.isEmpty) {
+      Get.snackbar(
+        'Falta el motivo',
+        'Cuéntanos brevemente por qué necesitas este cambio.',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+      return;
+    }
+
+    final changedDays = _originalSchedule.entries.where((entry) {
+      final edited = weeklySchedule[entry.key];
+      return edited != null && entry.value.id != null && _dayChanged(entry.value, edited);
+    }).toList();
+
+    if (changedDays.isEmpty) {
+      Get.snackbar(
+        'Sin cambios',
+        'No modificaste ningún día de tu horario.',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+      return;
+    }
+
+    isSubmitting.value = true;
+    bool anyFailed = false;
+
+    for (final entry in changedDays) {
+      final edited = weeklySchedule[entry.key]!;
+      final workBlocks = edited.blocks.where((b) => b.type == BlockType.work).toList();
+      if (workBlocks.isEmpty) continue;
+      final breakBlocks = edited.blocks.where((b) => b.type == BlockType.breakTime).toList();
+
+      final response = await _scheduleChangeRequestService.create(
+        scheduleDayId: entry.value.id!,
+        reason: reason,
+        newCheckInTime: workBlocks.first.start,
+        newLunchStartTime: breakBlocks.isNotEmpty ? breakBlocks.first.start : null,
+        newLunchEndTime: breakBlocks.isNotEmpty ? breakBlocks.first.end : null,
+        newCheckOutTime: workBlocks.last.end,
+      );
+      if (!response.success) anyFailed = true;
+    }
+
+    isSubmitting.value = false;
+
+    if (anyFailed) {
+      Get.snackbar(
+        'Error',
+        'Algunas solicitudes no se pudieron enviar.',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    } else {
       isSubmitted.value = true;
-    });
+    }
+  }
+
+  Future<void> submitForApproval() async {
+    if (hasExistingSchedule.value) {
+      await _submitChangeRequests();
+      return;
+    }
+
+    isSubmitting.value = true;
+    final existingId = _unapprovedScheduleId;
+    final response = existingId != null
+        ? await _scheduleService.update(
+            scheduleId: existingId,
+            weeklyHours: selectedTargetHours.value,
+            days: weeklySchedule,
+          )
+        : await _scheduleService.create(
+            weeklyHours: selectedTargetHours.value,
+            days: weeklySchedule,
+          );
+    isSubmitting.value = false;
+
+    if (response.success) {
+      _unapprovedScheduleId = response.data?.id ?? existingId;
+      isSubmitted.value = true;
+    } else {
+      Get.snackbar(
+        'Error',
+        response.message.isNotEmpty
+            ? response.message
+            : 'No se pudo guardar tu horario.',
+        backgroundColor: AppColors.error,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+      );
+    }
+  }
+
+  int _normalizeTargetHours(int value) {
+    if (value < 20) return 20;
+    if (value > 30) return 30;
+    return value;
   }
 }

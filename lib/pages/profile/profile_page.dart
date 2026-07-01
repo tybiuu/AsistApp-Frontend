@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
+import '../../components/no_active_schedule_view.dart';
 import '../../components/primary_button.dart';
 import '../../components/schedule_card.dart';
 import '../../components/status_badge.dart';
@@ -44,17 +45,30 @@ class ProfilePage extends StatelessWidget {
                     // ── Schedule ─────────────────────────────────────────
                     const _SectionHeader(title: 'Mi horario'),
                     const SizedBox(height: 10),
-                    ScheduleCard(
-                      schedule: c.schedule,
-                      expandedDay: c.expandedDay,
-                      onToggleDay: c.toggleDay,
-                    ),
-                    const SizedBox(height: 12),
-                    PrimaryButton(
-                      text: 'Solicitar cambio de horario',
-                      variant: PrimaryButtonVariant.secondary,
-                      onPressed: () => Get.toNamed(AppRoutes.scheduleChange),
-                    ),
+                    Obx(() {
+                      if (!c.hasApprovedSchedule) {
+                        return NoActiveScheduleView(
+                          schedule: c.rawSchedule.value,
+                          onReturn: c.reloadSchedule,
+                        );
+                      }
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          ScheduleCard(
+                            schedule: c.schedule,
+                            expandedDay: c.expandedDay,
+                            onToggleDay: c.toggleDay,
+                          ),
+                          const SizedBox(height: 12),
+                          PrimaryButton(
+                            text: 'Solicitar cambio de horario',
+                            variant: PrimaryButtonVariant.secondary,
+                            onPressed: () => Get.toNamed(AppRoutes.scheduleChange),
+                          ),
+                        ],
+                      );
+                    }),
                     const SizedBox(height: 16),
 
                     // ── Solicitudes ───────────────────────────────────────

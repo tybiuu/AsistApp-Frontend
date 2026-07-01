@@ -100,9 +100,9 @@ class ProfileHeaderCard extends StatelessWidget {
           // Stats row
           Row(
             children: [
-              _Stat(value: '92%', label: 'Asistencia', color: AppColors.chart1),
+              _Stat(value: '${c.attendancePercent.value}%', label: 'Asistencia', color: AppColors.chart1),
               _Divider(color: border),
-              _Stat(value: '142h', label: 'Completadas', color: onCard),
+              _Stat(value: '${c.completedHours.value}h', label: 'Completadas', color: onCard),
               _Divider(color: border),
               _Stat(value: cicloLabel(c.cycle), label: 'Ciclo', color: onCard),
             ],

@@ -1,6 +1,35 @@
 import '../utils/date_utils.dart';
 import 'attendance_request.dart';
 
+class ScheduleChangeRequestDay {
+  final String id;
+  final String day;
+  final String? checkInTime;
+  final String? lunchStartTime;
+  final String? lunchEndTime;
+  final String? checkOutTime;
+
+  const ScheduleChangeRequestDay({
+    required this.id,
+    required this.day,
+    this.checkInTime,
+    this.lunchStartTime,
+    this.lunchEndTime,
+    this.checkOutTime,
+  });
+
+  factory ScheduleChangeRequestDay.fromJson(Map<String, dynamic> json) {
+    return ScheduleChangeRequestDay(
+      id: json['id'] as String? ?? '',
+      day: json['day'] as String? ?? '',
+      checkInTime: json['checkInTime'] as String?,
+      lunchStartTime: json['lunchStartTime'] as String?,
+      lunchEndTime: json['lunchEndTime'] as String?,
+      checkOutTime: json['checkOutTime'] as String?,
+    );
+  }
+}
+
 class ScheduleChangeRequest {
   final String id;
   final String userId;
@@ -14,6 +43,7 @@ class ScheduleChangeRequest {
   final String? reviewedById;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final ScheduleChangeRequestDay? scheduleDay;
 
   const ScheduleChangeRequest({
     required this.id,
@@ -28,6 +58,7 @@ class ScheduleChangeRequest {
     this.reviewedById,
     required this.createdAt,
     required this.updatedAt,
+    this.scheduleDay,
   });
 
   factory ScheduleChangeRequest.fromJson(Map<String, dynamic> json) {
@@ -47,6 +78,9 @@ class ScheduleChangeRequest {
       reviewedById: json['reviewedById'] as String?,
       createdAt: dateFromJson(json['createdAt'] as String?),
       updatedAt: dateFromJson(json['updatedAt'] as String?),
+      scheduleDay: json['scheduleDay'] != null
+          ? ScheduleChangeRequestDay.fromJson(json['scheduleDay'] as Map<String, dynamic>)
+          : null,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
+import '../../components/no_active_schedule_view.dart';
 import 'analytics_controller.dart';
 import 'components/hours_card.dart';
 import 'components/stats_grid.dart';
@@ -24,6 +25,20 @@ class AnalyticsPage extends StatelessWidget {
         child: Obx(() {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
+          }
+
+          if (!controller.hasActiveSchedule) {
+            return Column(
+              children: [
+                const AppTopBar(title: 'Mi reporte'),
+                Expanded(
+                  child: NoActiveScheduleView(
+                    schedule: controller.schedule.value,
+                    onReturn: controller.loadData,
+                  ),
+                ),
+              ],
+            );
           }
 
           final data = controller.current;

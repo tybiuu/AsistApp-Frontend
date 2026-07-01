@@ -14,12 +14,7 @@ class AdminMemberDetailController extends GetxController {
   late final User member;
 
   final RxMap<String, DaySchedule> schedule = <String, DaySchedule>{
-    'Lunes': const DaySchedule(enabled: false, blocks: []),
-    'Martes': const DaySchedule(enabled: false, blocks: []),
-    'Miércoles': const DaySchedule(enabled: false, blocks: []),
-    'Jueves': const DaySchedule(enabled: false, blocks: []),
-    'Viernes': const DaySchedule(enabled: false, blocks: []),
-    'Sábado': const DaySchedule(enabled: false, blocks: []),
+    ...Schedule.emptyDays(),
   }.obs;
 
   final RxnInt expandedDay = RxnInt();
@@ -65,7 +60,8 @@ class AdminMemberDetailController extends GetxController {
   }
 
   Future<void> _loadSchedule() async {
-    schedule.assignAll(await _scheduleService.loadMock(member.id));
+    final response = await _scheduleService.fetchForUser(member.id);
+    schedule.assignAll(response.data?.days ?? Schedule.emptyDays());
   }
 
   void toggleDay(int idx) {

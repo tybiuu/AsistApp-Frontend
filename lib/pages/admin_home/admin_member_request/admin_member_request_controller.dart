@@ -1,5 +1,6 @@
 // lib/pages/admin_home/admin_member_request/admin_member_request_controller.dart
 
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../../models/user.dart';
@@ -15,16 +16,26 @@ class AdminMemberRequestController extends GetxController {
   }
 
   Future<void> acceptMember() async {
-    if (Get.isRegistered<AdminNewMembersController>()) {
-      await Get.find<AdminNewMembersController>().acceptMember(member);
+    try {
+      if (Get.isRegistered<AdminNewMembersController>()) {
+        await Get.find<AdminNewMembersController>().acceptMember(member);
+      }
+    } catch (e) {
+      debugPrint('[AdminMemberRequestController] Error al aceptar: $e');
+    } finally {
+      Get.back();
     }
-    Get.back();
   }
 
   Future<void> rejectMember() async {
-    if (Get.isRegistered<AdminNewMembersController>()) {
-      await Get.find<AdminNewMembersController>().rejectMember(member);
+    try {
+      if (Get.isRegistered<AdminNewMembersController>()) {
+        await Get.find<AdminNewMembersController>().rejectMember(member);
+      }
+    } catch (e) {
+      debugPrint('[AdminMemberRequestController] Error al rechazar: $e');
+    } finally {
+      Get.back();
     }
-    Get.back();
   }
 }

@@ -12,6 +12,7 @@ import '../../services/attendance_record_service.dart';
 import '../../services/attendance_request_service.dart';
 import '../../services/organization_service.dart';
 import '../../services/schedule_change_request_service.dart';
+import '../../services/schedule_service.dart';
 import '../../services/trainee_service.dart';
 import '../admin_validate/admin_missing_attendance_page.dart';
 import '../root/root_controller.dart';
@@ -23,6 +24,7 @@ class AdminHomeController extends GetxController {
   final AttendanceRecordService _attendanceRecordService = Get.find();
   final ScheduleChangeRequestService _scheduleChangeRequestService =
       Get.find();
+  final ScheduleService _scheduleService = Get.find();
   final AttendanceRequestService _attendanceRequestService = Get.find();
 
   final RxBool isLoading = false.obs;
@@ -79,6 +81,7 @@ class AdminHomeController extends GetxController {
     final attendanceRecordsResponse = await _attendanceRecordService.fetchAll();
     final scheduleChangeRequestsResponse = await _scheduleChangeRequestService
         .fetchAll();
+    final pendingSchedulesResponse = await _scheduleService.fetchPendingSchedules();
     final attendanceRequestsResponse = await _attendanceRequestService
         .fetchAll();
 
@@ -93,6 +96,7 @@ class AdminHomeController extends GetxController {
         trainees: traineesResponse.data ?? [],
         attendanceRecords: attendanceRecordsResponse.data ?? [],
         scheduleChangeRequests: scheduleChangeRequestsResponse.data ?? [],
+        pendingSchedulesCount: pendingSchedulesResponse.data?.length ?? 0,
         attendanceRequests: attendanceRequestsResponse.data ?? [],
       );
       message.value = '';
@@ -108,6 +112,7 @@ class AdminHomeController extends GetxController {
     required List<User> trainees,
     required List<AttendanceRecord> attendanceRecords,
     required List<ScheduleChangeRequest> scheduleChangeRequests,
+    required int pendingSchedulesCount,
     required List<AttendanceRequest> attendanceRequests,
   }) {
     final String summaryDate = _attendanceRecordService.latestDate(
@@ -148,17 +153,18 @@ class AdminHomeController extends GetxController {
       AdminRequestSummary(
         title: 'Nuevos miembros',
         count: trainees
-            .where((user) => user.status == UserStatus.pending)
+            .where((user) => user.status == UserStatus.pending && user.role == UserRole.trainee)
             .length,
         type: 'members',
       ),
       AdminRequestSummary(
-        title: 'Cambios de horario',
+        title: 'Solicitudes de horario',
         count: _scheduleChangeRequestService.countByStatus(
-          scheduleChangeRequests,
-          'pending',
-        ),
-        type: 'schedule',
+              scheduleChangeRequests,
+              'pending',
+            ) +
+            pendingSchedulesCount,
+        type: 'scheduleRequests',
       ),
       AdminRequestSummary(
         title: 'Asistencias faltantes',
@@ -170,7 +176,7 @@ class AdminHomeController extends GetxController {
       ),
     ]);
     activeMembers.assignAll(
-      trainees.where((user) => user.status == UserStatus.active),
+      trainees.where((user) => user.status == UserStatus.active && user.role == UserRole.trainee),
     );
   }
 
@@ -186,8 +192,8 @@ class AdminHomeController extends GetxController {
   void openRequest(AdminRequestSummary request) {
     if (request.type == 'members') {
       Get.toNamed(AppRoutes.adminNewMembers);
-    } else if (request.type == 'schedule') {
-      Get.toNamed(AppRoutes.adminScheduleValidation);
+    } else if (request.type == 'scheduleRequests') {
+      Get.toNamed(AppRoutes.adminScheduleRequests);
     } else if (request.type == 'attendance') {
       Get.to(() => const AdminMissingAttendancePage());
     }

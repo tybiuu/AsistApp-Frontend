@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../configs/routes.dart';
+import '../../models/attendance_record.dart';
 import '../../models/schedule.dart';
 import '../../models/user.dart';
+import '../../services/attendance_record_service.dart';
 import '../../services/organization_service.dart';
 import '../../services/schedule_service.dart';
 import '../../services/session_service.dart';
@@ -18,6 +20,7 @@ class ProfileController extends GetxController {
   final OrganizationService _organizationService = Get.find();
   final ScheduleService _scheduleService = Get.find();
   final UserService _userService = Get.find();
+  final AttendanceRecordService _attendanceRecordService = Get.find();
 
   // ── Current user — direct reference to SessionService ────────────────────
   Rx<User?> get user => SessionService.to.currentUser;
@@ -47,14 +50,15 @@ class ProfileController extends GetxController {
   final expandedDay = RxnInt();
 
   // ── Static data ───────────────────────────────────────────────────────────
-  final schedule = <String, DaySchedule>{
-    'Lunes': const DaySchedule(enabled: false, blocks: []),
-    'Martes': const DaySchedule(enabled: false, blocks: []),
-    'Miércoles': const DaySchedule(enabled: false, blocks: []),
-    'Jueves': const DaySchedule(enabled: false, blocks: []),
-    'Viernes': const DaySchedule(enabled: false, blocks: [])
-  }.obs;
+  final schedule = <String, DaySchedule>{...Schedule.emptyDays()}.obs;
+  final rawSchedule = Rxn<Schedule>();
   final carreras = kCarreras;
+
+  bool get hasApprovedSchedule => rawSchedule.value?.status == 'approved';
+
+  // ── Attendance stats ──────────────────────────────────────────────────────
+  final attendancePercent = 0.obs;
+  final completedHours = 0.obs;
 
   // ── Lifecycle ─────────────────────────────────────────────────────────────
   @override
@@ -67,12 +71,31 @@ class ProfileController extends GetxController {
     dCarrera.value = career;
     dCiclo.value = cycle;
 
-    _loadMockSchedule();
+    reloadSchedule();
     _loadOrganizationName();
+    _loadAttendanceStats();
   }
 
-  Future<void> _loadMockSchedule() async {
-    schedule.assignAll(await _scheduleService.loadMock(user.value?.id));
+  Future<void> _loadAttendanceStats() async {
+    final response = await _attendanceRecordService.fetchAll();
+    final List<AttendanceRecord> records = response.data ?? [];
+
+    final int confirmedCount = _attendanceRecordService.countByStatus(records, 'confirmed');
+    attendancePercent.value = records.isEmpty
+        ? 0
+        : ((confirmedCount / records.length) * 100).round();
+
+    final int completedMinutes = records.fold<int>(0, (total, record) {
+      final value = record.totalMinutes;
+      return value != null ? total + value : total;
+    });
+    completedHours.value = completedMinutes ~/ 60;
+  }
+
+  Future<void> reloadSchedule() async {
+    final response = await _scheduleService.fetchCurrent();
+    rawSchedule.value = response.data;
+    schedule.assignAll(response.data?.days ?? Schedule.emptyDays());
   }
 
   Future<void> _loadOrganizationName() async {

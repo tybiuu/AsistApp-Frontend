@@ -13,7 +13,7 @@ class AdminRequestCard extends StatelessWidget {
 
   IconData get _icon {
     switch (request.type) {
-      case 'schedule':
+      case 'scheduleRequests':
         return Icons.calendar_month_outlined;
       case 'attendance':
         return Icons.schedule_rounded;
@@ -24,7 +24,7 @@ class AdminRequestCard extends StatelessWidget {
 
   Color get _iconColor {
     switch (request.type) {
-      case 'schedule':
+      case 'scheduleRequests':
         return AppColors.chart6;
       case 'attendance':
         return AppColors.chart7;
@@ -74,24 +74,26 @@ class AdminRequestCard extends StatelessWidget {
                   ),
                 ),
               ),
-              Container(
-                width: 22,
-                height: 22,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: colors.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: Text(
-                  '${request.count}',
-                  style: TextStyle(
-                    color: colors.onPrimary,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
+              if (request.count > 0) ...[
+                Container(
+                  width: 22,
+                  height: 22,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: colors.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Text(
+                    '${request.count}',
+                    style: TextStyle(
+                      color: colors.onPrimary,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(width: 10),
+                const SizedBox(width: 10),
+              ],
               Icon(
                 Icons.chevron_right_rounded,
                 color: colors.onSurfaceVariant,

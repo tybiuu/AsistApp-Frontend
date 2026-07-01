@@ -6,8 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../components/no_active_schedule_view.dart';
 import '../../configs/theme.dart';
 import '../../models/attendance_record.dart';
+import '../../models/schedule.dart';
+import '../../services/schedule_service.dart';
 import '../../services/session_service.dart';
 import '../../utils/date_utils.dart';
 import '../root/root_controller.dart';
@@ -24,7 +27,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<_HomeMockData> _dataFuture;
+  late Future<_HomeData> _dataFuture;
 
   @override
   void initState() {
@@ -32,39 +35,30 @@ class _HomePageState extends State<HomePage> {
     _dataFuture = _loadHomeData();
   }
 
-  Future<_HomeMockData> _loadHomeData() async {
+  Future<_HomeData> _loadHomeData() async {
     final recordsString = await rootBundle.loadString(
       'assets/jsons/mock_attendance_records.json',
     );
-    final schedulesString = await rootBundle.loadString(
-      'assets/jsons/mock_schedules.json',
-    );
-
     final rawRecords = jsonDecode(recordsString) as List<dynamic>;
     final records = rawRecords
         .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
         .toList();
 
-    final schedules = jsonDecode(schedulesString) as List<dynamic>;
-    final schedule = schedules.first as Map<String, dynamic>;
-    final days = schedule['days'] as List<dynamic>;
-    final monday = days.first as Map<String, dynamic>;
+    final scheduleResponse = await Get.find<ScheduleService>().fetchCurrent();
 
-    return _HomeMockData(
-      records: records,
-      schedule: schedule,
-      todaySchedule: monday,
-    );
+    return _HomeData(records: records, schedule: scheduleResponse.data);
   }
 
-  String _dayName(String day) {
-    const names = {
-      'monday': 'Lunes', 'tuesday': 'Martes', 'wednesday': 'Miércoles',
-      'thursday': 'Jueves', 'friday': 'Viernes', 'saturday': 'Sábado',
-      'sunday': 'Domingo',
-    };
-    return names[day] ?? 'Lunes';
-  }
+  static const List<String> _dayLabels = [
+    'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo',
+  ];
+
+  static const List<String> _monthNames = [
+    'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+    'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre',
+  ];
+
+  String _todayDayLabel() => _dayLabels[DateTime.now().weekday - 1];
 
   int _completedMinutes(List<AttendanceRecord> records) =>
       records.fold<int>(0, (total, record) {
@@ -72,9 +66,13 @@ class _HomePageState extends State<HomePage> {
         return value != null ? total + value : total;
       });
 
-  int _requiredMonthlyHours(Map<String, dynamic> schedule) {
-    final weeklyHours = schedule['weeklyHours'];
-    return weeklyHours is int ? weeklyHours * 4 : 120;
+  Future<void> _refresh() async {
+    final future = _loadHomeData();
+    if (!mounted) return;
+    setState(() {
+      _dataFuture = future;
+    });
+    await future;
   }
 
   @override
@@ -88,7 +86,7 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 420),
-            child: FutureBuilder<_HomeMockData>(
+            child: FutureBuilder<_HomeData>(
               future: _dataFuture,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
@@ -104,13 +102,23 @@ class _HomePageState extends State<HomePage> {
                 }
 
                 final data = snapshot.data!;
-                final records = data.records;
-                final todaySchedule = data.todaySchedule;
                 final schedule = data.schedule;
+
+                if (schedule == null || schedule.status != 'approved') {
+                  return NoActiveScheduleView(schedule: schedule, onReturn: _refresh);
+                }
+
+                final records = data.records;
+                final todayLabel = _todayDayLabel();
+                final todaySchedule = schedule.days[todayLabel];
+                final workBlocks = todaySchedule?.blocks
+                        .where((b) => b.type == BlockType.work)
+                        .toList() ??
+                    const <ScheduleBlock>[];
 
                 final completedMinutes = _completedMinutes(records);
                 final completedHours = completedMinutes ~/ 60;
-                final requiredHours = _requiredMonthlyHours(schedule);
+                final requiredHours = schedule.weeklyHours * 4;
                 final progress = requiredHours == 0
                     ? 0.0
                     : (completedHours / requiredHours).clamp(0.0, 1.0);
@@ -124,9 +132,10 @@ class _HomePageState extends State<HomePage> {
                     ? 0
                     : ((confirmedCount / records.length) * 100).round();
 
-                final checkIn = formatTime12h(todaySchedule['checkInTime']);
-                final checkOut = formatTime12h(todaySchedule['checkOutTime']);
-                final todayLabel = '${_dayName(todaySchedule['day'].toString())} 28 de abril';
+                final checkIn = workBlocks.isNotEmpty ? formatTime12h(workBlocks.first.start) : '--:--';
+                final checkOut = workBlocks.isNotEmpty ? formatTime12h(workBlocks.last.end) : '--:--';
+                final now = DateTime.now();
+                final todayDateLabel = '$todayLabel ${now.day} de ${_monthNames[now.month - 1]}';
                 final latestRecords = records.where((r) => r.status != AttendanceStatus.pending).take(2).toList();
 
                 return ListView(
@@ -151,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 18),
                     TodayCard(
-                      dateLabel: todayLabel,
+                      dateLabel: todayDateLabel,
                       checkIn: checkIn,
                       checkOut: checkOut,
                       onMark: () => Get.find<RootController>().changeTab(1),
@@ -293,14 +302,9 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class _HomeMockData {
+class _HomeData {
   final List<AttendanceRecord> records;
-  final Map<String, dynamic> schedule;
-  final Map<String, dynamic> todaySchedule;
+  final Schedule? schedule;
 
-  const _HomeMockData({
-    required this.records,
-    required this.schedule,
-    required this.todaySchedule,
-  });
+  const _HomeData({required this.records, required this.schedule});
 }

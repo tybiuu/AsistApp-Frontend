@@ -26,9 +26,12 @@ class DaySchedule {
   final bool enabled;
   final List<ScheduleBlock> blocks;
 
+  final String? id;
+
   const DaySchedule({
     required this.enabled,
     required this.blocks,
+    this.id,
   });
 
   factory DaySchedule.fromJson(Map<String, dynamic> json) {
@@ -51,10 +54,11 @@ class DaySchedule {
     } else {
       blocks.add(ScheduleBlock(type: BlockType.work, start: checkIn, end: checkOut));
     }
-    return DaySchedule(enabled: true, blocks: blocks);
+    return DaySchedule(enabled: true, blocks: blocks, id: json['id'] as String?);
   }
 
   Map<String, dynamic> toJson() => {
+    'id': id,
     'enabled': enabled,
     'blocks': blocks.map((b) => b.toJson()).toList(),
   };
@@ -101,7 +105,8 @@ class Schedule {
     'Martes': const DaySchedule(enabled: false, blocks: []),
     'Miércoles': const DaySchedule(enabled: false, blocks: []),
     'Jueves': const DaySchedule(enabled: false, blocks: []),
-    'Viernes': const DaySchedule(enabled: false, blocks: [])
+    'Viernes': const DaySchedule(enabled: false, blocks: []),
+    'Sábado': const DaySchedule(enabled: false, blocks: []),
   };
 
   factory Schedule.fromJson(Map<String, dynamic> json) {

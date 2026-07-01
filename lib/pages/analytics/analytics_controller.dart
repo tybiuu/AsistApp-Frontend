@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../models/schedule.dart';
+import '../../services/schedule_service.dart';
+
 class PractitionerAnalytics {
   final String month;
   final int hoursCompleted;
@@ -58,9 +61,14 @@ class PractitionerAnalytics {
 }
 
 class AnalyticsController extends GetxController {
+  final ScheduleService _scheduleService = Get.find();
+
   final allMonths = <PractitionerAnalytics>[].obs;
   final selectedIndex = 0.obs;
   final isLoading = true.obs;
+  final Rxn<Schedule> schedule = Rxn<Schedule>();
+
+  bool get hasActiveSchedule => schedule.value?.status == 'approved';
 
   PractitionerAnalytics? get current =>
       allMonths.isEmpty ? null : allMonths[selectedIndex.value];
@@ -83,6 +91,16 @@ class AnalyticsController extends GetxController {
   }
 
   Future<void> loadData() async {
+    isLoading.value = true;
+
+    final scheduleResponse = await _scheduleService.fetchCurrent();
+    schedule.value = scheduleResponse.data;
+
+    if (!hasActiveSchedule) {
+      isLoading.value = false;
+      return;
+    }
+
     try {
       final String raw = await rootBundle
           .loadString('assets/jsons/mock_practi_analytics.json');

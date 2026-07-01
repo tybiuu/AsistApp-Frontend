@@ -1,10 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
+import '../../components/no_active_schedule_view.dart';
+import '../../models/schedule.dart';
+import '../../services/schedule_service.dart';
 import '../../utils/date_utils.dart';
 import '../../configs/theme.dart';
 import 'components/attendance_action_widgets.dart';
@@ -21,12 +23,16 @@ class AttendancePage extends StatefulWidget {
 }
 
 class _AttendancePageState extends State<AttendancePage> {
-  late Future<Map<String, dynamic>> _scheduleFuture;
+  late Future<Schedule?> _scheduleFuture;
   int _currentStep = 0;
   final Map<int, String> _markedTimes = {};
   bool _showConfirmation = false;
   Timer? _confirmTimer;
   int _stepsLength = 4;
+
+  static const List<String> _dayLabels = [
+    'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo',
+  ];
 
   @override
   void initState() {
@@ -40,10 +46,18 @@ class _AttendancePageState extends State<AttendancePage> {
     super.dispose();
   }
 
-  Future<Map<String, dynamic>> _loadSchedule() async {
-    final jsonString = await rootBundle.loadString('assets/jsons/mock_schedules.json');
-    final schedules = jsonDecode(jsonString) as List<dynamic>;
-    return schedules.first as Map<String, dynamic>;
+  Future<Schedule?> _loadSchedule() async {
+    final response = await Get.find<ScheduleService>().fetchCurrent();
+    return response.data;
+  }
+
+  Future<void> _refresh() async {
+    final future = _loadSchedule();
+    if (!mounted) return;
+    setState(() {
+      _scheduleFuture = future;
+    });
+    await future;
   }
 
   void _handleMark() {
@@ -77,21 +91,40 @@ class _AttendancePageState extends State<AttendancePage> {
       backgroundColor: colors.surfaceContainerLow,
       body: SafeArea(
         top: false,
-        child: FutureBuilder<Map<String, dynamic>>(
+        child: FutureBuilder<Schedule?>(
           future: _scheduleFuture,
           builder: (context, snapshot) {
-            if (!snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             }
 
-            final schedule = snapshot.data!;
-            final days = schedule['days'] as List<dynamic>;
-            final today = days.first as Map<String, dynamic>;
+            final schedule = snapshot.data;
+            if (schedule == null || schedule.status != 'approved') {
+              return Column(
+                children: [
+                  const AppTopBar(title: 'Asistencia'),
+                  Expanded(
+                    child: NoActiveScheduleView(schedule: schedule, onReturn: _refresh),
+                  ),
+                ],
+              );
+            }
 
-            final checkIn    = formatTime12h(today['checkInTime']);
-            final lunchStart = formatTime12h(today['lunchStartTime']);
-            final lunchEnd   = formatTime12h(today['lunchEndTime']);
-            final checkOut   = formatTime12h(today['checkOutTime']);
+            final todayLabel = _dayLabels[DateTime.now().weekday - 1];
+            final today = schedule.days[todayLabel];
+            final workBlocks = today?.blocks
+                    .where((b) => b.type == BlockType.work)
+                    .toList() ??
+                const <ScheduleBlock>[];
+            final breakBlocks = today?.blocks
+                    .where((b) => b.type == BlockType.breakTime)
+                    .toList() ??
+                const <ScheduleBlock>[];
+
+            final checkIn = workBlocks.isNotEmpty ? formatTime12h(workBlocks.first.start) : '--:--';
+            final checkOut = workBlocks.isNotEmpty ? formatTime12h(workBlocks.last.end) : '--:--';
+            final lunchStart = breakBlocks.isNotEmpty ? formatTime12h(breakBlocks.first.start) : '--:--';
+            final lunchEnd = breakBlocks.isNotEmpty ? formatTime12h(breakBlocks.first.end) : '--:--';
 
             final steps = [
               AttendanceStep(label: 'Ingreso',         action: 'MARCAR INGRESO',              color: colors.primary,  icon: Icons.login_rounded,          scheduled: checkIn),
@@ -112,7 +145,7 @@ class _AttendancePageState extends State<AttendancePage> {
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       ScheduleInfoCard(
-                        organizationId: schedule['organizationId'].toString(),
+                        organizationId: schedule.organizationId ?? '',
                         checkIn: checkIn,
                         checkOut: checkOut,
                         lunchStart: lunchStart,

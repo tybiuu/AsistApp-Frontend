@@ -1,7 +1,5 @@
 // lib/main.dart
 
-import 'package:asist_app/pages/admin_schedule_validation/admin_schedule_validation_detail_page.dart';
-import 'package:asist_app/pages/admin_schedule_validation/admin_schedule_validation_page.dart';
 import 'package:asist_app/pages/schedule_change/schedule_change_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
@@ -25,6 +23,8 @@ import 'pages/admin_home/admin_home_page.dart';
 import 'pages/admin_home/admin_member_detail/admin_member_detail_page.dart';
 import 'pages/admin_home/admin_member_request/admin_member_request_page.dart';
 import 'pages/admin_home/admin_new_members/admin_new_members_page.dart';
+import 'pages/admin_schedule_requests/admin_schedule_request_detail_page.dart';
+import 'pages/admin_schedule_requests/admin_schedule_requests_page.dart';
 import 'pages/admin_setup/admin_setup_page.dart';
 import 'pages/admin_setup_success/admin_setup_success_page.dart';
 import 'pages/admin_validate/admin_validate_page.dart';
@@ -135,12 +135,12 @@ class MyApp extends StatelessWidget {
           page: () => const AdminMemberDetailPage(),
         ),
         GetPage(
-          name: AppRoutes.adminScheduleValidation,
-          page: () => const AdminScheduleValidationPage(),
+          name: AppRoutes.adminScheduleRequests,
+          page: () => const AdminScheduleRequestsPage(),
         ),
         GetPage(
-          name: AppRoutes.adminScheduleValidationDetail,
-          page: () => const AdminScheduleValidationDetailPage(),
+          name: AppRoutes.adminScheduleRequestDetail,
+          page: () => const AdminScheduleRequestDetailPage(),
         ),
         GetPage(
           name: AppRoutes.scheduleChange,

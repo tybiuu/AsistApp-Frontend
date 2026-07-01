@@ -20,13 +20,9 @@ class RoleSelectController extends GetxController {
 
   void handleContinue() {
     if (selectedRole.value == null) return;
-    
-    // TODO: Save role in a global state if needed
-    // setRegisterRole(selectedRole.value);
-    
-    Get.toNamed(AppRoutes.register); // Navigation as per React code
+    Get.toNamed(AppRoutes.register);
   }
-  
+
   void goBack() {
     Get.back();
   }

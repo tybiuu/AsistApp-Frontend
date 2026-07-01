@@ -97,10 +97,36 @@ class EditorView extends StatelessWidget {
                 brandColor: brandColor,
               ),
             ),
+            if (c.hasExistingSchedule.value) ...[
+              const SizedBox(height: 8),
+              Text(
+                'MOTIVO DEL CAMBIO',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                  color: cs.onSurfaceVariant,
+                  letterSpacing: 0.5,
+                ),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: c.reasonController,
+                maxLines: 3,
+                decoration: InputDecoration(
+                  hintText: 'Cuéntale a tu jefe por qué necesitas este cambio',
+                  filled: true,
+                  fillColor: cs.surfaceContainerLow,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ],
             const SizedBox(height: 24),
             PrimaryButton(
               text: 'Enviar para aprobación',
-              onPressed: () => c.submitForApproval(),
+              onPressed: c.isSubmitting.value ? null : () => c.submitForApproval(),
             ),
             const SizedBox(height: 16),
           ],
