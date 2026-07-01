@@ -10,73 +10,34 @@ import '../configs/generic_response.dart';
 import '../models/organization.dart';
 import 'api_service.dart';
 import 'preferences_service.dart';
+import 'session_service.dart';
 
 class OrganizationService {
   final PreferencesService _prefs = PreferencesService();
   ApiService get _api => Get.find<ApiService>();
 
   Future<GenericResponse<Organization>> fetchCurrent({String? organizationId}) async {
-    if (organizationId == null || organizationId.isEmpty) {
-      try {
-        final String jsonString = await rootBundle.loadString(
-          'assets/jsons/mock_organization.json',
-        );
-        final Map<String, dynamic> jsonMap = json.decode(jsonString);
-        final Organization organization = Organization.fromJson(
-          jsonMap['organization'] ?? <String, dynamic>{},
-        );
-
-        return GenericResponse(
-          success: true,
-          data: organization,
-          message: 'Organización actual',
-          error: null,
-        );
-      } catch (e, stackTrace) {
-        return GenericResponse(
-          success: false,
-          data: null,
-          message: 'Ocurrió un error no esperado',
-          error: stackTrace.toString(),
-        );
-      }
+    final String? orgId = organizationId ?? SessionService.to.currentUser.value?.organizationId;
+    if (orgId == null || orgId.isEmpty) {
+      return GenericResponse(
+        success: false,
+        data: null,
+        message: 'No tienes una organización asignada.',
+      );
     }
 
     try {
-      final String baseURL = Constants.baseUrl;
-      final url = Uri.parse('${baseURL}organizations/$organizationId');
-      final String? token = await _prefs.getToken();
-
-      final response = await http.get(
-        url,
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        },
+      final Map<String, dynamic> data = await _api.get('organizations/$orgId');
+      return GenericResponse(
+        success: true,
+        data: Organization.fromJson(data),
+        message: 'Organización obtenida con éxito.',
       );
-      final Map<String, dynamic> body = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        final organization = Organization.fromJson(body);
-        return GenericResponse(
-          success: true,
-          data: organization,
-          message: 'Organización obtenida con éxito.',
-          error: null,
-        );
-      } else {
-        final String errorMessage = body['error'] as String? ?? 'Error al obtener la organización.';
-        return GenericResponse(
-          success: false,
-          data: null,
-          message: errorMessage,
-        );
-      }
     } catch (e, stackTrace) {
       return GenericResponse(
         success: false,
         data: null,
-        message: 'No se pudo conectar con el servidor.',
+        message: e.toString().replaceFirst('Exception: ', ''),
         error: stackTrace.toString(),
       );
     }
@@ -91,14 +52,22 @@ class OrganizationService {
     required String name,
     required int lateTimeLimit,
     String? description,
+    String? photoUrl,
   }) async {
     final Map<String, dynamic> body = {
       'name': name,
       'lateTimeLimit': lateTimeLimit,
       if (description != null && description.isNotEmpty) 'description': description,
+      if (photoUrl != null && photoUrl.isNotEmpty) 'photoUrl': photoUrl,
     };
-    final Map<String, dynamic> data = await _api.post('organizations', body);
+    final Map<String, dynamic> data = await _api.post('organizations', body, auth: true);
     return Organization.fromJson(data);
+  }
+
+  Future<String> uploadPhoto(Uint8List bytes, String filename) async {
+    final Map<String, dynamic> data = await _api.uploadFile('uploads', bytes, filename);
+    final String relativeUrl = data['url'] as String;
+    return Uri.parse(Constants.baseUrl).resolve(relativeUrl).toString();
   }
 
   Future<Organization> fetchByCode(String code) async {

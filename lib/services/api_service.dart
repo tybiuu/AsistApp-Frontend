@@ -3,6 +3,7 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 
 import '../configs/constants.dart';
 import 'preferences_service.dart';
@@ -82,6 +83,35 @@ class ApiService {
       body: jsonEncode(body),
     );
     return _parse(response, 'PUT', uri);
+  }
+
+  Future<Map<String, dynamic>> uploadFile(
+    String path,
+    Uint8List bytes,
+    String filename, {
+    bool auth = true,
+  }) async {
+    final uri = _uri(path);
+    debugPrint('[UPLOAD] → $uri | file: $filename (${bytes.length} bytes)');
+
+    final request = http.MultipartRequest('POST', uri);
+    final String? token = auth ? await _prefs.getToken() : null;
+    if (token != null) request.headers['Authorization'] = 'Bearer $token';
+    request.files.add(http.MultipartFile.fromBytes(
+      'file',
+      bytes,
+      filename: filename,
+      contentType: MediaType('image', _extensionOf(filename)),
+    ));
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    return _parse(response, 'UPLOAD', uri);
+  }
+
+  String _extensionOf(String filename) {
+    final String ext = filename.split('.').last.toLowerCase();
+    return ext == 'jpg' ? 'jpeg' : ext;
   }
 
   Future<void> delete(String path, {bool auth = true}) async {

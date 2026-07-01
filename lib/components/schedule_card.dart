@@ -151,14 +151,15 @@ class ScheduleCard extends StatelessWidget {
               ),
 
             // ── Hint ──────────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Text(
-                'Toca un día para ver los bloques exactos',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: muted, fontSize: 10),
+            if (days.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Text(
+                  'Toca un día para ver los bloques exactos',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: muted, fontSize: 10),
+                ),
               ),
-            ),
           ],
         ),
       );

@@ -59,15 +59,39 @@ class AdminAnalyticsPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    ...controller.members.map(
-                      (m) => MemberRow(
-                        member: m,
-                        onTap: () => Get.toNamed(
-                          AppRoutes.adminMemberDetail,
-                          arguments: m.toUser(),
+                    if (controller.members.isEmpty)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 24),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.groups_outlined,
+                              size: 40,
+                              color: colors.onSurfaceVariant,
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Todavía no tienes practicantes activos',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: colors.onSurfaceVariant,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      ...controller.members.map(
+                        (m) => MemberRow(
+                          member: m,
+                          onTap: () => Get.toNamed(
+                            AppRoutes.adminMemberDetail,
+                            arguments: m.toUser(),
+                          ),
                         ),
                       ),
-                    ),
                     const SizedBox(height: 24),
                     Text(
                       'Métricas generales',

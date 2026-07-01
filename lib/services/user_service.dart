@@ -121,6 +121,20 @@ class UserService {
     }
   }
 
+  Future<GenericResponse<void>> deleteUser(String id) async {
+    try {
+      await _api.delete('users/$id');
+      return GenericResponse(success: true, data: null, message: 'Usuario eliminado');
+    } catch (e, stackTrace) {
+      return GenericResponse(
+        success: false,
+        data: null,
+        message: e.toString().replaceFirst('Exception: ', ''),
+        error: stackTrace.toString(),
+      );
+    }
+  }
+
   Future<GenericResponse<User>> updateUser(String id, Map<String, dynamic> data) async {
     try {
       final String baseURL = Constants.baseUrl;

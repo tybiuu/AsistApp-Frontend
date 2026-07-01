@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../../../components/app_top_bar.dart';
 import '../../../components/info_row.dart';
 import '../../../components/member_metric_card.dart';
+import '../../../components/no_active_schedule_view.dart';
 import '../../../components/primary_button.dart';
 import '../../../components/schedule_card.dart';
 import '../../../utils/label_utils.dart';
@@ -151,24 +152,34 @@ class AdminMemberDetailPage extends StatelessWidget {
 
                     // ── Schedule ──────────────────────────────────────────────
                     const SizedBox(height: 20),
-                    ScheduleCard(
-                      schedule: controller.schedule,
-                      expandedDay: controller.expandedDay,
-                      onToggleDay: controller.toggleDay,
-                    ),
+                    Obx(() {
+                      if (!controller.hasApprovedSchedule) {
+                        return NoActiveScheduleView(
+                          schedule: controller.rawSchedule.value,
+                          isOwnSchedule: false,
+                        );
+                      }
+                      return ScheduleCard(
+                        schedule: controller.schedule,
+                        expandedDay: controller.expandedDay,
+                        onToggleDay: controller.toggleDay,
+                      );
+                    }),
 
                     // ── Delete button ─────────────────────────────────────────
                     const SizedBox(height: 24),
-                    PrimaryButton(
-                      variant: PrimaryButtonVariant.destructive,
-                      onPressed: controller.deleteMember,
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.person_remove_outlined, size: 20),
-                          SizedBox(width: 8),
-                          Text('Eliminar miembro'),
-                        ],
+                    Obx(
+                      () => PrimaryButton(
+                        variant: PrimaryButtonVariant.destructive,
+                        onPressed: controller.isDeleting.value ? null : controller.deleteMember,
+                        child: const Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.person_remove_outlined, size: 20),
+                            SizedBox(width: 8),
+                            Text('Eliminar miembro'),
+                          ],
+                        ),
                       ),
                     ),
                   ],

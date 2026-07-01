@@ -126,17 +126,36 @@ class AdminConfigController extends GetxController {
     final Organization? current = organization.value;
     if (current == null) return;
 
+    final Uint8List? photoBytes = organizationPhotoBytes.value;
+    String? photoUrl;
+    if (photoBytes != null) {
+      try {
+        photoUrl = await _organizationService.uploadPhoto(photoBytes, 'logo.jpg');
+      } catch (_) {
+        Get.snackbar(
+          'Error',
+          'No se pudo subir la foto del laboratorio.',
+          backgroundColor: AppColors.error,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(16),
+        );
+        return;
+      }
+    }
+
     final Map<String, dynamic> updateData = {
       'name': organizationNameController.text.trim(),
       'description': organizationDescriptionController.text.trim(),
       'lateTimeLimit': tardinessLimit.value,
+      'photoUrl': ?photoUrl,
     };
 
     final response = await _organizationService.updateOrganization(current.id, updateData);
 
     if (response.success && response.data != null) {
       savedOrganizationPhotoBytes.value =
-          organizationPhotoBytes.value ?? savedOrganizationPhotoBytes.value;
+          photoBytes ?? savedOrganizationPhotoBytes.value;
       organization.value = response.data;
       await SessionService.to.updateOrganization(response.data!);
       editingOrganization.value = false;

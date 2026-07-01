@@ -77,12 +77,24 @@ class AdminSetupController extends GetxController {
 
     isLoading.value = true;
     try {
+      String? photoUrl;
+      final Uint8List? photoBytes = laboratoryPhotoBytes.value;
+      if (photoBytes != null) {
+        photoUrl = await _organizationService.uploadPhoto(photoBytes, 'logo.jpg');
+      }
+
       final org = await _organizationService.createOrganization(
         name: organizationName,
         lateTimeLimit: tardinessLimit.value,
         description: description,
+        photoUrl: photoUrl,
       );
       await SessionService.to.saveOrganization(org);
+
+      final currentUser = SessionService.to.currentUser.value;
+      if (currentUser != null) {
+        await SessionService.to.updateUser(currentUser.copyWith(organizationId: org.id));
+      }
       Get.offNamed(
         AppRoutes.adminSetupSuccess,
         arguments: {

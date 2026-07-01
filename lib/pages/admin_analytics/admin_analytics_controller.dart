@@ -6,60 +6,30 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../models/user.dart';
+import '../../services/trainee_service.dart';
 
 class MemberAnalytic {
-  final String name;
+  final User user;
   final int hoursLogged;
   final int attendancePercent;
   final int minutesLateSum;
   final int daysMissed;
 
   MemberAnalytic({
-    required this.name,
+    required this.user,
     required this.hoursLogged,
     required this.attendancePercent,
     required this.minutesLateSum,
     required this.daysMissed,
   });
 
-  String get initials => name
-      .split(' ')
-      .take(2)
-      .map((w) => w[0])
-      .join()
-      .toUpperCase();
-
-  String get firstName => name.split(' ').first;
-  String get lastName => name.split(' ').last;
+  String get name => user.fullName;
+  String get initials => user.initials;
+  String get firstName => user.firstName;
+  String get lastName => user.lastName;
   String get shortName => '${firstName[0]}. $lastName';
 
-  factory MemberAnalytic.fromJson(Map<String, dynamic> json) {
-    return MemberAnalytic(
-      name:              json['name'],
-      hoursLogged:       json['hoursLogged'],
-      attendancePercent: json['attendancePercent'],
-      minutesLateSum:    json['minutesLateSum'],
-      daysMissed:        json['daysMissed'],
-    );
-  }
-
-  User toUser() {
-    final parts = name.trim().split(' ');
-    final first = parts.isNotEmpty ? parts.first : name;
-    final last  = parts.length > 1 ? parts.sublist(1).join(' ') : '';
-    final now   = DateTime.now();
-    return User(
-      id:                 'analytic-${name.hashCode.abs()}',
-      firstName:          first,
-      lastName:           last,
-      institutionalEmail: '',
-      phoneNumber:        '',
-      role:               UserRole.trainee,
-      status:             UserStatus.active,
-      createdAt:          now,
-      updatedAt:          now,
-    );
-  }
+  User toUser() => user;
 }
 
 class MonthSummary {
@@ -89,6 +59,8 @@ class MonthSummary {
 }
 
 class AdminAnalyticsController extends GetxController {
+  final TraineeService _traineeService = Get.find();
+
   final members = <MemberAnalytic>[].obs;
   final Rxn<MonthSummary> summary = Rxn<MonthSummary>();
   final isLoading = true.obs;
@@ -112,13 +84,23 @@ class AdminAnalyticsController extends GetxController {
   }
 
   Future<void> loadData() async {
-    final String raw = await rootBundle.loadString('assets/jsons/mock_analytics.json');
-    final Map<String, dynamic> json = jsonDecode(raw);
-
-    members.value = (json['members'] as List)
-        .map((e) => MemberAnalytic.fromJson(e))
+    final traineesResponse = await _traineeService.fetchAll();
+    final activeTrainees = (traineesResponse.data ?? <User>[])
+        .where((u) => u.status == UserStatus.active)
         .toList();
 
+    members.value = activeTrainees
+        .map((u) => MemberAnalytic(
+              user: u,
+              hoursLogged: 0,
+              attendancePercent: 0,
+              minutesLateSum: 0,
+              daysMissed: 0,
+            ))
+        .toList();
+
+    final String raw = await rootBundle.loadString('assets/jsons/mock_analytics.json');
+    final Map<String, dynamic> json = jsonDecode(raw);
     summary.value = MonthSummary.fromJson(json['summary']);
     isLoading.value = false;
   }
