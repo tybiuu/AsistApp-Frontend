@@ -1,9 +1,12 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
+
+import '../../models/schedule.dart';
+import '../../services/attendance_request_service.dart';
+import '../../services/schedule_service.dart';
 
 
 // ── Model ─────────────────────────────────────────────────────────────────────
@@ -50,7 +53,11 @@ class _MissingAttendanceRequestPageState
   bool _submitted = false;
   Timer? _navTimer;
 
+  bool _submitting = false;
+  String? _submitError;
+
   bool get _canSubmit =>
+      !_submitting &&
       _selectedBlockId != null &&
       _arrivalTime != null &&
       _reasonController.text.length >= 10;
@@ -70,48 +77,47 @@ class _MissingAttendanceRequestPageState
   }
 
   Future<_PageData> _loadData() async {
-    final jsonString =
-        await rootBundle.loadString('assets/jsons/mock_schedules.json');
-    final List<dynamic> schedules = jsonDecode(jsonString);
-    final days = (schedules.first['days'] as List<dynamic>);
+    final ScheduleService scheduleService = Get.find<ScheduleService>();
+    final response = await scheduleService.fetchCurrent();
+    final Schedule? schedule = response.data;
 
     final now = DateTime.now();
-    final dayKeys = [
-      'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'
+    const dayOrder = [
+      'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado',
     ];
-    final todayKey = dayKeys[now.weekday - 1];
-    final day = days.firstWhere(
-      (d) => d['day'] == todayKey,
-      orElse: () => days.first,
-    ) as Map<String, dynamic>;
+    final todayKey = now.weekday >= 1 && now.weekday <= 6
+        ? dayOrder[now.weekday - 1]
+        : null;
 
-    final checkIn = day['checkInTime'] as String;
-    final checkOut = day['checkOutTime'] as String;
-    final lunchStart = day['lunchStartTime'] as String?;
-    final lunchEnd = day['lunchEndTime'] as String?;
-
-    final blocks = <_WorkBlock>[];
-    if (lunchStart != null && lunchEnd != null) {
-      blocks.add(_WorkBlock(
-        id: 'b1',
-        start: checkIn,
-        end: lunchStart,
-        hours: _diffHours(checkIn, lunchStart),
-      ));
-      blocks.add(_WorkBlock(
-        id: 'b2',
-        start: lunchEnd,
-        end: checkOut,
-        hours: _diffHours(lunchEnd, checkOut),
-      ));
-    } else {
-      blocks.add(_WorkBlock(
-        id: 'b1',
-        start: checkIn,
-        end: checkOut,
-        hours: _diffHours(checkIn, checkOut),
-      ));
+    DaySchedule? day;
+    if (schedule != null) {
+      final todayDay = todayKey != null ? schedule.days[todayKey] : null;
+      if (todayDay != null && todayDay.enabled && todayDay.blocks.isNotEmpty) {
+        day = todayDay;
+      } else {
+        for (final key in dayOrder) {
+          final candidate = schedule.days[key];
+          if (candidate != null && candidate.enabled && candidate.blocks.isNotEmpty) {
+            day = candidate;
+            break;
+          }
+        }
+      }
     }
+
+    final workBlocks = (day?.blocks ?? const <ScheduleBlock>[])
+        .where((b) => b.type == BlockType.work)
+        .toList();
+
+    final blocks = <_WorkBlock>[
+      for (int i = 0; i < workBlocks.length; i++)
+        _WorkBlock(
+          id: 'b${i + 1}',
+          start: workBlocks[i].start,
+          end: workBlocks[i].end,
+          hours: _diffHours(workBlocks[i].start, workBlocks[i].end),
+        ),
+    ];
 
     return _PageData(blocks: blocks, todayLabel: _todayLabel(now));
   }
@@ -141,8 +147,35 @@ class _MissingAttendanceRequestPageState
     if (picked != null) setState(() => _arrivalTime = picked);
   }
 
-  void _handleSubmit() {
-    setState(() => _submitted = true);
+  Future<void> _handleSubmit() async {
+    setState(() {
+      _submitting = true;
+      _submitError = null;
+    });
+
+    final now = DateTime.now();
+    final requestedDate =
+        '${now.year.toString().padLeft(4, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+
+    final response = await Get.find<AttendanceRequestService>().create(
+      requestedDate: requestedDate,
+      reason: _reasonController.text.trim(),
+    );
+
+    if (!mounted) return;
+
+    if (!response.success) {
+      setState(() {
+        _submitting = false;
+        _submitError = response.message;
+      });
+      return;
+    }
+
+    setState(() {
+      _submitting = false;
+      _submitted = true;
+    });
     _navTimer = Timer(
       const Duration(milliseconds: 2500),
       () { if (mounted) Navigator.pop(context); },
@@ -239,6 +272,8 @@ class _MissingAttendanceRequestPageState
                   onPickTime: _pickTime,
                   onBack: () => Navigator.pop(context),
                   onSubmit: _handleSubmit,
+                  submitting: _submitting,
+                  submitError: _submitError,
                 );
               },
             ),
@@ -264,6 +299,8 @@ class _FormBody extends StatelessWidget {
   final VoidCallback onPickTime;
   final VoidCallback onBack;
   final VoidCallback onSubmit;
+  final bool submitting;
+  final String? submitError;
 
   const _FormBody({
     required this.data,
@@ -278,6 +315,8 @@ class _FormBody extends StatelessWidget {
     required this.onPickTime,
     required this.onBack,
     required this.onSubmit,
+    this.submitting = false,
+    this.submitError,
   });
 
   @override
@@ -576,6 +615,14 @@ class _FormBody extends StatelessWidget {
           ),
         ),
 
+        if (submitError != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            submitError!,
+            style: const TextStyle(color: AppColors.error, fontSize: 12),
+          ),
+        ],
+
         const SizedBox(height: 24),
 
         // ── Submit ──
@@ -594,10 +641,19 @@ class _FormBody extends StatelessWidget {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16)),
             ),
-            child: const Text(
-              'Enviar solicitud',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
-            ),
+            child: submitting
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.5,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Text(
+                    'Enviar solicitud',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+                  ),
           ),
         ),
       ],

@@ -14,6 +14,7 @@ class ValidateCard extends StatelessWidget {
   final String? snackEnd;
   final String outTime;
   final bool isLate;
+  final VoidCallback? onValidate;
 
   const ValidateCard({
     super.key,
@@ -27,6 +28,7 @@ class ValidateCard extends StatelessWidget {
     required this.snackEnd,
     required this.outTime,
     required this.isLate,
+    this.onValidate,
   });
 
   int get _activeIndex {
@@ -93,19 +95,21 @@ class ValidateCard extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {},
+              onPressed: onValidate,
               style: ElevatedButton.styleFrom(
                 backgroundColor: colors.primary,
                 foregroundColor: Colors.white,
+                disabledBackgroundColor: colors.surfaceContainerHighest,
+                disabledForegroundColor: colors.onSurfaceVariant,
                 elevation: 0,
                 shape: const RoundedRectangleBorder(
                   borderRadius: BorderRadius.vertical(bottom: Radius.circular(18)),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              child: const Text(
-                'Validar →',
-                style: TextStyle(fontWeight: FontWeight.w800),
+              child: Text(
+                onValidate != null ? 'Validar →' : 'Ya validado',
+                style: const TextStyle(fontWeight: FontWeight.w800),
               ),
             ),
           ),

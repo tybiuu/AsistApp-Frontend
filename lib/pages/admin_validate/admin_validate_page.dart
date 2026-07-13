@@ -1,12 +1,13 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
 import '../../configs/theme.dart';
 import '../../models/attendance_record.dart';
 import '../../models/user.dart';
+import '../../services/attendance_record_service.dart';
+import '../../services/session_service.dart';
+import '../../services/trainee_service.dart';
 import '../../utils/date_utils.dart';
 import '../../utils/trainee_utils.dart';
 import 'components/missing_card.dart';
@@ -30,22 +31,28 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
   }
 
   Future<_AdminValidateData> _loadData() async {
-    final recordsString = await rootBundle.loadString(
-      'assets/jsons/mock_attendance_records.json',
+    final recordsResponse = await Get.find<AttendanceRecordService>().fetchAll();
+    final traineesResponse = await Get.find<TraineeService>().fetchAll();
+
+    return _AdminValidateData(
+      records: recordsResponse.data ?? <AttendanceRecord>[],
+      trainees: traineesResponse.data ?? <User>[],
     );
-    final traineesString = await rootBundle.loadString(
-      'assets/jsons/mock_trainees.json',
+  }
+
+  Future<void> _validate(AttendanceRecord record) async {
+    final currentUserId = SessionService.to.currentUser.value?.id;
+    final response = await Get.find<AttendanceRecordService>().setStatus(
+      record.id,
+      'confirmed',
+      validatedById: currentUserId,
     );
-
-    final records = (jsonDecode(recordsString) as List<dynamic>)
-        .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
-        .toList();
-
-    final trainees = (jsonDecode(traineesString) as List<dynamic>)
-        .map((j) => User.fromJson(j as Map<String, dynamic>))
-        .toList();
-
-    return _AdminValidateData(records: records, trainees: trainees);
+    if (!mounted) return;
+    if (response.success) {
+      setState(() => _dataFuture = _loadData());
+    } else {
+      Get.snackbar('Error', 'No se pudo validar la asistencia.');
+    }
   }
 
   String _statusText(AttendanceRecord record) {
@@ -188,6 +195,9 @@ class _AdminValidatePageState extends State<AdminValidatePage> {
                                 outTime: formatTimeShort(
                                     record.checkOut?.toIso8601String()),
                                 isLate: (record.lateMinutes ?? 0) > 0,
+                                onValidate: record.status == AttendanceStatus.pending
+                                    ? () => _validate(record)
+                                    : null,
                               ),
                             );
                           }),

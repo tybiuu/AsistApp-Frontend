@@ -11,6 +11,7 @@ import './models/user.dart';
 import './services/api_service.dart';
 import './services/attendance_record_service.dart';
 import './services/attendance_request_service.dart';
+import './services/activity_log_service.dart';
 import './services/organization_service.dart';
 import './services/schedule_change_request_service.dart';
 import './services/schedule_service.dart';
@@ -93,6 +94,7 @@ class MyApp extends StatelessWidget {
         Get.lazyPut(() => ScheduleChangeRequestService(), fenix: true);
         Get.lazyPut(() => AttendanceRecordService(), fenix: true);
         Get.lazyPut(() => AttendanceRequestService(), fenix: true);
+        Get.lazyPut(() => ActivityLogService(), fenix: true);
       }),
       initialRoute: initialRoute,
       getPages: [

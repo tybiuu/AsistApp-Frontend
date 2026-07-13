@@ -1,12 +1,11 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
 import '../../components/attendance_record_card.dart';
 import '../../components/month_nav_button.dart';
 import '../../models/attendance_record.dart';
+import '../../services/attendance_record_service.dart';
 import '../../utils/date_utils.dart';
 
 class HistorialPage extends StatefulWidget {
@@ -26,13 +25,8 @@ class _HistorialPageState extends State<HistorialPage> {
   }
 
   Future<List<AttendanceRecord>> _loadRecords() async {
-    final jsonString = await rootBundle.loadString(
-      'assets/jsons/mock_attendance_records.json',
-    );
-    final list = jsonDecode(jsonString) as List<dynamic>;
-    return list
-        .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
-        .toList();
+    final response = await Get.find<AttendanceRecordService>().fetchAll();
+    return response.data ?? <AttendanceRecord>[];
   }
 
   @override

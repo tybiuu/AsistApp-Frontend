@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:asist_app/configs/theme.dart';
+import '../../../models/activity_log.dart';
 import '../admin_activity_log_controller.dart';
 
 class ActivityEntryCard extends StatelessWidget {
@@ -11,7 +12,7 @@ class ActivityEntryCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ColorScheme colors = Theme.of(context).colorScheme;
-    final _EntryStyle style = _styleFor(entry.type);
+    final _EntryStyle style = _styleFor(entry.category);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -42,22 +43,24 @@ class ActivityEntryCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  style.label,
+                  entry.title.isNotEmpty ? entry.title : style.label,
                   style: TextStyle(
                     color: style.color,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  entry.subject,
-                  style: TextStyle(
-                    color: colors.onSurface,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                if (entry.subject.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    entry.subject,
+                    style: TextStyle(
+                      color: colors.onSurface,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
+                ],
                 const SizedBox(height: 6),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -89,61 +92,25 @@ class ActivityEntryCard extends StatelessWidget {
     );
   }
 
-  _EntryStyle _styleFor(String type) {
-    switch (type) {
-      case 'asistencia_confirmada':
+  _EntryStyle _styleFor(LogCategory category) {
+    switch (category) {
+      case LogCategory.attendance:
         return _EntryStyle(
-          label: 'Asistencia confirmada',
+          label: 'Asistencia',
           icon: Icons.check_box_rounded,
           color: AppColors.success,
         );
-      case 'asistencia_faltante_procesada':
+      case LogCategory.schedule:
         return _EntryStyle(
-          label: 'Asistencia faltante procesada',
-          icon: Icons.edit_note_rounded,
-          color: AppColors.info,
-        );
-      case 'tardanza_registrada':
-        return _EntryStyle(
-          label: 'Tardanza registrada',
-          icon: Icons.alarm_rounded,
-          color: AppColors.chart1,
-        );
-      case 'inasistencia_marcada':
-        return _EntryStyle(
-          label: 'Inasistencia marcada',
-          icon: Icons.close_rounded,
-          color: AppColors.error,
-        );
-      case 'horario_aprobado':
-        return _EntryStyle(
-          label: 'Horario aprobado',
+          label: 'Horario',
           icon: Icons.calendar_month_rounded,
-          color: AppColors.success,
-        );
-      case 'cambio_de_horario_aprobado':
-        return _EntryStyle(
-          label: 'Cambio de horario aprobado',
-          icon: Icons.edit_calendar_rounded,
           color: AppColors.info,
         );
-      case 'miembro_aceptado':
+      case LogCategory.members:
         return _EntryStyle(
-          label: 'Miembro aceptado',
+          label: 'Miembros',
           icon: Icons.person_add_rounded,
-          color: AppColors.success,
-        );
-      case 'miembro_rechazado':
-        return _EntryStyle(
-          label: 'Miembro rechazado',
-          icon: Icons.person_off_rounded,
-          color: AppColors.error,
-        );
-      default:
-        return _EntryStyle(
-          label: type,
-          icon: Icons.info_outline_rounded,
-          color: AppColors.mutedForeground,
+          color: AppColors.chart1,
         );
     }
   }

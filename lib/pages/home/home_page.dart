@@ -1,15 +1,14 @@
 // lib/pages/home/home_page.dart
 import '../historial/historial_page.dart';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../components/no_active_schedule_view.dart';
 import '../../configs/theme.dart';
 import '../../models/attendance_record.dart';
 import '../../models/schedule.dart';
+import '../../services/attendance_record_service.dart';
 import '../../services/schedule_service.dart';
 import '../../services/session_service.dart';
 import '../../utils/date_utils.dart';
@@ -36,13 +35,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<_HomeData> _loadHomeData() async {
-    final recordsString = await rootBundle.loadString(
-      'assets/jsons/mock_attendance_records.json',
-    );
-    final rawRecords = jsonDecode(recordsString) as List<dynamic>;
-    final records = rawRecords
-        .map((j) => AttendanceRecord.fromJson(j as Map<String, dynamic>))
-        .toList();
+    final recordsResponse = await Get.find<AttendanceRecordService>().fetchAll();
+    final records = recordsResponse.data ?? <AttendanceRecord>[];
 
     final scheduleResponse = await Get.find<ScheduleService>().fetchCurrent();
 

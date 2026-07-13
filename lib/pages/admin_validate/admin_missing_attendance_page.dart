@@ -1,13 +1,12 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../components/app_top_bar.dart';
 import '../../configs/theme.dart';
 import '../../models/attendance_request.dart';
 import '../../models/user.dart';
+import '../../services/attendance_request_service.dart';
+import '../../services/trainee_service.dart';
 import '../../utils/date_utils.dart';
 import '../../utils/trainee_utils.dart';
 
@@ -30,25 +29,27 @@ class _AdminMissingAttendancePageState
   }
 
   Future<_MissingAttendanceData> _loadData() async {
-    final requestsString = await rootBundle.loadString(
-      'assets/jsons/mock_attendance_requests.json',
-    );
-    final traineesString = await rootBundle.loadString(
-      'assets/jsons/mock_trainees.json',
-    );
+    final requestsResponse = await Get.find<AttendanceRequestService>().fetchAll();
+    final traineesResponse = await Get.find<TraineeService>().fetchAll();
 
-    final allRequests = (jsonDecode(requestsString) as List<dynamic>)
-        .map((j) => AttendanceRequest.fromJson(j as Map<String, dynamic>))
+    final pendingRequests = (requestsResponse.data ?? <AttendanceRequest>[])
+        .where((r) => r.status == RequestStatus.pending)
         .toList();
 
-    final trainees = (jsonDecode(traineesString) as List<dynamic>)
-        .map((j) => User.fromJson(j as Map<String, dynamic>))
-        .toList();
+    return _MissingAttendanceData(
+      requests: pendingRequests,
+      trainees: traineesResponse.data ?? <User>[],
+    );
+  }
 
-    final pendingRequests =
-        allRequests.where((r) => r.status == RequestStatus.pending).toList();
-
-    return _MissingAttendanceData(requests: pendingRequests, trainees: trainees);
+  Future<void> _decide(AttendanceRequest request, String status) async {
+    final response = await Get.find<AttendanceRequestService>().setStatus(request.id, status);
+    if (!mounted) return;
+    if (response.success) {
+      setState(() => _dataFuture = _loadData());
+    } else {
+      Get.snackbar('Error', 'No se pudo actualizar la solicitud.');
+    }
   }
 
   @override
@@ -117,6 +118,8 @@ class _AdminMissingAttendancePageState
                                 arrivedAt: formatTime12h(
                                     request.createdAt.toIso8601String()),
                                 reason: request.reason,
+                                onDeny: () => _decide(request, 'rejected'),
+                                onApprove: () => _decide(request, 'approved'),
                               ),
                             );
                           }),
@@ -151,6 +154,8 @@ class _MissingRequestCard extends StatelessWidget {
   final String date;
   final String arrivedAt;
   final String reason;
+  final VoidCallback onDeny;
+  final VoidCallback onApprove;
 
   const _MissingRequestCard({
     required this.initials,
@@ -159,6 +164,8 @@ class _MissingRequestCard extends StatelessWidget {
     required this.date,
     required this.arrivedAt,
     required this.reason,
+    required this.onDeny,
+    required this.onApprove,
   });
 
   @override
@@ -272,7 +279,7 @@ class _MissingRequestCard extends StatelessWidget {
             children: [
               Expanded(
                 child: InkWell(
-                  onTap: () {},
+                  onTap: onDeny,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     child: Row(
@@ -297,7 +304,7 @@ class _MissingRequestCard extends StatelessWidget {
               Container(width: 1, height: 54, color: colors.outlineVariant),
               Expanded(
                 child: InkWell(
-                  onTap: () {},
+                  onTap: onApprove,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: Row(
