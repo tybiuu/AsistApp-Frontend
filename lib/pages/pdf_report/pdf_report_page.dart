@@ -23,6 +23,41 @@ class PdfReportPage extends StatelessWidget {
           if (controller.isLoading.value) {
             return const Center(child: CircularProgressIndicator());
           }
+          
+          if (controller.months.isEmpty) {
+            return CustomScrollView(
+              slivers: [
+                const SliverToBoxAdapter(
+                  child: AppTopBar(
+                    title: 'Control de asistencia',
+                    showBack: true,
+                  ),
+                ),
+                SliverFillRemaining(
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.description_outlined,
+                          size: 48,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'No hay registros de asistencia aún.',
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
 
           if (controller.current == null) {
             return const Center(child: Text('Error al cargar datos'));
