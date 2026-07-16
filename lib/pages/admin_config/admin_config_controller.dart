@@ -48,7 +48,9 @@ class AdminConfigController extends GetxController {
     isLoading.value = true;
 
     final String? orgId = admin?.organizationId;
-    final response = await _organizationService.fetchCurrent(organizationId: orgId);
+    final response = await _organizationService.fetchCurrent(
+      organizationId: orgId,
+    );
     if (response.success && response.data != null) {
       organization.value = response.data;
       _syncOrganizationFields(response.data!);
@@ -130,7 +132,10 @@ class AdminConfigController extends GetxController {
     String? photoUrl;
     if (photoBytes != null) {
       try {
-        photoUrl = await _organizationService.uploadPhoto(photoBytes, 'logo.jpg');
+        photoUrl = await _organizationService.uploadPhoto(
+          photoBytes,
+          'logo.jpg',
+        );
       } catch (_) {
         Get.snackbar(
           'Error',
@@ -148,10 +153,13 @@ class AdminConfigController extends GetxController {
       'name': organizationNameController.text.trim(),
       'description': organizationDescriptionController.text.trim(),
       'lateTimeLimit': tardinessLimit.value,
-      'photoUrl': ?photoUrl,
+      if (photoUrl != null && photoUrl.isNotEmpty) 'photoUrl': photoUrl,
     };
 
-    final response = await _organizationService.updateOrganization(current.id, updateData);
+    final response = await _organizationService.updateOrganization(
+      current.id,
+      updateData,
+    );
 
     if (response.success && response.data != null) {
       savedOrganizationPhotoBytes.value =
