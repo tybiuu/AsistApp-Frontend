@@ -11,6 +11,30 @@ import 'package:asist_app/models/schedule.dart';
 DateTime dateFromJson(String? value) =>
     DateTime.tryParse(value ?? '') ?? DateTime.fromMillisecondsSinceEpoch(0);
 
+/// "YYYY-MM-DD" for the current local date. Matches the convention already
+/// used across the app for date-only fields (e.g. attendance requests).
+String todayIso() {
+  final now = DateTime.now();
+  return '${now.year.toString().padLeft(4, '0')}-'
+      '${now.month.toString().padLeft(2, '0')}-'
+      '${now.day.toString().padLeft(2, '0')}';
+}
+
+/// Builds a UTC-labeled [DateTime] that keeps the wall-clock reading of
+/// [local]. Schedules and attendance marks in this app are timezone-agnostic
+/// wall-clock values (see [formatTime12h]/[formatTimeShort], which read the
+/// hour/minute digits straight from the ISO string). Sending a real UTC
+/// conversion would shift the displayed time, so marks are tagged as UTC
+/// without actually converting them.
+DateTime wallClockAsUtc(DateTime local) => DateTime.utc(
+      local.year,
+      local.month,
+      local.day,
+      local.hour,
+      local.minute,
+      local.second,
+    );
+
 // ─── Formatting ───────────────────────────────────────────────────────────────
 
 /// Converts a time value to 12-hour format ("08:30 AM").

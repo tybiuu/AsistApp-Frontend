@@ -1,11 +1,11 @@
 // lib/pages/admin_analytics/admin_analytics_controller.dart
 
 import 'package:asist_app/configs/theme.dart';
-import 'dart:convert';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../models/attendance_record.dart';
 import '../../models/user.dart';
+import '../../services/attendance_record_service.dart';
 import '../../services/trainee_service.dart';
 
 class MemberAnalytic {
@@ -46,20 +46,11 @@ class MonthSummary {
     required this.totalAbsences,
     required this.totalPending,
   });
-
-  factory MonthSummary.fromJson(Map<String, dynamic> json) {
-    return MonthSummary(
-      confirmedAttendances: json['confirmedAttendances'],
-      punctualityPercent:   json['punctualityPercent'],
-      totalLates:           json['totalLates'],
-      totalAbsences:        json['totalAbsences'],
-      totalPending:      json['totalPending'],
-    );
-  }
 }
 
 class AdminAnalyticsController extends GetxController {
   final TraineeService _traineeService = Get.find();
+  final AttendanceRecordService _attendanceRecordService = Get.find();
 
   final members = <MemberAnalytic>[].obs;
   final Rxn<MonthSummary> summary = Rxn<MonthSummary>();
@@ -89,20 +80,82 @@ class AdminAnalyticsController extends GetxController {
         .where((u) => u.status == UserStatus.active)
         .toList();
 
-    members.value = activeTrainees
-        .map((u) => MemberAnalytic(
-              user: u,
-              hoursLogged: 0,
-              attendancePercent: 0,
-              minutesLateSum: 0,
-              daysMissed: 0,
-            ))
-        .toList();
+    final recordsResponse = await _attendanceRecordService.fetchAll();
+    final records = recordsResponse.data ?? <AttendanceRecord>[];
 
-    final String raw = await rootBundle.loadString('assets/jsons/mock_analytics.json');
-    final Map<String, dynamic> json = jsonDecode(raw);
-    summary.value = MonthSummary.fromJson(json['summary']);
+    final Map<String, List<AttendanceRecord>> recordsByUser = {};
+    for (final record in records) {
+      (recordsByUser[record.userId] ??= <AttendanceRecord>[]).add(record);
+    }
+
+    members.value = activeTrainees.map((u) {
+      final userRecords = recordsByUser[u.id] ?? const <AttendanceRecord>[];
+      final confirmedCount =
+          userRecords.where((r) => r.status == AttendanceStatus.confirmed).length;
+      final hoursLogged = userRecords.fold<int>(
+            0,
+            (total, r) => total + (r.totalMinutes ?? 0),
+          ) ~/
+          60;
+      final attendancePercent = userRecords.isEmpty
+          ? 0
+          : ((confirmedCount / userRecords.length) * 100).round();
+      final minutesLateSum = userRecords.fold<int>(
+        0,
+        (total, r) => total + (r.lateMinutes != null && r.lateMinutes! > 0 ? r.lateMinutes! : 0),
+      );
+      final daysMissed =
+          userRecords.where((r) => r.status == AttendanceStatus.absence).length;
+
+      return MemberAnalytic(
+        user: u,
+        hoursLogged: hoursLogged,
+        attendancePercent: attendancePercent,
+        minutesLateSum: minutesLateSum,
+        daysMissed: daysMissed,
+      );
+    }).toList();
+
+    summary.value = _buildSummary(records);
     isLoading.value = false;
+  }
+
+  MonthSummary _buildSummary(List<AttendanceRecord> records) {
+    int confirmedAttendances = 0;
+    int onTimeConfirmed = 0;
+    int totalLates = 0;
+    int totalAbsences = 0;
+    int totalPending = 0;
+
+    for (final record in records) {
+      final isLate = record.lateMinutes != null && record.lateMinutes! > 0;
+      if (isLate) totalLates++;
+
+      switch (record.status) {
+        case AttendanceStatus.confirmed:
+          confirmedAttendances++;
+          if (!isLate) onTimeConfirmed++;
+          break;
+        case AttendanceStatus.absence:
+          totalAbsences++;
+          break;
+        case AttendanceStatus.pending:
+          totalPending++;
+          break;
+      }
+    }
+
+    final punctualityPercent = confirmedAttendances == 0
+        ? 0
+        : ((onTimeConfirmed / confirmedAttendances) * 100).round();
+
+    return MonthSummary(
+      confirmedAttendances: confirmedAttendances,
+      punctualityPercent: punctualityPercent,
+      totalLates: totalLates,
+      totalAbsences: totalAbsences,
+      totalPending: totalPending,
+    );
   }
 
   static Color percentColor(int percent) {

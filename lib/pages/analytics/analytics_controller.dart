@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../models/attendance_record.dart';
 import '../../models/schedule.dart';
+import '../../services/attendance_record_service.dart';
 import '../../services/schedule_service.dart';
 
 class PractitionerAnalytics {
@@ -20,7 +20,7 @@ class PractitionerAnalytics {
   final int totalHours;
   final String startMonth;
   final String endMonth;
-  double get hoursPercent => (currentHours / totalHours) * 100;
+  double get hoursPercent => totalHours == 0 ? 0 : (currentHours / totalHours) * 100;
 
   PractitionerAnalytics({
     required this.month,
@@ -37,31 +37,16 @@ class PractitionerAnalytics {
   });
 
   double get attendancePercent =>
-    ((daysAttended - daysMissed) / daysAttended) * 100;
+      totalWorkDays == 0 ? 0 : (daysAttended / totalWorkDays) * 100;
 
-  double get hoursProgress => hoursCompleted / hoursRequired;
+  double get hoursProgress => hoursRequired == 0 ? 0 : hoursCompleted / hoursRequired;
 
   int get hoursRemaining => hoursRequired - hoursCompleted;
-
-  factory PractitionerAnalytics.fromJson(Map<String, dynamic> json) {
-    return PractitionerAnalytics(
-      month: json['month'],
-      hoursCompleted: json['hoursCompleted'],
-      hoursRequired:  json['hoursRequired'],
-      daysAttended:   json['daysAttended'],
-      totalWorkDays:  json['totalWorkDays'],
-      daysLate:       json['daysLate'],
-      daysMissed:     json['daysMissed'],
-      currentHours: json['currentHours'],
-      totalHours:   json['totalHours'],
-      startMonth:   json['startMonth'],
-      endMonth:     json['endMonth'],
-    );
-  }
 }
 
 class AnalyticsController extends GetxController {
   final ScheduleService _scheduleService = Get.find();
+  final AttendanceRecordService _attendanceRecordService = Get.find();
 
   final allMonths = <PractitionerAnalytics>[].obs;
   final selectedIndex = 0.obs;
@@ -90,6 +75,21 @@ class AnalyticsController extends GetxController {
     loadData();
   }
 
+  static const List<String> _monthNames = [
+    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
+  ];
+
+  static const Map<String, int> _labelToWeekday = {
+    'Lunes': DateTime.monday,
+    'Martes': DateTime.tuesday,
+    'Miércoles': DateTime.wednesday,
+    'Jueves': DateTime.thursday,
+    'Viernes': DateTime.friday,
+    'Sábado': DateTime.saturday,
+    'Domingo': DateTime.sunday,
+  };
+
   Future<void> loadData() async {
     isLoading.value = true;
 
@@ -102,18 +102,97 @@ class AnalyticsController extends GetxController {
     }
 
     try {
-      final String raw = await rootBundle
-          .loadString('assets/jsons/mock_practi_analytics.json');
-      final Map<String, dynamic> json = jsonDecode(raw);
-      allMonths.value = (json['months'] as List)
-          .map((e) => PractitionerAnalytics.fromJson(e))
-          .toList();
+      final recordsResponse = await _attendanceRecordService.fetchAll();
+      final records = recordsResponse.data ?? <AttendanceRecord>[];
+
+      final Map<String, List<AttendanceRecord>> byMonth = {};
+      for (final record in records) {
+        if (record.date.length < 7) continue;
+        final key = record.date.substring(0, 7); // "YYYY-MM"
+        (byMonth[key] ??= <AttendanceRecord>[]).add(record);
+      }
+
+      final now = DateTime.now();
+      final currentKey = '${now.year.toString().padLeft(4, '0')}-'
+          '${now.month.toString().padLeft(2, '0')}';
+      byMonth.putIfAbsent(currentKey, () => <AttendanceRecord>[]);
+
+      final sortedKeys = byMonth.keys.toList()..sort();
+      final activeSchedule = schedule.value!;
+      final enabledDaysPerWeek =
+          activeSchedule.days.values.where((d) => d.enabled).length;
+
+      int cumulativeHours = 0;
+      int cumulativeRequiredHours = 0;
+      final months = <PractitionerAnalytics>[];
+
+      for (final key in sortedKeys) {
+        final year = int.parse(key.substring(0, 4));
+        final month = int.parse(key.substring(5, 7));
+        final monthRecords = byMonth[key]!;
+
+        final daysAttended = monthRecords
+            .where((r) => r.status == AttendanceStatus.confirmed)
+            .length;
+        final daysLate = monthRecords
+            .where((r) => r.lateMinutes != null && r.lateMinutes! > 0)
+            .length;
+        final daysMissed = monthRecords
+            .where((r) => r.status == AttendanceStatus.absence)
+            .length;
+        final hoursCompleted = monthRecords.fold<int>(
+              0,
+              (total, r) => total + (r.totalMinutes ?? 0),
+            ) ~/
+            60;
+
+        final totalWorkDays = _workDayOccurrencesInMonth(activeSchedule, year, month);
+        final double weeksInMonth =
+            enabledDaysPerWeek == 0 ? 0.0 : totalWorkDays / enabledDaysPerWeek;
+        final hoursRequired = (activeSchedule.weeklyHours * weeksInMonth).round();
+
+        cumulativeHours += hoursCompleted;
+        cumulativeRequiredHours += hoursRequired;
+
+        months.add(PractitionerAnalytics(
+          month: '${_monthNames[month - 1]} $year',
+          hoursCompleted: hoursCompleted,
+          hoursRequired: hoursRequired,
+          daysAttended: daysAttended,
+          totalWorkDays: totalWorkDays,
+          daysLate: daysLate,
+          daysMissed: daysMissed,
+          currentHours: cumulativeHours,
+          totalHours: cumulativeRequiredHours,
+          startMonth: '${_monthNames[int.parse(sortedKeys.first.substring(5, 7)) - 1]} '
+              '${sortedKeys.first.substring(0, 4)}',
+          endMonth: '${_monthNames[month - 1]} $year',
+        ));
+      }
+
+      allMonths.value = months;
       selectedIndex.value = allMonths.length - 1;
     } catch (e) {
       debugPrint('Analytics error: $e');
     } finally {
       isLoading.value = false;
     }
+  }
+
+  int _workDayOccurrencesInMonth(Schedule schedule, int year, int month) {
+    final enabledWeekdays = schedule.days.entries
+        .where((e) => e.value.enabled)
+        .map((e) => _labelToWeekday[e.key])
+        .whereType<int>()
+        .toSet();
+    if (enabledWeekdays.isEmpty) return 0;
+
+    final daysInMonth = DateTime(year, month + 1, 0).day;
+    int count = 0;
+    for (int day = 1; day <= daysInMonth; day++) {
+      if (enabledWeekdays.contains(DateTime(year, month, day).weekday)) count++;
+    }
+    return count;
   }
 
   static Color percentColor(double percent) {
