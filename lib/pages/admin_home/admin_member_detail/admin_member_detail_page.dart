@@ -129,26 +129,34 @@ class AdminMemberDetailPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    GridView.count(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      padding: EdgeInsets.zero,
-                      childAspectRatio: 1.35,
-                      children: controller.metrics
-                          .map(
-                            (m) => MemberMetricCard(
-                              label: m.label,
-                              value: m.value,
-                              valueColor: m.valueColor,
-                              subtitle: m.subtitle,
-                              progress: m.progress,
-                            ),
-                          )
-                          .toList(),
-                    ),
+                    Obx(() {
+                      if (controller.isLoadingMetrics.value) {
+                        return const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16),
+                          child: Center(child: CircularProgressIndicator()),
+                        );
+                      }
+                      return GridView.count(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 10,
+                        mainAxisSpacing: 10,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.zero,
+                        childAspectRatio: 1.35,
+                        children: controller.metrics
+                            .map(
+                              (m) => MemberMetricCard(
+                                label: m.label,
+                                value: m.value,
+                                valueColor: m.valueColor,
+                                subtitle: m.subtitle,
+                                progress: m.progress,
+                              ),
+                            )
+                            .toList(),
+                      );
+                    }),
 
                     // ── Schedule ──────────────────────────────────────────────
                     const SizedBox(height: 20),

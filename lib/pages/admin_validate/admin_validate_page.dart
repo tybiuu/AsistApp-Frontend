@@ -10,6 +10,7 @@ import '../../services/session_service.dart';
 import '../../services/trainee_service.dart';
 import '../../utils/date_utils.dart';
 import '../../utils/trainee_utils.dart';
+import '../root/root_controller.dart';
 import 'components/missing_card.dart';
 import 'components/section_title.dart';
 import 'components/validate_card.dart';
@@ -22,12 +23,32 @@ class AdminValidatePage extends StatefulWidget {
 }
 
 class _AdminValidatePageState extends State<AdminValidatePage> {
+  // Posición de esta pestaña dentro de `adminViews` en root_page.dart.
+  // Se usa para refrescar los datos cada vez que el admin vuelve a esta
+  // pestaña, ya que el IndexedStack mantiene el widget vivo y `initState`
+  // solo corre una vez por sesión.
+  static const int _tabIndex = 1;
+
   late Future<_AdminValidateData> _dataFuture;
+  Worker? _tabWorker;
 
   @override
   void initState() {
     super.initState();
     _dataFuture = _loadData();
+
+    if (Get.isRegistered<RootController>()) {
+      _tabWorker = ever<int>(Get.find<RootController>().currentIndex, (index) {
+        if (!mounted || index != _tabIndex) return;
+        setState(() => _dataFuture = _loadData());
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _tabWorker?.dispose();
+    super.dispose();
   }
 
   Future<_AdminValidateData> _loadData() async {

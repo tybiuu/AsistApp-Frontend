@@ -4,16 +4,21 @@ import 'package:asist_app/configs/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../../models/attendance_record.dart';
 import '../../../models/schedule.dart';
 import '../../../models/user.dart';
+import '../../../services/attendance_record_service.dart';
 import '../../../services/schedule_service.dart';
 import '../../../services/user_service.dart';
+import '../../../utils/date_utils.dart';
+import '../../admin_analytics/admin_analytics_controller.dart' show AdminAnalyticsController;
 import '../admin_home_controller.dart';
 import '../admin_home_models.dart';
 
 class AdminMemberDetailController extends GetxController {
   final ScheduleService _scheduleService = Get.find();
   final UserService _userService = Get.find();
+  final AttendanceRecordService _attendanceRecordService = Get.find();
 
   final RxBool isDeleting = false.obs;
 
@@ -28,50 +33,94 @@ class AdminMemberDetailController extends GetxController {
 
   final RxnInt expandedDay = RxnInt();
 
-  late final List<MemberMetric> metrics;
+  final RxList<MemberMetric> metrics = <MemberMetric>[].obs;
+  final RxBool isLoadingMetrics = true.obs;
 
   @override
   void onInit() {
     super.onInit();
     member = Get.arguments as User;
-    _buildMockMetrics();
-    _loadSchedule();
+    _init();
   }
 
-  void _buildMockMetrics() {
-    metrics = [
-      MemberMetric(
-        label: 'Horas completadas',
-        value: '102h',
-        subtitle: 'de 120h',
-        valueColor: AppColors.primary,
-        progress: 102 / 120,
-      ),
-      const MemberMetric(
-        label: '% Asistencia',
-        value: '82%',
-        subtitle: 'este mes',
-        valueColor: AppColors.success,
-      ),
-      const MemberMetric(
-        label: 'Tardanzas',
-        value: '2',
-        subtitle: 'este mes',
-        valueColor: AppColors.primary,
-      ),
-      const MemberMetric(
-        label: 'Inasistencias',
-        value: '0',
-        subtitle: 'este mes',
-        valueColor: AppColors.success,
-      ),
-    ];
+  Future<void> _init() async {
+    await _loadSchedule();
+    await _loadMetrics();
   }
 
   Future<void> _loadSchedule() async {
     final response = await _scheduleService.fetchForUser(member.id);
     rawSchedule.value = response.data;
     schedule.assignAll(response.data?.days ?? Schedule.emptyDays());
+  }
+
+  /// Calcula las métricas del mes en curso a partir de los registros de
+  /// asistencia reales del miembro (antes eran valores fijos de ejemplo).
+  Future<void> _loadMetrics() async {
+    isLoadingMetrics.value = true;
+
+    final now = DateTime.now();
+    final recordsResponse = await _attendanceRecordService.fetchAll();
+    final allRecords = recordsResponse.data ?? <AttendanceRecord>[];
+
+    final monthRecords = allRecords.where((r) {
+      if (r.userId != member.id || r.date.length < 7) return false;
+      final year = int.tryParse(r.date.substring(0, 4));
+      final month = int.tryParse(r.date.substring(5, 7));
+      return year == now.year && month == now.month;
+    }).toList();
+
+    final confirmedCount =
+        monthRecords.where((r) => r.status == AttendanceStatus.confirmed).length;
+    final hoursCompleted = monthRecords.fold<int>(
+          0,
+          (total, r) => total + (r.totalMinutes ?? 0),
+        ) ~/
+        60;
+    final attendancePercent = monthRecords.isEmpty
+        ? 0
+        : ((confirmedCount / monthRecords.length) * 100).round();
+    final latenessCount = monthRecords
+        .where((r) => r.lateMinutes != null && r.lateMinutes! > 0)
+        .length;
+    final daysMissed =
+        monthRecords.where((r) => r.status == AttendanceStatus.absence).length;
+
+    int hoursRequired = 0;
+    final activeSchedule = rawSchedule.value;
+    if (activeSchedule != null && hasApprovedSchedule) {
+      hoursRequired = hoursRequiredInMonth(activeSchedule, now.year, now.month);
+    }
+
+    metrics.assignAll([
+      MemberMetric(
+        label: 'Horas completadas',
+        value: '${hoursCompleted}h',
+        subtitle: hoursRequired > 0 ? 'de ${hoursRequired}h' : 'este mes',
+        valueColor: AppColors.primary,
+        progress: hoursRequired > 0 ? hoursCompleted / hoursRequired : null,
+      ),
+      MemberMetric(
+        label: '% Asistencia',
+        value: '$attendancePercent%',
+        subtitle: 'este mes',
+        valueColor: AdminAnalyticsController.percentColor(attendancePercent),
+      ),
+      MemberMetric(
+        label: 'Tardanzas',
+        value: '$latenessCount',
+        subtitle: 'este mes',
+        valueColor: latenessCount > 0 ? AppColors.primary : AppColors.success,
+      ),
+      MemberMetric(
+        label: 'Inasistencias',
+        value: '$daysMissed',
+        subtitle: 'este mes',
+        valueColor: daysMissed > 0 ? AppColors.error : AppColors.success,
+      ),
+    ]);
+
+    isLoadingMetrics.value = false;
   }
 
   void toggleDay(int idx) {

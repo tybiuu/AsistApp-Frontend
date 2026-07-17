@@ -184,3 +184,46 @@ int dayWorkMins(DaySchedule day) {
       .where((b) => b.type == BlockType.work)
       .fold(0, (sum, b) => sum + schedToMins(b.end) - schedToMins(b.start));
 }
+
+// ─── Monthly workload estimation ───────────────────────────────────────────
+
+const Map<String, int> _labelToWeekday = {
+  'Lunes': DateTime.monday,
+  'Martes': DateTime.tuesday,
+  'Miércoles': DateTime.wednesday,
+  'Jueves': DateTime.thursday,
+  'Viernes': DateTime.friday,
+  'Sábado': DateTime.saturday,
+  'Domingo': DateTime.sunday,
+};
+
+/// Cuenta cuántos días del mes [year]-[month] caen en alguno de los días
+/// habilitados del horario [schedule]. Se usa junto con `weeklyHours` para
+/// estimar las horas requeridas de un mes dado (tanto en el reporte propio
+/// del practicante como en el detalle de miembro que ve el admin).
+int workDayOccurrencesInMonth(Schedule schedule, int year, int month) {
+  final enabledWeekdays = schedule.days.entries
+      .where((e) => e.value.enabled)
+      .map((e) => _labelToWeekday[e.key])
+      .whereType<int>()
+      .toSet();
+  if (enabledWeekdays.isEmpty) return 0;
+
+  final daysInMonth = DateTime(year, month + 1, 0).day;
+  int count = 0;
+  for (int day = 1; day <= daysInMonth; day++) {
+    if (enabledWeekdays.contains(DateTime(year, month, day).weekday)) count++;
+  }
+  return count;
+}
+
+/// Horas requeridas en un mes dado un horario semanal aprobado: prorratea
+/// `weeklyHours` según cuántos de los días habilitados del horario caen
+/// dentro de ese mes.
+int hoursRequiredInMonth(Schedule schedule, int year, int month) {
+  final enabledDaysPerWeek = schedule.days.values.where((d) => d.enabled).length;
+  if (enabledDaysPerWeek == 0) return 0;
+  final totalWorkDays = workDayOccurrencesInMonth(schedule, year, month);
+  final weeksInMonth = totalWorkDays / enabledDaysPerWeek;
+  return (schedule.weeklyHours * weeksInMonth).round();
+}

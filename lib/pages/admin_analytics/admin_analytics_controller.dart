@@ -2,6 +2,7 @@
 
 import 'package:asist_app/configs/theme.dart';
 import 'package:get/get.dart';
+import 'package:flutter/material.dart';
 
 import '../../models/attendance_record.dart';
 import '../../models/user.dart';
@@ -77,7 +78,7 @@ class AdminAnalyticsController extends GetxController {
   Future<void> loadData() async {
     final traineesResponse = await _traineeService.fetchAll();
     final activeTrainees = (traineesResponse.data ?? <User>[])
-        .where((u) => u.status == UserStatus.active)
+        .where((u) => u.status == UserStatus.active && u.role == UserRole.trainee)
         .toList();
 
     final recordsResponse = await _attendanceRecordService.fetchAll();

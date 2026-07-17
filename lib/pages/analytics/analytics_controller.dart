@@ -6,6 +6,7 @@ import '../../models/attendance_record.dart';
 import '../../models/schedule.dart';
 import '../../services/attendance_record_service.dart';
 import '../../services/schedule_service.dart';
+import '../../utils/date_utils.dart' show workDayOccurrencesInMonth;
 
 class PractitionerAnalytics {
   final String month;
@@ -80,16 +81,6 @@ class AnalyticsController extends GetxController {
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre',
   ];
 
-  static const Map<String, int> _labelToWeekday = {
-    'Lunes': DateTime.monday,
-    'Martes': DateTime.tuesday,
-    'Miércoles': DateTime.wednesday,
-    'Jueves': DateTime.thursday,
-    'Viernes': DateTime.friday,
-    'Sábado': DateTime.saturday,
-    'Domingo': DateTime.sunday,
-  };
-
   Future<void> loadData() async {
     isLoading.value = true;
 
@@ -146,7 +137,7 @@ class AnalyticsController extends GetxController {
             ) ~/
             60;
 
-        final totalWorkDays = _workDayOccurrencesInMonth(activeSchedule, year, month);
+        final totalWorkDays = workDayOccurrencesInMonth(activeSchedule, year, month);
         final double weeksInMonth =
             enabledDaysPerWeek == 0 ? 0.0 : totalWorkDays / enabledDaysPerWeek;
         final hoursRequired = (activeSchedule.weeklyHours * weeksInMonth).round();
@@ -177,22 +168,6 @@ class AnalyticsController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  int _workDayOccurrencesInMonth(Schedule schedule, int year, int month) {
-    final enabledWeekdays = schedule.days.entries
-        .where((e) => e.value.enabled)
-        .map((e) => _labelToWeekday[e.key])
-        .whereType<int>()
-        .toSet();
-    if (enabledWeekdays.isEmpty) return 0;
-
-    final daysInMonth = DateTime(year, month + 1, 0).day;
-    int count = 0;
-    for (int day = 1; day <= daysInMonth; day++) {
-      if (enabledWeekdays.contains(DateTime(year, month, day).weekday)) count++;
-    }
-    return count;
   }
 
   static Color percentColor(double percent) {
